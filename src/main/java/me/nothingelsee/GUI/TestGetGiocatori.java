@@ -35,11 +35,11 @@ public class TestGetGiocatori {
         popup.add(annullaPopup);
         frame.add(popup);
 
+
         giocatoriTable.setModel(new DefaultTableModel(
-                new Object[][] {
-                },
-                new String[] {
-                        "Nome", "Cognome", "Data di Nascita'"
+                new Object[][]{},
+                new String[]{
+                        "Nome", "Cognome", "Data di Nascita"
                 }
         ));
 
@@ -136,6 +136,7 @@ public class TestGetGiocatori {
     private void visualizzaGiocatore(){
         if(giocatoreCerca!=null) {
             TRy giocatoreVis = new TRy(controller, frame, giocatoreCerca);
+            giocatoreCerca = null;
             giocatoreVis.frame.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Seleziona un giocatore prima!!");

@@ -58,6 +58,7 @@ public class TRy {
         caricaAbilità(giocatore);
         caricaSkill(giocatore);
         ruoliLabel.setText(giocatore.getRuoliString());
+        controller.
 
         chiudiButton.addActionListener(new ActionListener() {
             @Override

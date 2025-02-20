@@ -17,8 +17,10 @@ public class Giocatore {
     private HashMap<String, Integer> skill = new HashMap<>();
     private HashMap<String, Integer> abilita = new HashMap<>();
     private ArrayList<Enum> ruoli = new ArrayList<>();
+    private int trofeiVinti;
 
     public Giocatore() {}
+
     public Giocatore(int id, String nome, String cognome, String dataNascita, String dataRitiro, String piede) {
         this.id = id;
         this.nome = nome;
@@ -34,14 +36,14 @@ public class Giocatore {
     public String getDataNascita() {return dataNascita;}
     public String getDataRitiro() {return dataRitiro;}
     public Piede getPiede() {return piede;}
-    public HashMap<String, Integer> getAbilità() {return abilita;}
+    public int getTrofeiVinti() {return trofeiVinti;}
 
+    public HashMap<String, Integer> getAbilità() {return abilita;}
     public void aggiungiAbilita(String nome, Integer valore){
         abilita.put(nome, valore);
     };
 
     public HashMap<String, Integer> getSkill() {return skill;}
-
     public void aggiungiSkill(String nome, Integer valore){
         skill.put(nome, valore);
     }
@@ -53,11 +55,22 @@ public class Giocatore {
     }
 
     public String getRuoliString(){
-        String ruoliString = "";
-        for (int i=0; i<ruoli.size(); i++){
-            ruoliString += ruoli.get(i).toString() + " ";
-        }
+        String ruoliString;
+
+        ruoliString = "";
+        System.out.println(ruoliString);
+        for (int i=0; i<ruoli.size(); i++) ruoliString += ruoli.get(i).toString() + " ";
+
+        System.out.println(ruoliString);
 
         return ruoliString;
+    }
+
+    public void clearRuoli (){
+        ruoli.clear();
+    }
+
+    public void setTrofeiVinti(int trofeiVinti) {
+        this.trofeiVinti = trofeiVinti;
     }
 }
