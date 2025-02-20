@@ -5,6 +5,8 @@ import me.nothingelsee.Model.Giocatore;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class TRy {
@@ -32,6 +34,7 @@ public class TRy {
     private JLabel controlloLabel;
     private JPanel panel;
     private JLabel ruoliLabel;
+    private JButton chiudiButton;
 
 
     public TRy(Controller controller, Frame frameChiamante, Giocatore giocatore) {
@@ -55,6 +58,13 @@ public class TRy {
         caricaAbilità(giocatore);
         caricaSkill(giocatore);
         ruoliLabel.setText(giocatore.getRuoliString());
+
+        chiudiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                frame.dispose();
+            }
+        });
 
     }
 
