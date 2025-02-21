@@ -62,7 +62,7 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
 
             rs.next();
             while(rs2.next()){
-                giocatore.aggiungiAbilita(rs2.getString(1), rs.getInt(rs2.getRow()));
+                giocatore.addAbilita(rs2.getString(1), rs.getInt(rs2.getRow()));
             }
 
             rs.close();
@@ -92,7 +92,7 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
 
             rs.next();
             while(rs2.next()){
-                giocatore.aggiungiSkill(rs2.getString(1), rs.getInt(rs2.getRow()));
+                giocatore.addSkill(rs2.getString(1), rs.getInt(rs2.getRow()));
             }
 
             rs.close();
@@ -115,32 +115,11 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
             ResultSet rs = leggiRuoli.executeQuery();
             giocatore.clearRuoli();
             while(rs.next()){
-                giocatore.aggiungiRuoli(rs.getString(1));
+                giocatore.addRuolo(rs.getString(1));
             }
             rs.close();
             connection.close();
         } catch(SQLException e ){
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void getTrofeiVinti(Giocatore giocatore) {
-        PreparedStatement leggiTrofeiVinti;
-        int num = 0;
-
-        try{
-            leggiTrofeiVinti = connection.prepareStatement(
-                "SELECT G.nome, G.cognome, T.nome AS nome_trofeo, V.data AS data_vittoria FROM giocatore G JOIN vittoria V ON G.id_giocatore = V.id_giocatore JOIN trofeo T ON T.id_trofeo = V.id_trofeo " +
-                        "WHERE G.id_giocatore = " + giocatore.getId()
-            );
-
-            ResultSet rs = leggiTrofeiVinti.executeQuery();
-            while(rs.next()){
-                num++;
-            }
-            giocatore.setTrofeiVinti(num);
-        }catch (SQLException e){
             e.printStackTrace();
         }
     }

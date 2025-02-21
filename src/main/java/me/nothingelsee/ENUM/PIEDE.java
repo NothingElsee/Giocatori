@@ -1,5 +1,5 @@
 package me.nothingelsee.ENUM;
 
-public enum Piede {
+public enum PIEDE {
     DESTRO,SINISTRO,ENTRAMBI
 }

@@ -1,7 +1,7 @@
 package me.nothingelsee.Model;
 
-import me.nothingelsee.ENUM.Piede;
-import me.nothingelsee.ENUM.Ruoli;
+import me.nothingelsee.ENUM.PIEDE;
+import me.nothingelsee.ENUM.RUOLO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,11 +13,11 @@ public class Giocatore {
     private String cognome;
     private String dataNascita;
     private String dataRitiro;
-    private Piede piede;
+    private PIEDE piede;
     private HashMap<String, Integer> skill = new HashMap<>();
     private HashMap<String, Integer> abilita = new HashMap<>();
-    private ArrayList<Enum> ruoli = new ArrayList<>();
-    private int trofeiVinti;
+    private ArrayList<RUOLO> ruoli = new ArrayList<>();
+    private ArrayList<Trofeo> trofei = new ArrayList<>();
 
     public Giocatore() {}
 
@@ -27,7 +27,7 @@ public class Giocatore {
         this.cognome = cognome;
         this.dataNascita = dataNascita;
         this.dataRitiro = dataRitiro;
-        this.piede = Piede.valueOf(piede);
+        this.piede = PIEDE.valueOf(piede);
     }
 
     public int getId() {return id;}
@@ -35,42 +35,34 @@ public class Giocatore {
     public String getCognome() {return cognome;}
     public String getDataNascita() {return dataNascita;}
     public String getDataRitiro() {return dataRitiro;}
-    public Piede getPiede() {return piede;}
-    public int getTrofeiVinti() {return trofeiVinti;}
-
-    public HashMap<String, Integer> getAbilità() {return abilita;}
-    public void aggiungiAbilita(String nome, Integer valore){
-        abilita.put(nome, valore);
-    };
-
+    public PIEDE getPiede() {return piede;}
+    public ArrayList<Trofeo> getTrofei() {return trofei;}
+    public int getTrofeiVinti() {return trofei.size();}
+    public ArrayList<RUOLO> getRuoli() {return ruoli;}
+    public HashMap<String, Integer> getAbilita() {return abilita;}
     public HashMap<String, Integer> getSkill() {return skill;}
-    public void aggiungiSkill(String nome, Integer valore){
-        skill.put(nome, valore);
-    }
-
-    public ArrayList<Enum> getRuoli() {return ruoli;}
-
-    public void aggiungiRuoli(String nome){
-        ruoli.add(Ruoli.valueOf(nome));
-    }
-
     public String getRuoliString(){
         String ruoliString;
 
         ruoliString = "";
         System.out.println(ruoliString);
-        for (int i=0; i<ruoli.size(); i++) ruoliString += ruoli.get(i).toString() + " ";
+        for (RUOLO ruolo : ruoli) ruoliString += ruolo.toString() + " ";
 
         System.out.println(ruoliString);
 
         return ruoliString;
     }
 
-    public void clearRuoli (){
-        ruoli.clear();
+    public void addAbilita(String nome, Integer valore){
+        abilita.put(nome, valore);
     }
+    public void addSkill(String nome, Integer valore){
+        skill.put(nome, valore);
+    }
+    public void addRuolo(String nome){
+        ruoli.add(RUOLO.valueOf(nome));
+    }
+    public void addTrofeo(Trofeo trofeo) {trofei.add(trofeo);}
 
-    public void setTrofeiVinti(int trofeiVinti) {
-        this.trofeiVinti = trofeiVinti;
-    }
+    public void clearRuoli (){ruoli.clear();}
 }

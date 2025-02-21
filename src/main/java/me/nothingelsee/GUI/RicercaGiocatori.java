@@ -11,7 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class TestGetGiocatori {
+public class RicercaGiocatori {
 
     private static JFrame frame;
     private JTextField nomeGiocatore;
@@ -25,7 +25,7 @@ public class TestGetGiocatori {
     private JMenuItem visionaPopup;
     private JMenuItem annullaPopup;
 
-    public TestGetGiocatori() {
+    public RicercaGiocatori() {
         controller = new Controller();
 
         popup = new JPopupMenu();
@@ -119,7 +119,7 @@ public class TestGetGiocatori {
 
     public static void main(String[] args) {
         frame = new JFrame("Cerca Giocatori");
-        frame.setContentPane(new TestGetGiocatori().panel);
+        frame.setContentPane(new RicercaGiocatori().panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
@@ -135,7 +135,7 @@ public class TestGetGiocatori {
 
     private void visualizzaGiocatore(){
         if(giocatoreCerca!=null) {
-            TRy giocatoreVis = new TRy(controller, frame, giocatoreCerca);
+            LeggiGiocatore giocatoreVis = new LeggiGiocatore(controller, frame, giocatoreCerca);
             giocatoreCerca = null;
             giocatoreVis.frame.setVisible(true);
         } else {

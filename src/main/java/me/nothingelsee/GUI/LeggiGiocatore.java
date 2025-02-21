@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-public class TRy {
+public class LeggiGiocatore {
 
     JFrame frame;
     private JTable storicoPartiteTable;
@@ -37,7 +37,7 @@ public class TRy {
     private JButton chiudiButton;
 
 
-    public TRy(Controller controller, Frame frameChiamante, Giocatore giocatore) {
+    public LeggiGiocatore(Controller controller, Frame frameChiamante, Giocatore giocatore) {
 
         frame = new JFrame("Visualizza Giocatore");
         frame.setContentPane(panel);
@@ -58,7 +58,6 @@ public class TRy {
         caricaAbilità(giocatore);
         caricaSkill(giocatore);
         ruoliLabel.setText(giocatore.getRuoliString());
-        controller.
 
         chiudiButton.addActionListener(new ActionListener() {
             @Override
@@ -70,7 +69,7 @@ public class TRy {
     }
 
     private void caricaAbilità(Giocatore giocatore) {
-        HashMap<String, Integer> abilita =  giocatore.getAbilità();
+        HashMap<String, Integer> abilita =  giocatore.getAbilita();
 
         velocitaLabel.setText(String.valueOf(abilita.get("velocità")));
         tiroLabel.setText(abilita.get("tiro").toString());
