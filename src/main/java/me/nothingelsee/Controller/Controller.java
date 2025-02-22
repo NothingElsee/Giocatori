@@ -32,5 +32,8 @@ public class Controller {
         gioDAO.getSkill(giocatore);
     }
 
-    public void getGiocatore(Giocatore giocatore){}
+    public void getSquadre(Giocatore giocatore){
+        GiocatoreDAO gioDAO = new GiocatoreImplementazionePostgresDAO();
+        gioDAO.getSquadre(giocatore);
+    }
 }

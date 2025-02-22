@@ -3,6 +3,7 @@ package me.nothingelsee.ImplementazioniPostgresDAO;
 import me.nothingelsee.Database.ConnessioneDatabase;
 import me.nothingelsee.InterfacceDAO.GiocatoreDAO;
 import me.nothingelsee.Model.Giocatore;
+import me.nothingelsee.Model.Squadra;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,19 +28,37 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
 
         PreparedStatement leggiNomi;
 
-        try{
-            leggiNomi = connection.prepareStatement(
-                "Select  id_giocatore, cognome, dataNascita, dataRitiro, piede FROM Giocatore WHERE nome='"+nome+"'"
-            );
-        ResultSet rs = leggiNomi.executeQuery();
-        while(rs.next()){
-            giocatoriAr.add(new Giocatore(rs.getInt("id_Giocatore"), nome, rs.getString("cognome"),
-                    rs.getString("dataNascita"), rs.getString("dataRitiro"), rs.getString("piede")));
-        }
-        rs.close();
-        connection.close();
-        } catch (SQLException e){
-            e.printStackTrace();
+        if(nome.equals("")) {
+            try{
+                leggiNomi = connection.prepareStatement(
+                        "Select  id_giocatore, nome, cognome, dataNascita, dataRitiro, piede FROM Giocatore"
+                );
+
+                ResultSet rs = leggiNomi.executeQuery();
+                while(rs.next()){
+                    giocatoriAr.add(new Giocatore(rs.getInt("id_Giocatore"), rs.getString("nome"), rs.getString("cognome"),
+                            rs.getString("dataNascita"), rs.getString("dataRitiro"), rs.getString("piede")));
+                }
+                rs.close();
+                connection.close();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        } else {
+            try{
+                leggiNomi = connection.prepareStatement(
+                        "Select  id_giocatore, cognome, dataNascita, dataRitiro, piede FROM Giocatore WHERE nome='"+nome+"'"
+                );
+                ResultSet rs = leggiNomi.executeQuery();
+                while(rs.next()){
+                    giocatoriAr.add(new Giocatore(rs.getInt("id_Giocatore"), nome, rs.getString("cognome"),
+                            rs.getString("dataNascita"), rs.getString("dataRitiro"), rs.getString("piede")));
+                }
+                rs.close();
+                connection.close();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -120,6 +139,29 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
             rs.close();
             connection.close();
         } catch(SQLException e ){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getSquadre(Giocatore giocatore) {
+        PreparedStatement leggiSquadre;
+
+        try{
+
+            leggiSquadre = connection.prepareStatement(
+                    "SELECT S.nome, S.nomenazione, M.datainizio, M.datafine FROM Squadra AS S JOIN militanza AS M ON S.nome = M.nomesquadra " +
+                            "JOIN Giocatore AS G ON M.id_giocatore = G.id_giocatore WHERE G.id_giocatore = " + giocatore.getId() + " ORDER BY M.datafine DESC"
+            );
+
+            ResultSet rs = leggiSquadre.executeQuery();
+            giocatore.clearSquadre();
+            while (rs.next()){
+                giocatore.addSquadra(new Squadra(rs.getString("nome"), rs.getString("nomenazione"), rs.getString("datainizio"), rs.getString("datafine")));
+            }
+            rs.close();
+            connection.close();
+        } catch (SQLException e){
             e.printStackTrace();
         }
     }

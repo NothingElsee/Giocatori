@@ -18,6 +18,7 @@ public class Giocatore {
     private HashMap<String, Integer> abilita = new HashMap<>();
     private ArrayList<RUOLO> ruoli = new ArrayList<>();
     private ArrayList<Trofeo> trofei = new ArrayList<>();
+    private ArrayList<Squadra> squadre = new ArrayList<>();
 
     public Giocatore() {}
 
@@ -41,14 +42,12 @@ public class Giocatore {
     public ArrayList<RUOLO> getRuoli() {return ruoli;}
     public HashMap<String, Integer> getAbilita() {return abilita;}
     public HashMap<String, Integer> getSkill() {return skill;}
+    public ArrayList<Squadra> getSquadre() {return squadre;}
     public String getRuoliString(){
         String ruoliString;
 
         ruoliString = "";
-        System.out.println(ruoliString);
         for (RUOLO ruolo : ruoli) ruoliString += ruolo.toString() + " ";
-
-        System.out.println(ruoliString);
 
         return ruoliString;
     }
@@ -63,6 +62,9 @@ public class Giocatore {
         ruoli.add(RUOLO.valueOf(nome));
     }
     public void addTrofeo(Trofeo trofeo) {trofei.add(trofeo);}
+    public void addSquadra(Squadra squadra) {squadre.add(squadra);}
 
-    public void clearRuoli (){ruoli.clear();}
+    public void clearRuoli() {ruoli.clear();}
+    public void clearTrofei() {trofei.clear();}
+    public void clearSquadre() {squadre.clear();}
 }

@@ -2,11 +2,15 @@ package me.nothingelsee.GUI;
 
 import me.nothingelsee.Controller.Controller;
 import me.nothingelsee.Model.Giocatore;
+import me.nothingelsee.Model.Partita;
+import me.nothingelsee.Model.Squadra;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class LeggiGiocatore {
@@ -58,6 +62,22 @@ public class LeggiGiocatore {
         caricaAbilità(giocatore);
         caricaSkill(giocatore);
         ruoliLabel.setText(giocatore.getRuoliString());
+
+        storicoPartiteTable.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                        "Nome", "Nazionalità", "Data Inizio", "Data Fine"
+                }
+        ));
+
+        controller.getSquadre(giocatore);
+        DefaultTableModel model = (DefaultTableModel) storicoPartiteTable.getModel();
+        ArrayList<Squadra> squadre = giocatore.getSquadre();
+        for(Squadra s : squadre){
+            model.addRow(new Object[]{s.getNome(), s.getNazionalita(), s.getDataInizio(), s.getDataFine()});
+        }
+
+
 
         chiudiButton.addActionListener(new ActionListener() {
             @Override

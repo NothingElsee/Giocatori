@@ -5,10 +5,7 @@ import me.nothingelsee.Model.Giocatore;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class RicercaGiocatori {
@@ -49,7 +46,7 @@ public class RicercaGiocatori {
         cercaButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed (ActionEvent e) {
-                if(nomeGiocatore.getText()!=null){
+
                     giocatoriAr.clear();
                     model.setRowCount(0);
                     String nome = capitalizeFirstLetter(nomeGiocatore.getText());
@@ -60,9 +57,9 @@ public class RicercaGiocatori {
                         }
                     }
                     else{
-                        JOptionPane.showMessageDialog(null, "Inserisci un giocatore prima!!");
+                        JOptionPane.showMessageDialog(null, "Non sono presenti giocatori con questo nome!");
                     }
-                }
+
             }
         });
 
@@ -130,16 +127,14 @@ public class RicercaGiocatori {
     }
 
     public String capitalizeFirstLetter(String s){
+        if(s.equals("")) return "";
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
     private void visualizzaGiocatore(){
-        if(giocatoreCerca!=null) {
+
             LeggiGiocatore giocatoreVis = new LeggiGiocatore(controller, frame, giocatoreCerca);
             giocatoreCerca = null;
             giocatoreVis.frame.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(null, "Seleziona un giocatore prima!!");
-        }
     }
 }
