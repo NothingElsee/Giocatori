@@ -4,20 +4,25 @@ import me.nothingelsee.ENUM.COMPETIZIONE;
 
 public class Partita {
 
+    private final int id_partita;
     private String squadraCasa;
     private String squadraTrasferta;
     private int goalCasa;
     private int goalTrasferta;
     private String data;
-    private COMPETIZIONE competizine;
+    private COMPETIZIONE competizione;
+    private String nomeCompetizione;
     private Statistiche stat;
 
-    public Partita(String squadraCasa, String squadraTrasferta, int goalCasa, int goalTrasferta, String data){
+    public Partita(int id_partita, String squadraCasa, String squadraTrasferta, int goalCasa, int goalTrasferta, String data, String comp, String nomeCompetizione){
+        this.id_partita = id_partita;
         this.squadraCasa = squadraCasa;
         this.squadraTrasferta = squadraTrasferta;
         this.goalCasa = goalCasa;
         this.goalTrasferta = goalTrasferta;
         this.data = data;
+        this.competizione = COMPETIZIONE.valueOf(comp);
+        this.nomeCompetizione = nomeCompetizione;
     }
 
     public String getSquadraCasa(){return squadraCasa;}
@@ -25,7 +30,7 @@ public class Partita {
     public int getGoalCasa(){return goalCasa;}
     public int getGoalTrasferta(){return goalTrasferta;}
     public String getData(){return data;}
-    public String getCompetizione() {return competizine.toString();}
+    public String getCompetizione() {return competizione.toString();}
     public Statistiche getStat(){return stat;}
 
     public void setSquadraCasa (String squadraCasa){
@@ -43,6 +48,6 @@ public class Partita {
     public void setData (String data){
         this.data = data;
     }
-    public void setCompetizine(COMPETIZIONE competizine){ this.competizine=competizine;}
+    public void setCompetizine(COMPETIZIONE competizine){ this.competizione=competizine;}
     public void setStat (Statistiche stat){this.stat=stat;}
 }
