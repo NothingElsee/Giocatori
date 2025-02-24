@@ -6,23 +6,16 @@ public class Squadra {
 
     private String nome;
     private String nazionalita;
-    private String dataInizio;
-    private String dataFine;
     private ArrayList<Partita> partite = new ArrayList<>();
     private ArrayList<Trofeo> trofei = new ArrayList<>();
 
-    public Squadra (String nome, String nazionalita, String dataInizio, String dataFine){
+    public Squadra (String nome, String nazionalita){
         this.nome = nome;
         this.nazionalita = nazionalita;
-        this.dataInizio = dataInizio;
-        if(dataFine == null) this.dataFine = "Attuale";
-        else this.dataFine = dataFine;
     }
 
     public String getNome() {return nome;}
     public String getNazionalita() {return nazionalita;}
-    public String getDataInizio() {return dataInizio;}
-    public String getDataFine() {return dataFine;}
     public ArrayList<Partita> getPartite() {return partite;}
     public ArrayList<Trofeo> getTrofei() {return trofei;}
 

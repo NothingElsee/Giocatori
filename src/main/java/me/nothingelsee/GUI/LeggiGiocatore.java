@@ -2,6 +2,7 @@ package me.nothingelsee.GUI;
 
 import me.nothingelsee.Controller.Controller;
 import me.nothingelsee.Model.Giocatore;
+import me.nothingelsee.Model.Militanza;
 import me.nothingelsee.Model.Partita;
 import me.nothingelsee.Model.Squadra;
 
@@ -70,11 +71,11 @@ public class LeggiGiocatore {
                 }
         ));
 
-        controller.getSquadre(giocatore);
+        controller.getMilitanze(giocatore);
         DefaultTableModel model = (DefaultTableModel) storicoPartiteTable.getModel();
-        ArrayList<Squadra> squadre = giocatore.getSquadre();
-        for(Squadra s : squadre){
-            model.addRow(new Object[]{s.getNome(), s.getNazionalita(), s.getDataInizio(), s.getDataFine()});
+        ArrayList<Militanza> militanze = giocatore.getMilitanze();
+        for(Militanza m : militanze){
+            model.addRow(new Object[]{m.getSquadra().getNome(), m.getSquadra().getNazionalita(), m.getDataInizio(), m.getDataFine()});
         }
 
 

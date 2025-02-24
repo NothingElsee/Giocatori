@@ -1,7 +1,9 @@
 package me.nothingelsee.Controller;
 
 import me.nothingelsee.ImplementazioniPostgresDAO.GiocatoreImplementazionePostgresDAO;
+import me.nothingelsee.ImplementazioniPostgresDAO.MilitanzaImplementazionePostgresDAO;
 import me.nothingelsee.InterfacceDAO.GiocatoreDAO;
+import me.nothingelsee.InterfacceDAO.MilitanzaDAO;
 import me.nothingelsee.Model.Giocatore;
 
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ public class Controller {
         gioDAO.getSkill(giocatore);
     }
 
-    public void getSquadre(Giocatore giocatore){
-        GiocatoreDAO gioDAO = new GiocatoreImplementazionePostgresDAO();
-        gioDAO.getSquadre(giocatore);
+    public void getMilitanze(Giocatore giocatore){
+        MilitanzaDAO milDAO = new MilitanzaImplementazionePostgresDAO();
+        milDAO.getMilitanze(giocatore);
     }
 }

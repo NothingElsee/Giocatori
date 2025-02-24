@@ -12,13 +12,14 @@ public class Giocatore {
     private String nome;
     private String cognome;
     private String dataNascita;
+    private String nazionalita;
     private String dataRitiro;
     private PIEDE piede;
     private HashMap<String, Integer> skill = new HashMap<>();
     private HashMap<String, Integer> abilita = new HashMap<>();
     private ArrayList<RUOLO> ruoli = new ArrayList<>();
     private ArrayList<Trofeo> trofei = new ArrayList<>();
-    private ArrayList<Squadra> squadre = new ArrayList<>();
+    private ArrayList<Militanza> militanze = new ArrayList<>();
 
     public Giocatore() {}
 
@@ -27,6 +28,7 @@ public class Giocatore {
         this.nome = nome;
         this.cognome = cognome;
         this.dataNascita = dataNascita;
+        if(dataRitiro == null) dataRitiro = "Non Ritirato";
         this.dataRitiro = dataRitiro;
         this.piede = PIEDE.valueOf(piede);
     }
@@ -42,7 +44,7 @@ public class Giocatore {
     public ArrayList<RUOLO> getRuoli() {return ruoli;}
     public HashMap<String, Integer> getAbilita() {return abilita;}
     public HashMap<String, Integer> getSkill() {return skill;}
-    public ArrayList<Squadra> getSquadre() {return squadre;}
+    public ArrayList<Militanza> getMilitanze() {return militanze;}
     public String getRuoliString(){
         String ruoliString;
 
@@ -62,9 +64,9 @@ public class Giocatore {
         ruoli.add(RUOLO.valueOf(nome));
     }
     public void addTrofeo(Trofeo trofeo) {trofei.add(trofeo);}
-    public void addSquadra(Squadra squadra) {squadre.add(squadra);}
+    public void addMilitanza(Militanza militanza) {militanze.add(militanza);}
 
     public void clearRuoli() {ruoli.clear();}
     public void clearTrofei() {trofei.clear();}
-    public void clearSquadre() {squadre.clear();}
+    public void clearMilitanze() {militanze.clear();}
 }

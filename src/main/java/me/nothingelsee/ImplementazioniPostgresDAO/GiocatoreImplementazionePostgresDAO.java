@@ -142,27 +142,4 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void getSquadre(Giocatore giocatore) {
-        PreparedStatement leggiSquadre;
-
-        try{
-
-            leggiSquadre = connection.prepareStatement(
-                    "SELECT S.nome, S.nomenazione, M.datainizio, M.datafine FROM Squadra AS S JOIN militanza AS M ON S.nome = M.nomesquadra " +
-                            "JOIN Giocatore AS G ON M.id_giocatore = G.id_giocatore WHERE G.id_giocatore = " + giocatore.getId() + " ORDER BY M.datafine DESC"
-            );
-
-            ResultSet rs = leggiSquadre.executeQuery();
-            giocatore.clearSquadre();
-            while (rs.next()){
-                giocatore.addSquadra(new Squadra(rs.getString("nome"), rs.getString("nomenazione"), rs.getString("datainizio"), rs.getString("datafine")));
-            }
-            rs.close();
-            connection.close();
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
 }

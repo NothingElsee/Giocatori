@@ -9,5 +9,4 @@ public interface GiocatoreDAO {
     void getAbilita(Giocatore giocatore);
     void getSkill(Giocatore giocatore);
     void getRuoli(Giocatore giocatore);
-    void getSquadre(Giocatore giocatore);
 }
