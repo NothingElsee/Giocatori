@@ -45,6 +45,9 @@ public class PartitaImplementazionePostgres implements PartitaDAO {
                 militanza.getPartite().add(new Partita(rs.getInt("id_partita"), rs.getString("squadracasa"), rs.getString("squadratrasferta"), rs.getInt("goalcasa"), rs.getInt("goaltrasferta"), rs.getString("datapartita"), rs.getString("tipocompetizione"), rs.getString("nomecompetizione")));
             }
 
+            rs.close();
+            connection.close();
+
         }catch (SQLException e){
             e.printStackTrace();
         }
