@@ -16,7 +16,6 @@ public class RicercaGiocatori {
     private JTable giocatoriTable;
     private JPanel panel;
     private JButton visionaButton;
-    private Giocatore giocatoreCerca = null;
     private Controller controller;
     private JPopupMenu popup;
     private JMenuItem visionaPopup;
@@ -41,19 +40,18 @@ public class RicercaGiocatori {
         ));
 
         DefaultTableModel model = (DefaultTableModel) giocatoriTable.getModel();
-        ArrayList<Giocatore> giocatoriAr = new ArrayList<>();
 
         cercaButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed (ActionEvent e) {
 
-                    giocatoriAr.clear();
+                    controller.getGiocatori().clear();
                     model.setRowCount(0);
                     String nome = capitalizeFirstLetter(nomeGiocatore.getText());
-                    controller.getGiocatoriByName(nome, giocatoriAr);
-                    if(!giocatoriAr.isEmpty()) {
-                        for (int i = 0; i < giocatoriAr.size(); i++){
-                            model.addRow(new Object[]{giocatoriAr.get(i).getNome(), giocatoriAr.get(i).getCognome(), giocatoriAr.get(i).getDataNascita()});
+                    controller.getGiocatoriByName(nome);
+                    if(!controller.getGiocatori().isEmpty()) {
+                        for (int i = 0; i < controller.getGiocatori().size(); i++){
+                            model.addRow(new Object[]{controller.getGiocatori().get(i).getNome(), controller.getGiocatori().get(i).getCognome(), controller.getGiocatori().get(i).getDataNascita()});
                         }
                     }
                     else{
@@ -72,7 +70,7 @@ public class RicercaGiocatori {
                 if (e.getButton() == MouseEvent.BUTTON1) {
 
                     int row = giocatoriTable.getSelectedRow();
-                    giocatoreCerca = giocatoriAr.get(row);
+                    controller.setGiocatoreCercato(controller.getGiocatori().get(row));
 
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
 
@@ -83,7 +81,7 @@ public class RicercaGiocatori {
                     if(r >= 0 && r < giocatoriTable.getRowCount()){
                         giocatoriTable.setRowSelectionInterval(r, r);
                         int row = giocatoriTable.getSelectedRow();
-                        giocatoreCerca = giocatoriAr.get(row);
+                        controller.setGiocatoreCercato(controller.getGiocatori().get(row));
                     } else {
                         giocatoriTable.clearSelection();
                     }
@@ -133,8 +131,7 @@ public class RicercaGiocatori {
 
     private void visualizzaGiocatore(){
 
-            LeggiGiocatore giocatoreVis = new LeggiGiocatore(controller, frame, giocatoreCerca);
-            giocatoreCerca = null;
-            giocatoreVis.frame.setVisible(true);
+        LeggiGiocatore giocatoreVis = new LeggiGiocatore(controller, frame);
+        giocatoreVis.frame.setVisible(true);
     }
 }

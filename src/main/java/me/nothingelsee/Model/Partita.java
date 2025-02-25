@@ -21,10 +21,12 @@ public class Partita {
         this.goalCasa = goalCasa;
         this.goalTrasferta = goalTrasferta;
         this.data = data;
-        this.competizione = COMPETIZIONE.valueOf(comp);
+        if(comp != null) this.competizione = COMPETIZIONE.valueOf(comp);
+        else comp = "GENERICA";
         this.nomeCompetizione = nomeCompetizione;
     }
 
+    public int getId() {return id_partita;}
     public String getSquadraCasa(){return squadraCasa;}
     public String getSquadraTrasferta(){return squadraTrasferta;}
     public int getGoalCasa(){return goalCasa;}

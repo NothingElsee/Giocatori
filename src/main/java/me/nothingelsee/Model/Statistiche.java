@@ -9,8 +9,7 @@ public class Statistiche {
     private int goalSubiti;
     private int numParate;
 
-    public Statistiche(int goal, int assist, int cartelliniRossi, int cartelliniGialli, int rigoriSegnati,
-                       int goalSubiti, int numParate) {
+    public Statistiche(int goal, int assist, int cartelliniRossi, int cartelliniGialli, int rigoriSegnati, int goalSubiti, int numParate) {
         this.goal = goal;
         this.assist = assist;
         this.cartelliniRossi = cartelliniRossi;
