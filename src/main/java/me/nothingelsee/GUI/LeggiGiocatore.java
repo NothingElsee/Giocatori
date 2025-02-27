@@ -49,7 +49,7 @@ public class LeggiGiocatore {
 
         frame = new JFrame("Visualizza Giocatore");
         frame.setContentPane(panel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(frameChiamante);
         frame.setSize(1000, 600);

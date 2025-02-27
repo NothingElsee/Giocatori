@@ -34,7 +34,7 @@ public class LeggiPartite {
 
         frame = new JFrame( "Statistiche Partite");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(frameChiamante);
         frame.setSize(1000, 600);
 
