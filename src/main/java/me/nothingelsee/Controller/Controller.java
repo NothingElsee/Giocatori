@@ -63,4 +63,9 @@ public class Controller {
     public void setGiocatoreCercato(Giocatore giocatoreCercato) { this.giocatoreCercato = giocatoreCercato;}
 
     public void setMilitanzaCercata(Militanza militanzaCercata) { this.militanzaCercata = militanzaCercata;}
+
+    public boolean isIn(String username, String password) {
+        AccountImplementazionePostgresDAO adao = new AccountImplementazionePostgresDAO();
+        return adao.isIn(username,password);
+    }
 }

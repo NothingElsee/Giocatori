@@ -22,6 +22,9 @@
               </grid>
             </constraints>
             <properties>
+              <focusable value="true"/>
+              <opaque value="false"/>
+              <requestFocusEnabled value="true"/>
               <text value="Username"/>
               <toolTipText value="Inserisci Username"/>
             </properties>
@@ -33,6 +36,8 @@
               </grid>
             </constraints>
             <properties>
+              <opaque value="false"/>
+              <requestFocusEnabled value="true"/>
               <text value="Password"/>
               <toolTipText value="Inserisci Password"/>
             </properties>
@@ -70,6 +75,8 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <focusTraversalPolicyProvider value="false"/>
+              <selected value="false"/>
               <text value="Accedi"/>
             </properties>
           </component>
