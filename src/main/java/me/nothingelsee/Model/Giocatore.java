@@ -45,6 +45,7 @@ public class Giocatore {
     public HashMap<String, Integer> getAbilita() {return abilita;}
     public HashMap<String, Integer> getSkill() {return skill;}
     public ArrayList<Militanza> getMilitanze() {return militanze;}
+    public int getNumTrofei() {return trofei.size();}
     public String getRuoliString(){
         String ruoliString;
 

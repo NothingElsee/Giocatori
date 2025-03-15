@@ -1,15 +1,13 @@
 package me.nothingelsee.GUI;
 
+import me.nothingelsee.Aesthetics.Estetica;
 import me.nothingelsee.Controller.Controller;
 import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Militanza;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,6 +16,7 @@ public class LeggiGiocatore {
     private Controller controller;
 
     JFrame frame;
+    private Estetica e;
     private JTable storicoSquadreTable;
     private JLabel nomeLabel;
     private JLabel cognomeLabel;
@@ -38,29 +37,84 @@ public class LeggiGiocatore {
     private JLabel dribblingLabel;
     private JLabel sforbiciataLabel;
     private JLabel controlloLabel;
-    private JPanel panel;
+    private JPanel mainPanel;
     private JLabel ruoliLabel;
     private JButton chiudiButton;
     private JButton apriButton;
+    private JPanel generaliPanel;
+    private JPanel abilitaPanel;
+    private JPanel skillPanel;
+    private JPanel squadrePanel;
+    private JPanel buttonPanel;
+    private JPanel topPanel;
+    private JPanel middlePanel;
+    private JScrollPane squadreScrollPanel;
+    private JButton trofeiButton;
     private JPopupMenu popupSquadre;
+    private JMenuItem visionaPopupSquadre;
+    private JMenuItem annullaPopupSquadre;
 
     public LeggiGiocatore(Controller controller, JFrame frameChiamante) {
+        this.controller = controller;
+        inizializzaComponenti(frameChiamante);
+        impostaBackground();
+        caricaDati();
+        implementaListeners();
+    }
 
-
-        frame = new JFrame("Visualizza Giocatore");
-        frame.setContentPane(panel);
+    public void inizializzaComponenti(JFrame frameChiamante) {
+        frame = new JFrame("Informazioni Giocatore");
+        frame.setContentPane(mainPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
-        frame.setLocationRelativeTo(frameChiamante);
+        frame.setLocationRelativeTo(null);
         frame.setSize(1000, 600);
 
         popupSquadre = new JPopupMenu("Squadre");
-        JMenuItem visionaPopupSquadre = new JMenuItem("Visualizza");
-        JMenuItem annullaPopupSquadre = new JMenuItem("Annulla");
+        visionaPopupSquadre = new JMenuItem("Visualizza");
+        annullaPopupSquadre = new JMenuItem("Annulla");
 
+        popupSquadre.add(visionaPopupSquadre);
+        popupSquadre.add(annullaPopupSquadre);
+
+        Estetica.setMenuItemColor(visionaPopupSquadre);
+        Estetica.setMenuItemColor(annullaPopupSquadre);
+
+        Estetica.setButtonColor(trofeiButton);
+        Estetica.setButtonColor(apriButton);
+        Estetica.setButtonColor(chiudiButton);
         apriButton.setEnabled(false);
 
-        this.controller = controller;
+        storicoSquadreTable.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                        "Nome", "Nazionalità", "Data Inizio", "Data Fine"
+                }
+        ));
+        storicoSquadreTable.setFillsViewportHeight(true);
+
+        Estetica.setHeaderTable(storicoSquadreTable);
+    }
+
+    public void impostaBackground() {
+
+        //BorderLayout e Margini MainPanel
+        mainPanel.setBackground(Estetica.mainBackgroundColor);
+        //BorderLayout e Margini GeneraliPanel
+        generaliPanel.setBackground(Estetica.filterBackgorundColor);
+        //BorderLayout e Margini AbilitaPanel
+        abilitaPanel.setBackground(Estetica.filterBackgorundColor);
+        //BorderLayout e Margini SkillPanel
+        skillPanel.setBackground(Estetica.filterBackgorundColor);
+
+        squadreScrollPanel.setBackground(Estetica.filterBackgorundColor);
+
+        buttonPanel.setBackground(Estetica.filterBackgorundColor);
+
+
+    }
+
+    public void caricaDati() {
 
         nomeLabel.setText(controller.getGiocatoreCercato().getNome());
         cognomeLabel.setText(controller.getGiocatoreCercato().getCognome());
@@ -70,34 +124,32 @@ public class LeggiGiocatore {
         controller.getAbilita(controller.getGiocatoreCercato());
         controller.getSkill(controller.getGiocatoreCercato());
         controller.getRuoli(controller.getGiocatoreCercato());
+        controller.getTrofei(controller.getGiocatoreCercato());
         caricaAbilità(controller.getGiocatoreCercato());
         caricaSkill(controller.getGiocatoreCercato());
         ruoliLabel.setText(controller.getGiocatoreCercato().getRuoliString());
-
-        storicoSquadreTable.setModel(new DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                        "Nome", "Nazionalità", "Data Inizio", "Data Fine"
-                }
-        ));
+        trofeiVintiLabel.setText(String.valueOf(controller.getGiocatoreCercato().getNumTrofei()));
 
         controller.getMilitanze(controller.getGiocatoreCercato());
         DefaultTableModel model = (DefaultTableModel) storicoSquadreTable.getModel();
         ArrayList<Militanza> militanze = controller.getMilitanzeDaGiocatore();
-        for(Militanza m : militanze){
+        for (Militanza m : militanze) {
             model.addRow(new Object[]{m.getSquadra().getNome(), m.getSquadra().getNazionalita(), m.getDataInizio(), m.getDataFine()});
         }
+    }
+
+    public void implementaListeners() {
 
         chiudiButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 frame.dispose();
             }
         });
 
         storicoSquadreTable.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
 
                 super.mouseClicked(e);
 
@@ -112,7 +164,7 @@ public class LeggiGiocatore {
                     popupSquadre.show(storicoSquadreTable, e.getX(), e.getY());
 
                     int r = storicoSquadreTable.rowAtPoint(e.getPoint());
-                    if(r >= 0 && r < storicoSquadreTable.getRowCount()){
+                    if (r >= 0 && r < storicoSquadreTable.getRowCount()) {
                         storicoSquadreTable.setRowSelectionInterval(r, r);
                         int row = storicoSquadreTable.getSelectedRow();
                         controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
@@ -146,10 +198,23 @@ public class LeggiGiocatore {
             }
         });
 
+        trofeiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LeggiTrofei trofeiVis = new LeggiTrofei(controller, frame);
+            }
+        });
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                super.windowClosed(e);
+            }
+        });
     }
 
     private void caricaAbilità(Giocatore giocatore) {
-        HashMap<String, Integer> abilita =  giocatore.getAbilita();
+        HashMap<String, Integer> abilita = giocatore.getAbilita();
 
         velocitaLabel.setText(String.valueOf(abilita.get("velocità")));
         tiroLabel.setText(abilita.get("tiro").toString());
@@ -171,10 +236,9 @@ public class LeggiGiocatore {
         controlloLabel.setText(String.valueOf(skill.get("controllopalla")));
     }
 
-    private void visualizzaSquadra(){
+    private void visualizzaSquadra() {
 
         LeggiPartite partiteVis = new LeggiPartite(controller, frame);
-        controller.setMilitanzaCercata(null);
         partiteVis.frame.setVisible(true);
     }
 }

@@ -13,6 +13,7 @@ public class Controller {
     private ArrayList<Giocatore> giocatori = new ArrayList<>();
     private Giocatore giocatoreCercato;
     private Militanza militanzaCercata;
+    private ArrayList<String> filtriRicerca = new ArrayList<>();
 
     public Controller() {
     }
@@ -23,9 +24,9 @@ public class Controller {
 
     public Militanza getMilitanzaCercata() {return militanzaCercata;}
 
-    public void getGiocatoriByName(String nome) {
+    public void getGiocatoriByFiltri() {
         GiocatoreDAO gioDAO = new GiocatoreImplementazionePostgresDAO();
-        gioDAO.getGiocatoriByNome(nome,giocatori);
+        gioDAO.getGiocatoriByFiltri(giocatori, filtriRicerca);
     }
 
     public void getAbilita(Giocatore giocatore){
@@ -60,7 +61,23 @@ public class Controller {
 
     public ArrayList<Militanza> getMilitanzeDaGiocatore(){ return giocatoreCercato.getMilitanze();}
 
+    public ArrayList<String> getSquadreNomi() {
+        SquadraDAO sqDAO = new SquadraImplementazionePostgresDAO();
+        return sqDAO.getSquadreNomi();
+    }
+
+    public void getTrofei(Giocatore giocatore) {
+
+        TrofeoDAO tDAO = new TrofeoImplementazionePostgresDAO();
+        tDAO.getTrofei(giocatore);
+    }
+
+    public ArrayList<String> getFiltriRicerca() {return filtriRicerca;}
+
+    public void addFiltri(String filtro) { filtriRicerca.add(filtro);}
+
     public void setGiocatoreCercato(Giocatore giocatoreCercato) { this.giocatoreCercato = giocatoreCercato;}
 
     public void setMilitanzaCercata(Militanza militanzaCercata) { this.militanzaCercata = militanzaCercata;}
+
 }
