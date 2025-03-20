@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class LeggiGiocatore {
+public class LeggiGiocatoreGuest {
 
     private Controller controller;
 
@@ -54,7 +54,7 @@ public class LeggiGiocatore {
     private JMenuItem visionaPopupSquadre;
     private JMenuItem annullaPopupSquadre;
 
-    public LeggiGiocatore(Controller controller, JFrame frameChiamante) {
+    public LeggiGiocatoreGuest(Controller controller, JFrame frameChiamante) {
         this.controller = controller;
         inizializzaComponenti(frameChiamante);
         impostaBackground();
@@ -201,7 +201,7 @@ public class LeggiGiocatore {
         trofeiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LeggiTrofei trofeiVis = new LeggiTrofei(controller, frame);
+                LeggiTrofeiGuest trofeiVis = new LeggiTrofeiGuest(controller, frame);
             }
         });
 
@@ -238,7 +238,7 @@ public class LeggiGiocatore {
 
     private void visualizzaSquadra() {
 
-        LeggiPartite partiteVis = new LeggiPartite(controller, frame);
+        LeggiPartiteGuest partiteVis = new LeggiPartiteGuest(controller, frame);
         partiteVis.frame.setVisible(true);
     }
 }

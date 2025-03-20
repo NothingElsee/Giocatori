@@ -2,7 +2,6 @@ package me.nothingelsee.GUI;
 
 import me.nothingelsee.Aesthetics.Estetica;
 import me.nothingelsee.Controller.Controller;
-import me.nothingelsee.InterfacceDAO.TrofeoDAO;
 import me.nothingelsee.Model.Trofeo;
 
 import javax.swing.*;
@@ -11,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class LeggiTrofei {
+public class LeggiTrofeiGuest {
 
     JFrame frame;
     private Controller controller;
@@ -21,7 +20,7 @@ public class LeggiTrofei {
     private JTable trofeiTable;
     private JScrollPane trofeiScrollPane;
 
-    public LeggiTrofei (Controller controller,JFrame frameChiamante){
+    public LeggiTrofeiGuest(Controller controller, JFrame frameChiamante){
 
         inizializzaComponenti(controller, frameChiamante);
         impostaEstetica();

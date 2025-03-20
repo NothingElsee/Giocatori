@@ -4,10 +4,7 @@ import me.nothingelsee.Aesthetics.Estetica;
 import me.nothingelsee.Controller.Controller;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 public class Login {
 
@@ -50,7 +47,7 @@ public class Login {
         userField.addMouseListener(new MouseAdapter() {
 
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
 
                 userField.setText("");
             }
@@ -59,27 +56,55 @@ public class Login {
         passField.addMouseListener(new MouseAdapter() {
 
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 passField.setText("");
             }
         });
 
+
         accediButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
+                accediButtonFun();
+            }
+        });
 
-                username = userField.getText();
-                password = passField.getText();
+        userField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    accediButtonFun();
+                }
+                if(e.getKeyCode() == KeyEvent.VK_TAB) {
+                    passField.setText("");
+                }
+            }
+        });
 
-                if(controller.isIn(username, password)) {
-                    JOptionPane.showMessageDialog(frame,"Accesso eseguito con successo!");
-                    frameChiamante.setVisible(false);
-                    frame.dispose();
-                    RicercaGiocatori ricercaGiocatori = new RicercaGiocatori(frameChiamante, true);
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Utente: " + username + " non trovato", "Errore", JOptionPane.ERROR_MESSAGE);
+        passField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    accediButtonFun();
                 }
             }
         });
     }
+
+    private void accediButtonFun() {
+        username = userField.getText();
+        password = passField.getText();
+
+        if (controller.isIn(username, password)) {
+            JOptionPane.showMessageDialog(frame, "Accesso eseguito con successo!");
+            frameChiamante.setVisible(false);
+            frame.dispose();
+            RicercaGiocatori ricercaGiocatori = new RicercaGiocatori(frameChiamante, true);
+        } else {
+            JOptionPane.showMessageDialog(frame, "Utente: " + username + " non trovato", "Errore", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
+

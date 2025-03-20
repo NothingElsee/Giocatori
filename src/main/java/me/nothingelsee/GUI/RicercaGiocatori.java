@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class RicercaGiocatori {
 
     private static JFrame frame;
+    private JFrame frameChiamante;
     private JTextField nomeGiocatore;
     private JButton cercaButton;
     private JTable giocatoriTable;
@@ -32,6 +33,9 @@ public class RicercaGiocatori {
     private JLabel raggruppaLabel;
     private JLabel ordinaLabel;
     private JComboBox ordinaComboBox;
+    private JButton modificaButton;
+    private JPanel buttonPanel;
+    private JButton chiudiButton;
     private Controller controller;
     private JPopupMenu popup;
     private JMenuItem visionaPopup;
@@ -39,18 +43,19 @@ public class RicercaGiocatori {
     private JMenuItem annullaPopup;
     private boolean isAdmin = false;
 
-    public RicercaGiocatori(JFrame framechiamante, boolean isAdmin) {
+    public RicercaGiocatori(JFrame frameChiamante, boolean isAdmin) {
         controller = new Controller();
-        framechiamante.setVisible(false);
-        inizializzaComponenti(isAdmin);
+        frameChiamante.setVisible(false);
+        inizializzaComponenti(isAdmin, frameChiamante);
         creaLayout();
         implementaListeners();
         frame.setVisible(true);
     }
 
-    public void inizializzaComponenti(Boolean isAdmin) {
+    public void inizializzaComponenti(Boolean isAdmin, JFrame frameChiamante) {
 
         this.isAdmin = isAdmin;
+        this.frameChiamante = frameChiamante;
         frame = new JFrame("Cerca Giocatori");
         frame.setContentPane(mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,6 +67,19 @@ public class RicercaGiocatori {
         popup = new JPopupMenu();
         visionaPopup = new JMenuItem("Visualizza");
         annullaPopup = new JMenuItem("Annulla");
+
+        //Aggiunge Modifica al Popup e il Bottone Modifica alla GUI
+        if(isAdmin){
+            modificaPopup = new JMenuItem("Modifica");
+            popup.add(modificaPopup);
+            popup.addSeparator();
+            Estetica.setMenuItemColor(modificaPopup);
+
+
+            modificaButton.setVisible(true);
+            Estetica.setButtonColor(modificaButton);
+        }
+
         popup.add(visionaPopup);
         popup.add(annullaPopup);
 
@@ -71,13 +89,6 @@ public class RicercaGiocatori {
         Estetica.setButtonColor(resettaFiltri);
         Estetica.setMenuItemColor(visionaPopup);
         Estetica.setMenuItemColor(annullaPopup);
-
-        //Aggiunge Modifica al Popup
-        if(isAdmin){
-            modificaPopup = new JMenuItem("Modifica");
-            popup.add(modificaPopup);
-            Estetica.setMenuItemColor(modificaPopup);
-        }
 
         //Aggiungi Ruoli nella ComboBox
         ruoloComboBox.addItem("TUTTI");
@@ -114,6 +125,7 @@ public class RicercaGiocatori {
 
         mainPanel.setBackground(Estetica.mainBackgroundColor);
         filterPanel.setBackground(Estetica.filterBackgorundColor);
+        buttonPanel.setBackground(Estetica.filterBackgorundColor);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -177,6 +189,9 @@ public class RicercaGiocatori {
 
         gbc.gridx = 1;
         filterPanel.add(visionaButton, gbc);
+
+        gbc.gridx = 2;
+        filterPanel.add(modificaButton, gbc);
     }
 
     public void implementaListeners() {
@@ -222,6 +237,7 @@ public class RicercaGiocatori {
                         int row = giocatoriTable.getSelectedRow();
                         controller.setGiocatoreCercato(controller.getGiocatori().get(row));
                         visionaButton.setEnabled(true);
+                        if(isAdmin) modificaButton.setEnabled(true);
 
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
 
@@ -234,6 +250,7 @@ public class RicercaGiocatori {
                             int row = giocatoriTable.getSelectedRow();
                             controller.setGiocatoreCercato(controller.getGiocatori().get(row));
                             visionaButton.setEnabled(true);
+                            if(isAdmin) modificaButton.setEnabled(true);
                         } else {
                             giocatoriTable.clearSelection();
                         }
@@ -275,6 +292,33 @@ public class RicercaGiocatori {
                 groupByComboBox.setSelectedIndex(0);
             }
         });
+
+        chiudiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                frameChiamante.setVisible(true);
+                frame.dispose();
+            }
+        });
+
+        modificaPopup.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frameChiamante);
+                gioAdmin.frame.setVisible(true);
+                modificaButton.setEnabled(false);
+            }
+        });
+
+        modificaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frameChiamante);
+                gioAdmin.frame.setVisible(true);
+                modificaButton.setEnabled(false);
+            }
+        });
     }
 
     public String capitalizeFirstLetter(String s) {
@@ -284,7 +328,7 @@ public class RicercaGiocatori {
 
     private void visualizzaGiocatore() {
 
-        LeggiGiocatore giocatoreVis = new LeggiGiocatore(controller, frame);
+        LeggiGiocatoreGuest giocatoreVis = new LeggiGiocatoreGuest(controller, frame);
         giocatoreVis.frame.setVisible(true);
     }
 

@@ -6,11 +6,10 @@ import me.nothingelsee.Model.Partita;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class LeggiPartite {
+public class LeggiPartiteGuest {
 
     JFrame frame;
     private Controller controller;
@@ -41,7 +40,7 @@ public class LeggiPartite {
     private JMenuItem annullaItem;
 
 
-    public LeggiPartite(Controller controller, JFrame frameChiamante) {
+    public LeggiPartiteGuest(Controller controller, JFrame frameChiamante) {
 
         inizializzaComponenti(controller, frameChiamante);
         impostaBackground();
