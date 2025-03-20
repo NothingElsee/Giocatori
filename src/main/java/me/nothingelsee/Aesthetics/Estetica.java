@@ -8,6 +8,8 @@ public class Estetica {
 
     //Colori Personalizzati
     public static final Color mainBackgroundColor = new Color(245, 245, 245); //Grigio Chiaro
+    public static final Color corallo = new Color(255, 90, 80);
+    public static final Color bluPetrolio = new Color(0, 100, 120);
     public static final Color filterBackgorundColor = new Color(230, 240, 250); //Azzurro
     public static final Color buttonBackgroundColor = new Color(70, 130, 180); // Blu
     public static final Color buttonForegroundColor = Color.WHITE;

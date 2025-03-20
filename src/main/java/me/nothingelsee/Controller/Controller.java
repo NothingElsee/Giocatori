@@ -24,9 +24,9 @@ public class Controller {
 
     public Militanza getMilitanzaCercata() {return militanzaCercata;}
 
-    public void getGiocatoriByFiltri() {
+    public ArrayList<Integer> getGiocatoriByFiltri() {
         GiocatoreDAO gioDAO = new GiocatoreImplementazionePostgresDAO();
-        gioDAO.getGiocatoriByFiltri(giocatori, filtriRicerca);
+        return gioDAO.getGiocatoriByFiltri(giocatori, filtriRicerca);
     }
 
     public void getAbilita(Giocatore giocatore){
@@ -79,5 +79,10 @@ public class Controller {
     public void setGiocatoreCercato(Giocatore giocatoreCercato) { this.giocatoreCercato = giocatoreCercato;}
 
     public void setMilitanzaCercata(Militanza militanzaCercata) { this.militanzaCercata = militanzaCercata;}
+
+    public boolean isIn(String username, String password) {
+        AccountDAO accountDAO = new AccountImplementazionePostgresDAO();
+        return accountDAO.isIn(username, password);
+    }
 
 }

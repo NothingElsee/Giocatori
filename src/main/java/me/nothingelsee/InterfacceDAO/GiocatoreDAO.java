@@ -5,5 +5,5 @@ import me.nothingelsee.Model.Giocatore;
 import java.util.ArrayList;
 
 public interface GiocatoreDAO {
-    void getGiocatoriByFiltri(ArrayList<Giocatore> giocatoriAr, ArrayList<String> filtri);
+    ArrayList<Integer> getGiocatoriByFiltri(ArrayList<Giocatore> giocatoriAr, ArrayList<String> filtri);
 }

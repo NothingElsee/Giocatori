@@ -1,5 +1,6 @@
 package me.nothingelsee.GUI;
 
+import me.nothingelsee.Aesthetics.Estetica;
 import me.nothingelsee.Controller.Controller;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ public class Login {
 
     private Controller controller;
     static JFrame frame;
+    private JFrame frameChiamante;
     private JPanel mainPanel;
     private JPanel middlePanel;
     private JTextField userField;
@@ -21,13 +23,26 @@ public class Login {
     private String username;
     private String password;
 
-    public Login() {
-        inizializzazioneComponenti();
+    public Login(JFrame frameChiamante) {
+        inizializzazioneComponenti(frameChiamante);
+        impostaEstetica();
         implementazioneListeners();
     }
 
-    private void inizializzazioneComponenti() {
+    private void inizializzazioneComponenti(JFrame frameChiamante) {
+        frame = new JFrame("Login");
+        frame.setContentPane(mainPanel);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        this.frameChiamante = frameChiamante;
         controller = new Controller();
+    }
+
+    private void impostaEstetica() {
+
+        Estetica.setButtonColor(accediButton);
     }
 
     private void implementazioneListeners() {
@@ -56,22 +71,15 @@ public class Login {
                 username = userField.getText();
                 password = passField.getText();
 
-                if(controller.isIn(username, password)){
-
+                if(controller.isIn(username, password)) {
+                    JOptionPane.showMessageDialog(frame,"Accesso eseguito con successo!");
+                    frameChiamante.setVisible(false);
+                    frame.dispose();
+                    RicercaGiocatori ricercaGiocatori = new RicercaGiocatori(frameChiamante, true);
                 } else {
                     JOptionPane.showMessageDialog(frame, "Utente: " + username + " non trovato", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
     }
-
-    public static void main(String[] args) {
-        frame = new JFrame("Login");
-        frame.setContentPane(new Login().mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setLocationRelativeTo(null);
-    }
-
 }

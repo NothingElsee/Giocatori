@@ -6,11 +6,10 @@ import me.nothingelsee.ENUM.PIEDE;
 import me.nothingelsee.ENUM.RUOLO;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class RicercaGiocatori {
 
@@ -26,29 +25,45 @@ public class RicercaGiocatori {
     private JComboBox squadraComboBox;
     private JComboBox groupByComboBox;
     private JButton resettaFiltri;
+    private JLabel nomeLabel;
+    private JLabel ruoloLabel;
+    private JLabel piedeLabel;
+    private JLabel squadraLabel;
+    private JLabel raggruppaLabel;
+    private JLabel ordinaLabel;
+    private JComboBox ordinaComboBox;
     private Controller controller;
     private JPopupMenu popup;
     private JMenuItem visionaPopup;
     private JMenuItem modificaPopup;
     private JMenuItem annullaPopup;
+    private boolean isAdmin = false;
 
-    public RicercaGiocatori() {
+    public RicercaGiocatori(JFrame framechiamante, boolean isAdmin) {
         controller = new Controller();
-        inizializzaComponenti();
+        framechiamante.setVisible(false);
+        inizializzaComponenti(isAdmin);
         creaLayout();
         implementaListeners();
+        frame.setVisible(true);
     }
 
-    public void inizializzaComponenti() {
+    public void inizializzaComponenti(Boolean isAdmin) {
+
+        this.isAdmin = isAdmin;
+        frame = new JFrame("Cerca Giocatori");
+        frame.setContentPane(mainPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setSize(600, 500);
+        frame.setLocationRelativeTo(null);
 
         //Crea PopupMenu
         popup = new JPopupMenu();
         visionaPopup = new JMenuItem("Visualizza");
-        modificaPopup = new JMenuItem("Modifica");
         annullaPopup = new JMenuItem("Annulla");
         popup.add(visionaPopup);
         popup.add(annullaPopup);
-        frame.add(popup);
 
         //Imposta colore bottoni e MenuItem
         Estetica.setButtonColor(cercaButton);
@@ -56,6 +71,13 @@ public class RicercaGiocatori {
         Estetica.setButtonColor(resettaFiltri);
         Estetica.setMenuItemColor(visionaPopup);
         Estetica.setMenuItemColor(annullaPopup);
+
+        //Aggiunge Modifica al Popup
+        if(isAdmin){
+            modificaPopup = new JMenuItem("Modifica");
+            popup.add(modificaPopup);
+            Estetica.setMenuItemColor(modificaPopup);
+        }
 
         //Aggiungi Ruoli nella ComboBox
         ruoloComboBox.addItem("TUTTI");
@@ -90,17 +112,8 @@ public class RicercaGiocatori {
 
     private void creaLayout() {
 
-        //BorderLayout e Margini MainPanel
-        mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         mainPanel.setBackground(Estetica.mainBackgroundColor);
-
-        //BorderLayout e Margini FilterPanel
-        filterPanel = new JPanel(new GridBagLayout());
         filterPanel.setBackground(Estetica.filterBackgorundColor);
-        TitledBorder titledBorder = BorderFactory.createTitledBorder("Filtri di Ricerca");
-        titledBorder.setTitleFont(new Font("Arial", Font.BOLD, 14));
-        filterPanel.setBorder(titledBorder);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -109,7 +122,7 @@ public class RicercaGiocatori {
         //Riga 0; Nome e Bottone Ricercaù
         gbc.gridx = 0;
         gbc.gridy = 0;
-        filterPanel.add(new JLabel("Nome: "), gbc);
+        filterPanel.add(nomeLabel, gbc);
 
         gbc.gridx = 1;
         filterPanel.add(nomeGiocatore, gbc);
@@ -120,7 +133,7 @@ public class RicercaGiocatori {
         //Riga 1: Ruolo
         gbc.gridx = 0;
         gbc.gridy = 1;
-        filterPanel.add(new JLabel("Ruolo: "), gbc);
+        filterPanel.add(ruoloLabel, gbc);
 
         gbc.gridx = 1;
         filterPanel.add(ruoloComboBox, gbc);
@@ -128,7 +141,7 @@ public class RicercaGiocatori {
         //Riga 2: Piede
         gbc.gridx = 0;
         gbc.gridy = 2;
-        filterPanel.add(new JLabel("Piede: "), gbc);
+        filterPanel.add(piedeLabel, gbc);
 
         gbc.gridx = 1;
         filterPanel.add(piedeComboBox, gbc);
@@ -136,7 +149,7 @@ public class RicercaGiocatori {
         //Riga 3: Squadre
         gbc.gridx = 0;
         gbc.gridy = 3;
-        filterPanel.add(new JLabel("Squadra: "), gbc);
+        filterPanel.add(squadraLabel, gbc);
 
         gbc.gridx = 1;
         filterPanel.add(squadraComboBox, gbc);
@@ -144,24 +157,26 @@ public class RicercaGiocatori {
         //Riga 4: Group By
         gbc.gridx = 0;
         gbc.gridy = 4;
-        filterPanel.add(new JLabel("Raggruppa per: "), gbc);
+        filterPanel.add(raggruppaLabel, gbc);
 
         gbc.gridx = 1;
         filterPanel.add(groupByComboBox, gbc);
 
-        //Riga 5: Resetta filtri bottone
+        //Riga 5: Ordine
         gbc.gridx = 0;
         gbc.gridy = 5;
+        filterPanel.add(ordinaLabel, gbc);
+
+        gbc.gridx = 1;
+        filterPanel.add(ordinaComboBox, gbc);
+
+        //Riga 6: Resetta filtri bottone
+        gbc.gridx = 0;
+        gbc.gridy = 6;
         filterPanel.add(resettaFiltri, gbc);
 
         gbc.gridx = 1;
         filterPanel.add(visionaButton, gbc);
-        visionaButton.setEnabled(false);
-
-        //Aggiunge tabella in scroll pane
-        JScrollPane scrollPane = new JScrollPane(giocatoriTable);
-        mainPanel.add(filterPanel, BorderLayout.NORTH);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
     public void implementaListeners() {
@@ -176,11 +191,18 @@ public class RicercaGiocatori {
                 String nome = capitalizeFirstLetter(nomeGiocatore.getText());
                 creaFiltri(nome);
                 controller.getGiocatori().clear();
-                controller.getGiocatoriByFiltri();
+                ArrayList<Integer> stat = controller.getGiocatoriByFiltri();
                 if (!controller.getGiocatori().isEmpty()) {
-                    for (int i = 0; i < controller.getGiocatori().size(); i++) {
-                        model.addRow(new Object[]{controller.getGiocatori().get(i).getNome(), controller.getGiocatori().get(i).getCognome(), controller.getGiocatori().get(i).getDataNascita()});
+                    if (stat == null) {
+                        for (int i = 0; i < controller.getGiocatori().size(); i++) {
+                            model.addRow(new Object[]{controller.getGiocatori().get(i).getNome(), controller.getGiocatori().get(i).getCognome(), controller.getGiocatori().get(i).getDataNascita()});
+                        }
+                    } else {
+                        for (int i = 0; i < controller.getGiocatori().size(); i++) {
+                            model.addRow(new Object[]{controller.getGiocatori().get(i).getNome(), controller.getGiocatori().get(i).getCognome(), controller.getGiocatori().get(i).getDataNascita(), stat.get(i).toString()});
+                        }
                     }
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Non sono presenti giocatori con questi parametri!");
                 }
@@ -189,70 +211,70 @@ public class RicercaGiocatori {
         });
 
         giocatoriTable.addMouseListener(new MouseAdapter() {
-                                                    @Override
-                                                    public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
-                                                        if (giocatoriTable.getSelectedRow() != -1) {
-                                                            super.mouseClicked(e);
+                if (giocatoriTable.getSelectedRow() != -1) {
+                    super.mouseClicked(e);
 
-                                                            if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
 
-                                                                int row = giocatoriTable.getSelectedRow();
-                                                                controller.setGiocatoreCercato(controller.getGiocatori().get(row));
-                                                                visionaButton.setEnabled(true);
+                        int row = giocatoriTable.getSelectedRow();
+                        controller.setGiocatoreCercato(controller.getGiocatori().get(row));
+                        visionaButton.setEnabled(true);
 
-                                                            } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    } else if (e.getButton() == MouseEvent.BUTTON3) {
 
 
-                                                                popup.show(giocatoriTable, e.getX(), e.getY());
+                        popup.show(giocatoriTable, e.getX(), e.getY());
 
-                                                                int r = giocatoriTable.rowAtPoint(e.getPoint());
-                                                                if (r >= 0 && r < giocatoriTable.getRowCount()) {
-                                                                    giocatoriTable.setRowSelectionInterval(r, r);
-                                                                    int row = giocatoriTable.getSelectedRow();
-                                                                    controller.setGiocatoreCercato(controller.getGiocatori().get(row));
-                                                                    visionaButton.setEnabled(true);
-                                                                } else {
-                                                                    giocatoriTable.clearSelection();
-                                                                }
+                        int r = giocatoriTable.rowAtPoint(e.getPoint());
+                        if (r >= 0 && r < giocatoriTable.getRowCount()) {
+                            giocatoriTable.setRowSelectionInterval(r, r);
+                            int row = giocatoriTable.getSelectedRow();
+                            controller.setGiocatoreCercato(controller.getGiocatori().get(row));
+                            visionaButton.setEnabled(true);
+                        } else {
+                            giocatoriTable.clearSelection();
+                        }
 
-                                                            }
-                                                        }
-                                                    }
-                                                });
+                    }
+                }
+            }
+        });
 
         visionaButton.addActionListener(new ActionListener() {
-                                                    @Override
-                                                    public void actionPerformed(ActionEvent e) {
-                                                        visualizzaGiocatore();
-                                                        visionaButton.setEnabled(false);
-                                                    }
-                                                });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visualizzaGiocatore();
+                visionaButton.setEnabled(false);
+            }
+        });
 
         visionaPopup.addActionListener(new ActionListener() {
-                                                   @Override
-                                                   public void actionPerformed(ActionEvent e) {
-                                                       visualizzaGiocatore();
-                                                       visionaButton.setEnabled(false);
-                                                   }
-                                               });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visualizzaGiocatore();
+                visionaButton.setEnabled(false);
+            }
+        });
 
         annullaPopup.addActionListener(new ActionListener() {
-                                                   @Override
-                                                   public void actionPerformed(ActionEvent e) {
-                                                       popup.hide();
-                                                   }
-                                               });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                popup.hide();
+            }
+        });
 
         resettaFiltri.addActionListener(new ActionListener() {
-                                                    @Override
-                                                    public void actionPerformed(ActionEvent e) {
-                                                        ruoloComboBox.setSelectedIndex(0);
-                                                        piedeComboBox.setSelectedIndex(0);
-                                                        squadraComboBox.setSelectedIndex(0);
-                                                        groupByComboBox.setSelectedIndex(0);
-                                                    }
-                                                });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ruoloComboBox.setSelectedIndex(0);
+                piedeComboBox.setSelectedIndex(0);
+                squadraComboBox.setSelectedIndex(0);
+                groupByComboBox.setSelectedIndex(0);
+            }
+        });
     }
 
     public String capitalizeFirstLetter(String s) {
@@ -271,7 +293,7 @@ public class RicercaGiocatori {
         controller.getFiltriRicerca().clear();
 
         if (nome == "") controller.addFiltri("G.nome LIKE '%'");
-        else controller.addFiltri("G.nome LIKE " + nome);
+        else controller.addFiltri("G.nome LIKE \'" + nome + "\'");
 
         if (piedeComboBox.getSelectedItem().toString().equals("TUTTI")) controller.addFiltri("");
         else controller.addFiltri("AND G.piede = \'" + piedeComboBox.getSelectedItem().toString() + "\'");
@@ -283,38 +305,31 @@ public class RicercaGiocatori {
         else controller.addFiltri("AND M.nomesquadra = \'" + squadraComboBox.getSelectedItem().toString() + "\'");
 
         controller.addFiltri(groupByComboBox.getSelectedItem().toString());
+        controller.addFiltri(ordinaComboBox.getSelectedItem().toString());
     }
 
     private void impostaTabella() {
 
-        if(groupByComboBox.getSelectedItem().toString() == "Nessuno"){
+        if (groupByComboBox.getSelectedItem().toString() == "Nessuno") {
 
-                giocatoriTable.setModel(new DefaultTableModel(
-                        new Object[][]{},
-                        new String[]{
-                                "Nome", "Cognome", "Data di Nascita"
-                        }
-                ));
+            giocatoriTable.setModel(new DefaultTableModel(
+                    new Object[][]{},
+                    new String[]{
+                            "Nome", "Cognome", "Data di Nascita"
+                    }
+            ));
         } else {
 
-                giocatoriTable.setModel(new DefaultTableModel(
-                        new Object[][]{},
-                        new String[]{
-                                "Nome", "Cognome", "Data di Nascita", groupByComboBox.getSelectedItem().toString()
-                        }
-                ));
+            giocatoriTable.setModel(new DefaultTableModel(
+                    new Object[][]{},
+                    new String[]{
+                            "Nome", "Cognome", "Data di Nascita", groupByComboBox.getSelectedItem().toString()
+                    }
+            ));
         }
 
     }
 
-    public static void main(String[] args) {
-        frame = new JFrame("Cerca Giocatori");
-        frame.setContentPane(new RicercaGiocatori().mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setSize(600, 500);
-        frame.setLocationRelativeTo(null);
+    public void setIsAdmin(boolean isAdmin){ this.isAdmin = isAdmin;}
 
-    }
 }
