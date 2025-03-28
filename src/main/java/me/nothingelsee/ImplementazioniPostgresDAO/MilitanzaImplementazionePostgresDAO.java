@@ -6,6 +6,7 @@ import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Militanza;
 import me.nothingelsee.Model.Squadra;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,13 +48,21 @@ public class MilitanzaImplementazionePostgresDAO implements MilitanzaDAO {
     }
 
     @Override
-    public void caricaMilitanta(Militanza militanza) {
+    public void caricaMilitanta(Giocatore giocatore) {
         PreparedStatement caricaMilitanza = null;
 
         try{
             caricaMilitanza = connection.prepareStatement("INSERT INTO Militanza(id_giocatore, nomesquadra, datainizio, datafine) VALUES (?,?,?,?)");
-
+            for(Militanza m : giocatore.getMilitanze()){
+                caricaMilitanza.setInt(1, giocatore.getId());
+                caricaMilitanza.setString(2, m.getSquadra().getNome());
+                caricaMilitanza.setString(3, m.getDataInizio());
+                caricaMilitanza.setString(4, m.getDataFine());
+                caricaMilitanza.executeUpdate();
+            }
+            caricaMilitanza.close();
         }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore durante il caricamento delle militanze", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }

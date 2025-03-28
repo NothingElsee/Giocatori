@@ -4,6 +4,7 @@ import me.nothingelsee.Database.ConnessioneDatabase;
 import me.nothingelsee.InterfacceDAO.GiocatoreDAO;
 import me.nothingelsee.Model.Giocatore;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -82,7 +83,7 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
     @Override
     public void caricaGiocatore(Giocatore giocatore){
         try{
-            PreparedStatement insGio = connection.prepareStatement("INSERT INTO Giocatore(nome, cognome, datanascita, dataritiro, piede) VALUES (?,?,?,?,?) RETURNING id_giocatore");
+            PreparedStatement insGio = connection.prepareStatement("INSERT INTO Giocatore(nome, cognome, datanascita, dataritiro, piede) VALUES (?,?,?,?,?)");
             insGio.setString(1, giocatore.getNome());
             insGio.setString(2, giocatore.getCognome());
             insGio.setString(3, giocatore.getDataNascita());
@@ -93,11 +94,29 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
 
             insGio.close();
             if(giocatore.getId() == -1){
-                insGio = connection.prepareStatement("SELECT currval('persons_id_seq')");
+                insGio = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('giocatore','id_giocatore'))");
                 ResultSet rs = insGio.executeQuery();
                 giocatore.setId(rs.getInt(1));
             }
 
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteGiocatore(Giocatore giocatore){
+        PreparedStatement delGiocatore = null;
+
+        try{
+            delGiocatore = connection.prepareStatement("DELETE FROM Giocatore WHERE id_giocatore = ? CASCADE");
+
+            delGiocatore.setInt(1, giocatore.getId());
+            delGiocatore.executeUpdate();
+            delGiocatore.close();
+            connection.close();
+
+            JOptionPane.showMessageDialog(null, "Giocatore " + giocatore.getNome() + " " + giocatore.getCognome() + " eliminato con successo!");
         }catch (SQLException e){
             e.printStackTrace();
         }

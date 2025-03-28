@@ -2,9 +2,11 @@ package me.nothingelsee.ImplementazioniPostgresDAO;
 
 import me.nothingelsee.Database.ConnessioneDatabase;
 import me.nothingelsee.InterfacceDAO.PartitaDAO;
+import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Militanza;
 import me.nothingelsee.Model.Partita;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,6 +51,31 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
             connection.close();
 
         }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void caricaPartita(Giocatore giocatore) {
+        PreparedStatement insertPartite;
+
+        try{
+
+            insertPartite = connection.prepareStatement("insert into match(id_militanza, datapartita, goalcasa, goaltrasferta) values(?,?,?,?)");
+
+            for(int i=0; i<giocatore.getMilitanze().size(); i++) {
+                for (Partita partita : giocatore.getMilitanze().get(i).getPartite()){
+                    insertPartite.setInt(1, giocatore.getMilitanze().get(i).getId());
+                    insertPartite.setString(2, partita.getData());
+                    insertPartite.setInt(3, partita.getGoalCasa());
+                    insertPartite.setInt(4, partita.getGoalTrasferta());
+                    insertPartite.executeUpdate();
+                }
+            }
+            insertPartite.close();
+            connection.close();
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore nel caricamento delle partite!", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }

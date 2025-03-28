@@ -71,17 +71,16 @@ public class RicercaGiocatori {
 
         //Aggiunge Modifica al Popup e il Bottone Modifica alla GUI
         if(isAdmin){
-            aggiungiButton = new JButton();
             modificaPopup = new JMenuItem("Modifica");
             popup.add(modificaPopup);
             popup.addSeparator();
             Estetica.setMenuItemColor(modificaPopup);
 
+            Estetica.setButtonColor(modificaButton);
+            Estetica.setButtonColor(aggiungiButton);
 
             modificaButton.setVisible(true);
             aggiungiButton.setVisible(true);
-            Estetica.setButtonColor(modificaButton);
-            Estetica.setButtonColor(aggiungiButton);
         }
 
         popup.add(visionaPopup);
@@ -326,9 +325,9 @@ public class RicercaGiocatori {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frame, true);
-                    gioAdmin.frame.setVisible(true);
+                    controller.setGiocatoreCercato(null);
                     frame.setVisible(false);
+                    LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frame);
                 }
             });
 
@@ -336,7 +335,6 @@ public class RicercaGiocatori {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frame);
-                    gioAdmin.frame.setVisible(true);
                     frame.setVisible(false);
                     modificaButton.setEnabled(false);
                 }

@@ -27,27 +27,21 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
     @Override
     public void getSkills(Giocatore giocatore) {
         PreparedStatement leggiSkill;
-        PreparedStatement leggiNomeSkill;
 
         try{
             leggiSkill = connection.prepareStatement(
                     "SELECT * FROM Skill WHERE id_giocatore = " + giocatore.getId()
             );
 
-            leggiNomeSkill = connection.prepareStatement(
-                    "SELECT column_name FROM information_schema.columns WHERE table_name   = 'skill'"
-            );
-
             ResultSet rs = leggiSkill.executeQuery();
-            ResultSet rs2 = leggiNomeSkill.executeQuery();
 
-            rs.next();
-            while(rs2.next()){
-                giocatore.addSkill(rs2.getString(1), rs.getInt(rs2.getRow()));
+            int i=1;
+            while (rs.next()) {
+                giocatore.addSkill(rs.getInt(i));
+                i++;
             }
 
             rs.close();
-            rs2.close();
             connection.close();
         } catch(SQLException e){
             e.printStackTrace();

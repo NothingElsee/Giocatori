@@ -27,29 +27,21 @@ public class AbilitaImplementazionePostgresDAO implements AbilitaDAO {
 
     @Override
     public void getAbilities(Giocatore giocatore){
-
         PreparedStatement leggiAbilita;
-        PreparedStatement leggiNomeAbilita;
 
         try{
             leggiAbilita = connection.prepareStatement(
                     "SELECT * FROM Abilità WHERE id_giocatore = " + giocatore.getId()
             );
 
-            leggiNomeAbilita = connection.prepareStatement(
-                    "SELECT column_name FROM information_schema.columns WHERE table_name   = 'abilità'"
-            );
-
             ResultSet rs = leggiAbilita.executeQuery();
-            ResultSet rs2 = leggiNomeAbilita.executeQuery();
 
-            rs.next();
-            while(rs2.next()){
-                giocatore.addAbilita(rs2.getString(1), rs.getInt(rs2.getRow()));
+            int i = 1;
+            while(rs.next()){
+                giocatore.addAbilita(rs.getInt(i));
             }
 
             rs.close();
-            rs2.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -15,12 +15,10 @@ public class Giocatore {
     private String nazionalita;
     private String dataRitiro;
     private PIEDE piede;
-    private HashMap<String, Integer> skill = new HashMap<>();
-    private HashMap<String, Integer> abilita = new HashMap<>();
     private ArrayList<RUOLO> ruoli;
     private ArrayList<Trofeo> trofei = new ArrayList<>();
-    private ArrayList<Integer> abilitaI;
-    private ArrayList<Integer> skillI;
+    private ArrayList<Integer> abilita;
+    private ArrayList<Integer> skill;
     private ArrayList<Militanza> militanze = new ArrayList<>();
 
     public Giocatore(String nome, String cognome, String dataNascita, String nazionalita, String dataRitiro, PIEDE piede, ArrayList<Integer> skills, ArrayList<Integer> abilita, ArrayList<RUOLO> ruoli) {
@@ -32,8 +30,8 @@ public class Giocatore {
         this.dataRitiro = dataRitiro;
         this.piede = piede;
         this.ruoli = ruoli;
-        this.skillI = skills;
-        this.abilitaI = abilita;
+        this.skill = skills;
+        this.abilita = abilita;
     }
 
     public Giocatore(int id, String nome, String cognome, String dataNascita, String dataRitiro, String piede) {
@@ -57,8 +55,8 @@ public class Giocatore {
     public ArrayList<Trofeo> getTrofei() {return trofei;}
     public int getTrofeiVinti() {return trofei.size();}
     public ArrayList<RUOLO> getRuoli() {return ruoli;}
-    public HashMap<String, Integer> getAbilita() {return abilita;}
-    public HashMap<String, Integer> getSkill() {return skill;}
+    public ArrayList<Integer> getSkill() {return skill;}
+    public ArrayList<Integer> getAbilita() {return abilita;}
     public ArrayList<Militanza> getMilitanze() {return militanze;}
     public int getNumTrofei() {return trofei.size();}
     public String getRuoliString(){
@@ -77,16 +75,12 @@ public class Giocatore {
     public void setDataRitiro (String dataRitiro) {this.dataRitiro = dataRitiro;}
     public void setNazionalita (String nazionalita) {this.nazionalita = nazionalita;}
     public void setPiede(PIEDE piede) {this.piede = piede;}
-    public void setSkills(ArrayList<Integer> skills) {this.skillI = skills;}
-    public void setAbilita(ArrayList<Integer> abilita) {this.abilitaI = abilita;}
+    public void setSkills(ArrayList<Integer> skills) {this.skill = skills;}
+    public void setAbilita(ArrayList<Integer> abilita) {this.abilita = abilita;}
     public void setRuoli(ArrayList<RUOLO> ruoli) {this.ruoli = ruoli;}
 
-    public void addAbilita(String nome, Integer valore){
-        abilita.put(nome, valore);
-    }
-    public void addSkill(String nome, Integer valore){
-        skill.put(nome, valore);
-    }
+    public void addAbilita(Integer valore){abilita.add(valore);}
+    public void addSkill(Integer valore){skill.add(valore);}
     public void addRuolo(String nome){
         ruoli.add(RUOLO.valueOf(nome));
     }

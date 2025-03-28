@@ -5,6 +5,7 @@ import me.nothingelsee.InterfacceDAO.*;
 import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Militanza;
 import me.nothingelsee.Model.Partita;
+import me.nothingelsee.Model.Trofeo;
 
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ public class Controller {
     private Giocatore giocatoreCercato;
     private Militanza militanzaCercata;
     private ArrayList<String> filtriRicerca = new ArrayList<>();
+    private Trofeo trofeoCercato = null;
 
     public Controller() {
     }
@@ -72,6 +74,10 @@ public class Controller {
         tDAO.getTrofei(giocatore);
     }
 
+    public Trofeo getTrofeoCercato() {
+        return trofeoCercato;
+    }
+
     public ArrayList<String> getFiltriRicerca() {return filtriRicerca;}
 
     public void addFiltri(String filtro) { filtriRicerca.add(filtro);}
@@ -85,21 +91,6 @@ public class Controller {
         return accountDAO.isIn(username, password);
     }
 
-    public int addTrofeo(String nomeTrofeo, String tipoTrofeo) {
-        TrofeoDAO trDAO = new TrofeoImplementazionePostgresDAO();
-        return trDAO.addTrofeo(nomeTrofeo, tipoTrofeo);
-    }
-
-    public int addVittoriaIndividuale(int idTrofeo, int idGiocatore, String data) {
-        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
-        return vitDAO.addVittoriaIndividuale(idTrofeo, idGiocatore, data);
-    }
-
-    public int addVittoriaSquadra(int idTrofeo, String nomeSquadra, String data) {
-        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
-        return vitDAO.addVittoriaSquadra(idTrofeo, nomeSquadra, data);
-    }
-
     public void getTrofeiNome(ArrayList<String> trofeiNome) {
         TrofeoDAO trDAO = new TrofeoImplementazionePostgresDAO();
         trDAO.getTrofeiNome(trofeiNome);
@@ -110,9 +101,69 @@ public class Controller {
         naDAO.getNazionalita(nazionalita);
     }
 
-    public void caricaGiocatore(Giocatore giocatore) {
+    private void caricaGiocatore(Giocatore giocatore) {
 
         GiocatoreDAO giocatoreDAO = new GiocatoreImplementazionePostgresDAO();
         giocatoreDAO.caricaGiocatore(giocatore);
+    }
+    private void caricaRuoli(Giocatore giocatore) {
+        PosizioneDAO psDAO = new PosizioneImplementazionePostgresDAO();
+        psDAO.caricaPosizione(giocatoreCercato);
+    }
+    private void caricaSkill(Giocatore giocatore) {
+        SkillDAO sDAO = new SkillImplementazionePostgresDAO();
+        sDAO.caricaSkill(giocatore);
+    }
+    private void caricaAbilta(Giocatore giocatore) {
+        AbilitaDAO aDAO = new AbilitaImplementazionePostgresDAO();
+        aDAO.caricaAbilita(giocatore);
+    }
+    private void caricaNazionalita(Giocatore giocatore) {
+        NazionalitaDAO naDAO = new NazionalitaImplementazionePostgresDAO();
+        naDAO.caricaNazionalita(giocatore);
+    }
+    private void caricaSquadra(Giocatore giocatore) {
+        SquadraDAO sDAO = new SquadraImplementazionePostgresDAO();
+        sDAO.caricaSquadra(giocatore);
+    }
+    private void caricaMilitanza(Giocatore giocatore) {
+        MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
+        mDAO.caricaMilitanta(giocatore);
+    }
+    private void caricaTrofeo(Giocatore giocatore) {
+        TrofeoDAO tDAO = new TrofeoImplementazionePostgresDAO();
+        tDAO.caricaTrofeo(giocatore);
+        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
+        vitDAO.caricaVittoria(giocatore);
+    }
+    private void caricaPartita(Giocatore giocatore) {
+        PartitaDAO pDAO = new PartitaImplementazionePostgresDAO();
+        pDAO.caricaPartita(giocatore);
+    }
+
+    public void deleteGiocatore(Giocatore giocatore) {
+        GiocatoreDAO gioDAO = new GiocatoreImplementazionePostgresDAO();
+        gioDAO.deleteGiocatore(giocatore);
+    }
+
+    public void deleteTrofeo(Trofeo trofeo) {
+        TrofeoDAO trDAO = new TrofeoImplementazionePostgresDAO();
+        trDAO.deleteTrofeo(trofeo);
+    }
+
+    public void setTrofeoCercato(Trofeo trofeo) {
+        trofeoCercato = trofeo;
+    }
+
+    public void caricaTutto(Giocatore giocatoreCercato) {
+        caricaGiocatore(giocatoreCercato);
+        caricaRuoli(giocatoreCercato);
+        caricaSkill(giocatoreCercato);
+        caricaAbilta(giocatoreCercato);
+        caricaNazionalita(giocatoreCercato);
+        caricaSquadra(giocatoreCercato);
+        caricaMilitanza(giocatoreCercato);
+        caricaTrofeo(giocatoreCercato);
+        caricaPartita(giocatoreCercato);
     }
 }

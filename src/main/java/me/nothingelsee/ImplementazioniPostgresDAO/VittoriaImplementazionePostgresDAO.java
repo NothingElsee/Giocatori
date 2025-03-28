@@ -2,13 +2,12 @@ package me.nothingelsee.ImplementazioniPostgresDAO;
 
 import me.nothingelsee.Database.ConnessioneDatabase;
 import me.nothingelsee.InterfacceDAO.VittoriaDAO;
+import me.nothingelsee.Model.Giocatore;
+import me.nothingelsee.Model.Trofeo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
 
@@ -23,43 +22,39 @@ public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
         }
     }
 
-
     @Override
-    public int addVittoriaIndividuale(int idTrofeo, int idGiocatore, String data){
-        PreparedStatement addVittoria;
+    public void caricaVittoria(Giocatore giocatore) {
+        PreparedStatement insertVittoria = null;
 
-        try {
-            addVittoria = connection.prepareStatement("insert into vittoria (id_trofeo, id_giocatore, data) values (" + idTrofeo + ", " + idGiocatore + ", \'" +  data + "\')");
 
-            addVittoria.executeUpdate();
-            addVittoria.close();
-            addVittoria = connection.prepareStatement("select pg_get_serial_sequence('vittoria', 'id_vittoria')");
-            ResultSet rs = addVittoria.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return 0;
     }
 
-    @Override
-    public int addVittoriaSquadra(int idTrofeo, String nomeSquadra, String data){
-        PreparedStatement addVittoria;
+    private void caricaVittoriaIndivisuale(Giocatore giocatore) {
+        PreparedStatement insertVittoria = null;
 
-        try {
-            addVittoria = connection.prepareStatement("insert into vittoria (id_trofeo, NomeSquadra, data) values (" + idTrofeo + ", " + nomeSquadra + ", \'" +  data + "\')");
+        try{
+            insertVittoria = connection.prepareStatement("insert into vittoria(id_trofeo, id_giocatore, nomesquadra, data) values(?,?,?,?)");
 
-            addVittoria.executeUpdate();
-            addVittoria.close();
-            addVittoria = connection.prepareStatement("select pg_get_serial_sequence('vittoria', 'id_vittoria')");
-            ResultSet rs = addVittoria.executeQuery();
-            rs.next();
-            return rs.getInt(1);
+            for(Trofeo trofeo : giocatore.getTrofei()){
+                if(trofeo.getTipo().equals("INDIVIDUALE")){
+                    insertVittoria.setInt(1, trofeo.getId());
+                    insertVittoria.setInt(2, giocatore.getId());
+                    insertVittoria.setString(3, null);
+                    insertVittoria.setString(4, trofeo.getData());
+                } else if(trofeo.getTipo().equals("SQUADRA")){
+                    insertVittoria.setInt(1, trofeo.getId());
+                    insertVittoria.setNull(2, Types.NULL);
+                    insertVittoria.setString(3, trofeo.getSquadra());
+                    insertVittoria.setString(4, trofeo.getData());
+                }
+                insertVittoria.executeUpdate();
+            }
+            insertVittoria.close();
+            connection.close();
         }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore durante il caricametno della vittoria indivisuale!", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-        return 0;
     }
 
 }

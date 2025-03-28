@@ -7,6 +7,7 @@ import me.nothingelsee.InterfacceDAO.TrofeoDAO;
 import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Trofeo;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,19 +37,19 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
 
         try{
 
-            leggiTrofeiIndividuali = connection.prepareStatement("select T.nome, V.data, T.tipo from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
+            leggiTrofeiIndividuali = connection.prepareStatement("select T.id_trofeo, T.nome, V.data, T.tipo from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
                     "JOIN GIOCATORE AS G ON G.id_giocatore = V.id_giocatore\n" +
                     "WHERE G.id_giocatore =  " + giocatore.getId());
 
             ResultSet rs = leggiTrofeiIndividuali.executeQuery();
 
             while(rs.next()){
-                giocatore.addTrofeo(new Trofeo(rs.getString("nome"), rs.getString("data"), rs.getString("tipo")));
+                giocatore.addTrofeo(new Trofeo(rs.getInt("id_trofeo"), rs.getString("nome"), rs.getString("data"), rs.getString("tipo")));
             }
 
             rs.close();
 
-            leggiTrofeiSquadra = connection.prepareStatement("select T.nome, V.data, T.tipo, V.nomesquadra from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
+            leggiTrofeiSquadra = connection.prepareStatement("select T.id_trofeo, T.nome, V.data, T.tipo, V.nomesquadra from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
                     "JOIN Squadra AS S ON S.nome = V.nomesquadra " +
                     "JOIN Militanza AS M ON M.nomesquadra = S.nome " +
                     "JOIN Giocatore AS G ON G.id_giocatore = M.id_giocatore " +
@@ -57,7 +58,7 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
             rs = leggiTrofeiSquadra.executeQuery();
 
             while(rs.next()){
-                giocatore.addTrofeo(new Trofeo(rs.getString("nome"), rs.getString("data"), rs.getString("nomesquadra"), rs.getString("tipo")));
+                giocatore.addTrofeo(new Trofeo(rs.getInt("id_trofeo"), rs.getString("nome"), rs.getString("data"), rs.getString("nomesquadra"), rs.getString("tipo")));
             }
 
             rs.close();
@@ -83,22 +84,43 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
     }
 
     @Override
-    public int addTrofeo(String nome, String tipo) {
+    public void caricaTrofeo(Giocatore giocatore) {
 
-        PreparedStatement add=null;
+        PreparedStatement insertTrofeo=null;
+        PreparedStatement idTrofeo=null;
 
         try{
-            add = connection.prepareStatement("insert into trofeo (nome, tipo) values (?, \'" + TROFEO.valueOf(tipo).toString() + "\')");
-            add.setString(1, nome);
-            add.executeUpdate();
-            add.close();
-            add = connection.prepareStatement("select pg_get_serial_sequence('trofeo', 'id_trofeo')");
-            ResultSet rs = add.executeQuery();
-            rs.next();
-            return rs.getInt("id_trofeo");
+            for(Trofeo trofeo : giocatore.getTrofei()){
+                insertTrofeo = connection.prepareStatement("insert into trofeo (nome, data) values (?, ?)");
+                insertTrofeo.setString(1, trofeo.getNome());
+                insertTrofeo.setString(2, trofeo.getData());
+                insertTrofeo.executeUpdate();
+                if(trofeo.getId() == -1){
+                    idTrofeo = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('trofeo','id_trofeo'))");
+                    ResultSet rs = idTrofeo.executeQuery();
+                    trofeo.setId(rs.getInt(1));
+                }
+            }
+
         }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore durante il caricamento dei trofei", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-        return 0;
+    }
+
+    @Override
+    public void deleteTrofeo(Trofeo trofeo) {
+        PreparedStatement delete = null;
+
+        try{
+            delete = connection.prepareStatement("delete from trofeo where id_trofeo = ?");
+
+            delete.setInt(1, trofeo.getId());
+            delete.executeUpdate();
+            delete.close();
+            JOptionPane.showMessageDialog(null, trofeo.getNome() + " eliminato con successo!");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 }
