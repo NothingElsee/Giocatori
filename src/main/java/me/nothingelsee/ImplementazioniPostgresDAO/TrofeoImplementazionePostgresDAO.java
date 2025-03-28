@@ -1,6 +1,8 @@
 package me.nothingelsee.ImplementazioniPostgresDAO;
 
 import me.nothingelsee.Database.ConnessioneDatabase;
+import me.nothingelsee.ENUM.COMPETIZIONE;
+import me.nothingelsee.ENUM.TROFEO;
 import me.nothingelsee.InterfacceDAO.TrofeoDAO;
 import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Trofeo;
@@ -9,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
 
@@ -25,6 +28,7 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
         }
     }
 
+    @Override
     public void getTrofei(Giocatore giocatore) {
 
         PreparedStatement leggiTrofeiIndividuali = null;
@@ -61,7 +65,40 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
         }catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    public void getTrofeiNome(ArrayList<String> nomeTrofei){
+        PreparedStatement leggiTrofei = null;
 
+        try{
+            leggiTrofei = connection.prepareStatement("select nome from trofeo");
+            ResultSet rs = leggiTrofei.executeQuery();
+            while(rs.next()){
+                nomeTrofei.add(rs.getString("nome"));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public int addTrofeo(String nome, String tipo) {
+
+        PreparedStatement add=null;
+
+        try{
+            add = connection.prepareStatement("insert into trofeo (nome, tipo) values (?, \'" + TROFEO.valueOf(tipo).toString() + "\')");
+            add.setString(1, nome);
+            add.executeUpdate();
+            add.close();
+            add = connection.prepareStatement("select pg_get_serial_sequence('trofeo', 'id_trofeo')");
+            ResultSet rs = add.executeQuery();
+            rs.next();
+            return rs.getInt("id_trofeo");
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

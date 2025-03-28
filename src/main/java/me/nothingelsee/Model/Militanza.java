@@ -10,6 +10,12 @@ public class Militanza {
     private Squadra squadra;
     private ArrayList<Partita> partite = new ArrayList<>();
 
+    public Militanza (String dataInizio, String dataFine, Squadra squadra) {
+        this.dataInizio = dataInizio;
+        this.dataFine = dataFine;
+        this.squadra = squadra;
+    }
+
     public Militanza(int id, String dataInizio, String dataFine, Squadra squadra){
         this.id = id;
         this.dataInizio = dataInizio;
@@ -23,4 +29,7 @@ public class Militanza {
     public String getDataFine() {return dataFine;}
     public Squadra getSquadra() {return squadra;}
     public ArrayList<Partita> getPartite() {return partite;}
+
+    public void setPartite(ArrayList<Partita> partite) {this.partite = partite;}
+    public void addPartita(Partita p){partite.add(p);}
 }

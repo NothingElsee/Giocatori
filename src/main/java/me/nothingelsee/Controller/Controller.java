@@ -85,4 +85,34 @@ public class Controller {
         return accountDAO.isIn(username, password);
     }
 
+    public int addTrofeo(String nomeTrofeo, String tipoTrofeo) {
+        TrofeoDAO trDAO = new TrofeoImplementazionePostgresDAO();
+        return trDAO.addTrofeo(nomeTrofeo, tipoTrofeo);
+    }
+
+    public int addVittoriaIndividuale(int idTrofeo, int idGiocatore, String data) {
+        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
+        return vitDAO.addVittoriaIndividuale(idTrofeo, idGiocatore, data);
+    }
+
+    public int addVittoriaSquadra(int idTrofeo, String nomeSquadra, String data) {
+        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
+        return vitDAO.addVittoriaSquadra(idTrofeo, nomeSquadra, data);
+    }
+
+    public void getTrofeiNome(ArrayList<String> trofeiNome) {
+        TrofeoDAO trDAO = new TrofeoImplementazionePostgresDAO();
+        trDAO.getTrofeiNome(trofeiNome);
+    }
+
+    public void getNazionalita(ArrayList<String> nazionalita) {
+        NazionalitaDAO naDAO = new NazionalitaImplementazionePostgresDAO();
+        naDAO.getNazionalita(nazionalita);
+    }
+
+    public void caricaGiocatore(Giocatore giocatore) {
+
+        GiocatoreDAO giocatoreDAO = new GiocatoreImplementazionePostgresDAO();
+        giocatoreDAO.caricaGiocatore(giocatore);
+    }
 }

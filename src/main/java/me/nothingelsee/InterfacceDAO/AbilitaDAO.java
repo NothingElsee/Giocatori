@@ -4,4 +4,5 @@ import me.nothingelsee.Model.Giocatore;
 
 public interface AbilitaDAO {
     void getAbilities(Giocatore giocatore);
+    void caricaAbilita(Giocatore giocatore);
 }

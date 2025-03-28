@@ -60,7 +60,6 @@ public class Home {
                 Login login = new Login(frame);
             }
         });
-
     }
 
     public static void main(String[] args) {

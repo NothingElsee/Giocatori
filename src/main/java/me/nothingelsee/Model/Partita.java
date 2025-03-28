@@ -4,7 +4,7 @@ import me.nothingelsee.ENUM.COMPETIZIONE;
 
 public class Partita {
 
-    private final int id_partita;
+    private int id_partita;
     private String squadraCasa;
     private String squadraTrasferta;
     private int goalCasa;
@@ -13,6 +13,18 @@ public class Partita {
     private COMPETIZIONE competizione;
     private String nomeCompetizione;
     private Statistiche stat;
+
+    public Partita(int id, String squadraCasa, String squadraTrasferta, int goalCasa, int goalTrasferta, String data, Statistiche stat) {
+        id_partita = id;
+        this.squadraCasa = squadraCasa;
+        this.squadraTrasferta = squadraTrasferta;
+        this.goalCasa = goalCasa;
+        this.goalTrasferta = goalTrasferta;
+        this.data = data;
+        this.stat = stat;
+        competizione = null;
+        nomeCompetizione = null;
+    }
 
     public Partita(int id_partita, String squadraCasa, String squadraTrasferta, int goalCasa, int goalTrasferta, String data, String comp, String nomeCompetizione){
         this.id_partita = id_partita;

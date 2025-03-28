@@ -4,4 +4,5 @@ import me.nothingelsee.Model.Giocatore;
 
 public interface SkillDAO {
     void getSkills(Giocatore giocatore);
+    void caricaSkill(Giocatore giocatore);
 }

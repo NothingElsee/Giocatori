@@ -36,6 +36,7 @@ public class RicercaGiocatori {
     private JButton modificaButton;
     private JPanel buttonPanel;
     private JButton chiudiButton;
+    private JButton aggiungiButton;
     private Controller controller;
     private JPopupMenu popup;
     private JMenuItem visionaPopup;
@@ -52,13 +53,13 @@ public class RicercaGiocatori {
         frame.setVisible(true);
     }
 
-    public void inizializzaComponenti(Boolean isAdmin, JFrame frameChiamante) {
+    public void inizializzaComponenti(boolean isAdmin, JFrame frameChiamante) {
 
         this.isAdmin = isAdmin;
         this.frameChiamante = frameChiamante;
         frame = new JFrame("Cerca Giocatori");
         frame.setContentPane(mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setSize(600, 500);
         frame.setLocationRelativeTo(null);
@@ -70,6 +71,7 @@ public class RicercaGiocatori {
 
         //Aggiunge Modifica al Popup e il Bottone Modifica alla GUI
         if(isAdmin){
+            aggiungiButton = new JButton();
             modificaPopup = new JMenuItem("Modifica");
             popup.add(modificaPopup);
             popup.addSeparator();
@@ -77,7 +79,9 @@ public class RicercaGiocatori {
 
 
             modificaButton.setVisible(true);
+            aggiungiButton.setVisible(true);
             Estetica.setButtonColor(modificaButton);
+            Estetica.setButtonColor(aggiungiButton);
         }
 
         popup.add(visionaPopup);
@@ -190,8 +194,13 @@ public class RicercaGiocatori {
         gbc.gridx = 1;
         filterPanel.add(visionaButton, gbc);
 
-        gbc.gridx = 2;
-        filterPanel.add(modificaButton, gbc);
+        if(isAdmin){
+            gbc.gridx = 2;
+            filterPanel.add(modificaButton, gbc);
+
+            gbc.gridx = 2;
+            filterPanel.add(aggiungiButton, gbc);
+        }
     }
 
     public void implementaListeners() {
@@ -302,21 +311,43 @@ public class RicercaGiocatori {
             }
         });
 
-        modificaPopup.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frameChiamante);
-                gioAdmin.frame.setVisible(true);
-                modificaButton.setEnabled(false);
-            }
-        });
+        if(isAdmin) {
+            modificaPopup.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frame);
+                    gioAdmin.frame.setVisible(true);
+                    frame.setVisible(false);
+                    modificaButton.setEnabled(false);
+                }
+            });
 
-        modificaButton.addActionListener(new ActionListener() {
+            aggiungiButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frame, true);
+                    gioAdmin.frame.setVisible(true);
+                    frame.setVisible(false);
+                }
+            });
+
+            modificaButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frame);
+                    gioAdmin.frame.setVisible(true);
+                    frame.setVisible(false);
+                    modificaButton.setEnabled(false);
+                }
+            });
+        }
+
+        frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frameChiamante);
-                gioAdmin.frame.setVisible(true);
-                modificaButton.setEnabled(false);
+            public void windowClosed(WindowEvent e) {
+                super.windowClosed(e);
+                frameChiamante.setVisible(true);
             }
         });
     }

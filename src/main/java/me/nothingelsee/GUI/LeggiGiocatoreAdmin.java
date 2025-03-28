@@ -2,44 +2,48 @@ package me.nothingelsee.GUI;
 
 import me.nothingelsee.Aesthetics.Estetica;
 import me.nothingelsee.Controller.Controller;
+import me.nothingelsee.ENUM.PIEDE;
+import me.nothingelsee.ENUM.RUOLO;
 import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Militanza;
+import raven.datetime.DatePicker;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.NumberFormatter;
 import java.awt.event.*;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class LeggiGiocatoreAdmin {
 
     private Controller controller;
     JFrame frame;
-    private Estetica e;
+    private JFrame frameChiamante;
     private JTable storicoSquadreTable;
-    private JTextField nomeLabel;
-    private JTextField cognomeLabel;
-    private JTextField dataNascitaLabel;
-    private JTextField dataRitiroLabel;
-    private JTextField piedeLabel;
-    private JTextField trofeiVintiLabel;
-    private JTextField velocitaLabel;
-    private JTextField tiroLabel;
-    private JTextField passaggioLabel;
-    private JTextField piedeDeboleLabel;
-    private JTextField restistenzaLabel;
-    private JTextField difesaLabel;
-    private JTextField punizioneLabel;
-    private JTextField taccoLabel;
-    private JTextField rovesciataLabel;
-    private JTextField testaLabel;
-    private JTextField dribblingLabel;
-    private JTextField sforbiciataLabel;
-    private JTextField controlloLabel;
+    private JTextField nomeText;
+    private JTextField cognomeText;
+    private JFormattedTextField dataNascitaText;
+    private JFormattedTextField dataRitiroText;
+    private JTextField trofeiVintiText;
+    private JTextField velocitaText;
+    private JTextField tiroText;
+    private JTextField passaggioText;
+    private JTextField piedeDeboleText;
+    private JTextField restistenzaText;
+    private JTextField difesaText;
+    private JTextField punizioneText;
+    private JTextField taccoText;
+    private JTextField rovesciataText;
+    private JTextField testaText;
+    private JTextField dribblingText;
+    private JTextField sforbiciataText;
+    private JTextField controlloText;
     private JPanel mainPanel;
-    private JTextField ruoliLabel;
     private JButton chiudiButton;
-    private JButton apriButton;
     private JPanel generaliPanel;
     private JPanel abilitaPanel;
     private JPanel skillPanel;
@@ -49,19 +53,33 @@ public class LeggiGiocatoreAdmin {
     private JPanel middlePanel;
     private JScrollPane squadreScrollPanel;
     private JButton trofeiButton;
+    private JButton caricaGiocatoreButton;
+    private JComboBox nazionalitaBox;
+    private JComboBox piedeBox;
+    private JList ruoliList;
+    private JPanel squadraPanel;
+    private JButton aggiungiSquadra;
+    private JButton modificaButton;
+    private JButton caricaButton;
+    private JButton eliminaButton;
     private JPopupMenu popupSquadre;
-    private JMenuItem visionaPopupSquadre;
+    private JMenuItem eliminaPopup;
+    private JPopupMenu modificaPopup;
     private JMenuItem annullaPopupSquadre;
+    private DatePicker dataNascita;
+    private DatePicker dataRitiro;
+    private Giocatore giocatore = null;
 
     public LeggiGiocatoreAdmin(Controller controller, JFrame frameChiamante) {
-        this.controller = controller;
-        inizializzaComponenti(frameChiamante);
-        impostaBackground();
-        caricaDati();
+        inizializzaComponenti(frameChiamante, controller);
+        impostaEstetica();
         implementaListeners();
     }
 
-    public void inizializzaComponenti(JFrame frameChiamante) {
+    public void inizializzaComponenti(JFrame frameChiamante, Controller controller) {
+        this.controller = controller;
+        this.frameChiamante = frameChiamante;
+        this.giocatore = controller.getGiocatoreCercato();
         frame = new JFrame("Informazioni Giocatore");
         frame.setContentPane(mainPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -70,19 +88,40 @@ public class LeggiGiocatoreAdmin {
         frame.setSize(1000, 600);
 
         popupSquadre = new JPopupMenu("Squadre");
-        visionaPopupSquadre = new JMenuItem("Visualizza");
+        modificaPopup = new JPopupMenu("Modifica");
+        eliminaPopup = new JMenuItem("Elimina");
         annullaPopupSquadre = new JMenuItem("Annulla");
 
-        popupSquadre.add(visionaPopupSquadre);
+        popupSquadre.add(eliminaPopup);
+        popupSquadre.add(modificaPopup);
+        popupSquadre.addSeparator();
         popupSquadre.add(annullaPopupSquadre);
 
-        Estetica.setMenuItemColor(visionaPopupSquadre);
-        Estetica.setMenuItemColor(annullaPopupSquadre);
+        dataNascita = new DatePicker();
+        dataRitiro = new DatePicker();
 
-        Estetica.setButtonColor(trofeiButton);
-        Estetica.setButtonColor(apriButton);
-        Estetica.setButtonColor(chiudiButton);
-        apriButton.setEnabled(false);
+        dataNascita.setEditor(dataNascitaText);
+        dataRitiro.setEditor(dataRitiroText);
+        modificaButton.setVisible(false);
+        eliminaButton.setVisible(false);
+        dataNascita.setDateSelectionMode(DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+        dataRitiro.setDateSelectionMode(DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+
+        ArrayList<String> nazioni = new ArrayList<>();
+        controller.getNazionalita(nazioni);
+        for (String s : nazioni) {
+            nazionalitaBox.addItem(s);
+        }
+
+        DefaultListModel listModel = (DefaultListModel) ruoliList.getModel();
+        for (RUOLO r : RUOLO.values()) {
+            listModel.addElement(r.toString());
+        }
+        ruoliList.setModel(listModel);
+
+        for (PIEDE p : PIEDE.values()) {
+            piedeBox.addItem(p);
+        }
 
         storicoSquadreTable.setModel(new DefaultTableModel(
                 new Object[][]{},
@@ -92,61 +131,36 @@ public class LeggiGiocatoreAdmin {
         ));
         storicoSquadreTable.setFillsViewportHeight(true);
 
+        if(giocatore == null) {
+            caricaDati();
+        }
+
+        frame.setVisible(true);
+    }
+
+    public void impostaEstetica() {
+
+        mainPanel.setBackground(Estetica.mainBackgroundColor);
+        generaliPanel.setBackground(Estetica.filterBackgorundColor);
+        abilitaPanel.setBackground(Estetica.filterBackgorundColor);
+        skillPanel.setBackground(Estetica.filterBackgorundColor);
+        squadreScrollPanel.setBackground(Estetica.filterBackgorundColor);
+        buttonPanel.setBackground(Estetica.filterBackgorundColor);
+
+        Estetica.setMenuItemColor(annullaPopupSquadre);
+        Estetica.setButtonColor(trofeiButton);
+        Estetica.setButtonColor(chiudiButton);
+
         Estetica.setHeaderTable(storicoSquadreTable);
     }
 
-    public void impostaBackground() {
-
-        //BorderLayout e Margini MainPanel
-        mainPanel.setBackground(Estetica.mainBackgroundColor);
-        //BorderLayout e Margini GeneraliPanel
-        generaliPanel.setBackground(Estetica.filterBackgorundColor);
-        //BorderLayout e Margini AbilitaPanel
-        abilitaPanel.setBackground(Estetica.filterBackgorundColor);
-        //BorderLayout e Margini SkillPanel
-        skillPanel.setBackground(Estetica.filterBackgorundColor);
-
-        squadreScrollPanel.setBackground(Estetica.filterBackgorundColor);
-
-        buttonPanel.setBackground(Estetica.filterBackgorundColor);
 
 
-    }
-
-    public void caricaDati() {
-
-        nomeLabel.setText(controller.getGiocatoreCercato().getNome());
-        cognomeLabel.setText(controller.getGiocatoreCercato().getCognome());
-        dataNascitaLabel.setText(controller.getGiocatoreCercato().getDataNascita());
-        dataRitiroLabel.setText(controller.getGiocatoreCercato().getDataRitiro());
-        piedeLabel.setText(controller.getGiocatoreCercato().getPiede().toString());
-        controller.getAbilita(controller.getGiocatoreCercato());
-        controller.getSkill(controller.getGiocatoreCercato());
-        controller.getRuoli(controller.getGiocatoreCercato());
-        controller.getTrofei(controller.getGiocatoreCercato());
-        caricaAbilità(controller.getGiocatoreCercato());
-        caricaSkill(controller.getGiocatoreCercato());
-        ruoliLabel.setText(controller.getGiocatoreCercato().getRuoliString());
-        trofeiVintiLabel.setText(String.valueOf(controller.getGiocatoreCercato().getNumTrofei()));
-
-        controller.getMilitanze(controller.getGiocatoreCercato());
-        DefaultTableModel model = (DefaultTableModel) storicoSquadreTable.getModel();
-        ArrayList<Militanza> militanze = controller.getMilitanzeDaGiocatore();
-        for (Militanza m : militanze) {
-            model.addRow(new Object[]{m.getSquadra().getNome(), m.getSquadra().getNazionalita(), m.getDataInizio(), m.getDataFine()});
-        }
-    }
-
-    public void implementaListeners() {
-
-        chiudiButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-            }
-        });
+    private void implementaListeners() {
 
         storicoSquadreTable.addMouseListener(new MouseAdapter() {
+
+
             @Override
             public void mouseClicked(MouseEvent e) {
 
@@ -155,8 +169,10 @@ public class LeggiGiocatoreAdmin {
                 if (e.getButton() == MouseEvent.BUTTON1) {
 
                     int row = storicoSquadreTable.getSelectedRow();
-                    controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
-                    apriButton.setEnabled(true);
+                    if(row >= 0 && row < storicoSquadreTable.getRowCount()) {
+                        controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
+                        modificaButton.setEnabled(true);
+                    }
 
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
 
@@ -167,40 +183,99 @@ public class LeggiGiocatoreAdmin {
                         storicoSquadreTable.setRowSelectionInterval(r, r);
                         int row = storicoSquadreTable.getSelectedRow();
                         controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
-                        apriButton.setEnabled(true);
+                        modificaButton.setEnabled(true);
                     } else {
                         storicoSquadreTable.clearSelection();
+                    }
+                }
+            }
+        });
+
+        aggiungiSquadra.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.setMilitanzaCercata(null);
+                visualizzaSquadra();
+            }
+        });
+        modificaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visualizzaSquadra();
+            }
+        });
+
+        eliminaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.deleteGiocatore(controller.getGiocatoreCercato());
+            }
+        });
+
+        eliminaPopup.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                giocatore.getMilitanze().remove(storicoSquadreTable.getSelectedRow());
+            }
+        });
+
+        caricaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (checkGenerali() && checkSkills() && checkAbilita() && checkRuoli()) {
+                    ArrayList<Integer> skills = new ArrayList<>();
+                    ArrayList<Integer> abilita = new ArrayList<>();
+
+                    skills.add(Integer.valueOf(taccoText.getText()));
+                    skills.add(Integer.valueOf(rovesciataText.getText()));
+                    skills.add(Integer.valueOf(testaText.getText()));
+                    skills.add(Integer.valueOf(dribblingText.getText()));
+                    skills.add(Integer.valueOf(sforbiciataText.getText()));
+                    skills.add(Integer.valueOf(controlloText.getText()));
+
+                    abilita.add(Integer.valueOf(velocitaText.getText()));
+                    abilita.add(Integer.valueOf(tiroText.getText()));
+                    abilita.add(Integer.valueOf(passaggioText.getText()));
+                    abilita.add(Integer.valueOf(piedeDeboleText.getText()));
+                    abilita.add(Integer.valueOf(restistenzaText.getText()));
+                    abilita.add(Integer.valueOf(difesaText.getText()));
+                    abilita.add(Integer.valueOf(punizioneText.getText()));
+
+                    ArrayList<RUOLO> ruoli = new ArrayList<>();
+                    ruoli.addAll((List<RUOLO>) ruoliList.getSelectedValuesList());
+
+                    if(giocatore == null) {
+                        giocatore = new Giocatore(nomeText.getText(), cognomeText.getText(), dataNascitaText.getText(), nazionalitaBox.getSelectedItem().toString(),
+                                dataRitiroText.getText(), (PIEDE) piedeBox.getSelectedItem(), skills, abilita, ruoli);
+                    } else {
+                        giocatore.setNome(nomeText.getText());
+                        giocatore.setCognome(cognomeText.getText());
+                        giocatore.setDataNascita(dataNascitaText.getText());
+                        giocatore.setNazionalita(nazionalitaBox.getSelectedItem().toString());
+                        giocatore.setDataRitiro(dataRitiroText.getText());
+                        giocatore.setPiede(PIEDE.valueOf(piedeDeboleText.getText()));
+                        giocatore.setSkills(skills);
+                        giocatore.setAbilita(abilita);
+                        giocatore.setRuoli(ruoli);
                     }
 
                 }
             }
         });
 
-        visionaPopupSquadre.addActionListener(new ActionListener() {
+        chiudiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visualizzaSquadra();
-            }
-        });
-
-        annullaPopupSquadre.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                popupSquadre.hide();
-            }
-        });
-
-        apriButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                visualizzaSquadra();
+                frame.dispose();
+                frameChiamante.setVisible(true);
             }
         });
 
         trofeiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LeggiTrofeiGuest trofeiVis = new LeggiTrofeiGuest(controller, frame);
+                LeggiTrofei trofeiVis = new LeggiTrofei(controller, frame, true);
+                frame.setVisible(false);
             }
         });
 
@@ -208,36 +283,100 @@ public class LeggiGiocatoreAdmin {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
+                frameChiamante.setVisible(true);
             }
         });
+    }
+
+    public void caricaDati() {
+
+        nomeText.setText(giocatore.getNome());
+        cognomeText.setText(giocatore.getCognome());
+        dataNascita.setSelectedDate(LocalDate.parse(giocatore.getDataNascita()));
+        nazionalitaBox.setSelectedItem(giocatore.getNazionalita());
+        dataRitiro.setSelectedDate(LocalDate.parse(giocatore.getDataRitiro()));
+        piedeBox.setSelectedItem(giocatore.getPiede().toString());
+        controller.getAbilita(giocatore);
+        controller.getSkill(giocatore);
+        controller.getRuoli(giocatore);
+        controller.getTrofei(giocatore);
+        caricaAbilità(giocatore);
+        caricaSkill(giocatore);
+        DefaultListModel modelList = (DefaultListModel) ruoliList.getModel();
+        modelList.addElement(giocatore.getRuoli());
+        trofeiVintiText.setText(String.valueOf(giocatore.getNumTrofei()));
+
+        controller.getMilitanze(giocatore);
+        DefaultTableModel model = (DefaultTableModel) storicoSquadreTable.getModel();
+        ArrayList<Militanza> militanze = controller.getMilitanzeDaGiocatore();
+        for (Militanza m : militanze) {
+            model.addRow(new Object[]{m.getSquadra().getNome(), m.getSquadra().getNazionalita(), m.getDataInizio(), m.getDataFine()});
+        }
     }
 
     private void caricaAbilità(Giocatore giocatore) {
         HashMap<String, Integer> abilita = giocatore.getAbilita();
 
-        velocitaLabel.setText(String.valueOf(abilita.get("velocità")));
-        tiroLabel.setText(abilita.get("tiro").toString());
-        passaggioLabel.setText(String.valueOf(abilita.get("passaggio")));
-        piedeDeboleLabel.setText(String.valueOf(abilita.get("piededebole")));
-        restistenzaLabel.setText(String.valueOf(abilita.get("resistenza")));
-        difesaLabel.setText(String.valueOf(abilita.get("difesa")));
-        punizioneLabel.setText(String.valueOf(abilita.get("tirosupunizione")));
+        velocitaText.setText(String.valueOf(abilita.get("velocità")));
+        tiroText.setText(abilita.get("tiro").toString());
+        passaggioText.setText(String.valueOf(abilita.get("passaggio")));
+        piedeDeboleText.setText(String.valueOf(abilita.get("piededebole")));
+        restistenzaText.setText(String.valueOf(abilita.get("resistenza")));
+        difesaText.setText(String.valueOf(abilita.get("difesa")));
+        punizioneText.setText(String.valueOf(abilita.get("tirosupunizione")));
     }
 
     private void caricaSkill(Giocatore giocatore) {
         HashMap<String, Integer> skill = giocatore.getSkill();
 
-        taccoLabel.setText(String.valueOf(skill.get("colpoditacco")));
-        rovesciataLabel.setText(String.valueOf(skill.get("rovesciata")));
-        testaLabel.setText(String.valueOf(skill.get("colpoditesta")));
-        dribblingLabel.setText(String.valueOf(skill.get("dribbling")));
-        sforbiciataLabel.setText(String.valueOf(skill.get("sforbiciata")));
-        controlloLabel.setText(String.valueOf(skill.get("controllopalla")));
+        taccoText.setText(String.valueOf(skill.get("colpoditacco")));
+        rovesciataText.setText(String.valueOf(skill.get("rovesciata")));
+        testaText.setText(String.valueOf(skill.get("colpoditesta")));
+        dribblingText.setText(String.valueOf(skill.get("dribbling")));
+        sforbiciataText.setText(String.valueOf(skill.get("sforbiciata")));
+        controlloText.setText(String.valueOf(skill.get("controllopalla")));
     }
 
     private void visualizzaSquadra() {
 
-        LeggiPartiteGuest partiteVis = new LeggiPartiteGuest(controller, frame);
-        partiteVis.frame.setVisible(true);
+        LeggiPartiteAdmin partiteVis = new LeggiPartiteAdmin(frame, controller);
+    }
+
+    private boolean checkGenerali() {
+
+        if (nomeText.getText().isEmpty() || cognomeText.getText().isEmpty() || dataNascitaText.getText().isEmpty() ||
+                nazionalitaBox.getSelectedItem().equals("") || piedeBox.getSelectedItem().equals("")) {
+
+            JOptionPane.showMessageDialog(null, "Dati giocatore mancanti");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkSkills() {
+        if (taccoText.getText().isEmpty() || rovesciataText.getText().isEmpty() || testaText.getText().isEmpty() || dribblingText.getText().isEmpty() ||
+                sforbiciataText.getText().isEmpty() || controlloText.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Skill giocatore mancanti");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkAbilita() {
+        if (velocitaText.getText().isEmpty() || tiroText.getText().isEmpty() || passaggioText.getText().isEmpty() ||
+                piedeDeboleText.getText().isEmpty() || restistenzaText.getText().isEmpty() || difesaText.getText().isEmpty() || punizioneText.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Abilità giocatore mancanti");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkRuoli() {
+        if (ruoliList.getSelectedValuesList().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Ruoli giocatore mancanti");
+            return false;
+        }
+        return true;
     }
 }

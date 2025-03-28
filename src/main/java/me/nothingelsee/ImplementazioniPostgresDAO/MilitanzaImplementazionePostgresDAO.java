@@ -45,4 +45,16 @@ public class MilitanzaImplementazionePostgresDAO implements MilitanzaDAO {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void caricaMilitanta(Militanza militanza) {
+        PreparedStatement caricaMilitanza = null;
+
+        try{
+            caricaMilitanza = connection.prepareStatement("INSERT INTO Militanza(id_giocatore, nomesquadra, datainizio, datafine) VALUES (?,?,?,?)");
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }

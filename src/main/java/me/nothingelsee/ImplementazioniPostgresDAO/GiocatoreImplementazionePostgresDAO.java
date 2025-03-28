@@ -78,4 +78,28 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
 
         return stat;
     }
+
+    @Override
+    public void caricaGiocatore(Giocatore giocatore){
+        try{
+            PreparedStatement insGio = connection.prepareStatement("INSERT INTO Giocatore(nome, cognome, datanascita, dataritiro, piede) VALUES (?,?,?,?,?) RETURNING id_giocatore");
+            insGio.setString(1, giocatore.getNome());
+            insGio.setString(2, giocatore.getCognome());
+            insGio.setString(3, giocatore.getDataNascita());
+            insGio.setString(4, giocatore.getDataRitiro());
+            insGio.setString(5, giocatore.getPiede().toString());
+
+            insGio.executeUpdate();
+
+            insGio.close();
+            if(giocatore.getId() == -1){
+                insGio = connection.prepareStatement("SELECT currval('persons_id_seq')");
+                ResultSet rs = insGio.executeQuery();
+                giocatore.setId(rs.getInt(1));
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }

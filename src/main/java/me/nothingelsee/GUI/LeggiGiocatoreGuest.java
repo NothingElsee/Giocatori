@@ -16,6 +16,7 @@ public class LeggiGiocatoreGuest {
     private Controller controller;
 
     JFrame frame;
+    private JFrame frameChiamante;
     private Estetica e;
     private JTable storicoSquadreTable;
     private JLabel nomeLabel;
@@ -63,6 +64,7 @@ public class LeggiGiocatoreGuest {
     }
 
     public void inizializzaComponenti(JFrame frameChiamante) {
+        this.frameChiamante = frameChiamante;
         frame = new JFrame("Informazioni Giocatore");
         frame.setContentPane(mainPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -201,14 +203,7 @@ public class LeggiGiocatoreGuest {
         trofeiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LeggiTrofeiGuest trofeiVis = new LeggiTrofeiGuest(controller, frame);
-            }
-        });
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                super.windowClosed(e);
+                LeggiTrofei trofeiVis = new LeggiTrofei(controller, frame, false);
             }
         });
     }
