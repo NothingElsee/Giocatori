@@ -51,18 +51,23 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
     }
 
     @Override
-    public void caricaSquadra(Giocatore giocatore) {
+    public void insertSquadra(Squadra squadra) {
         PreparedStatement insertSquadra = null;
 
         try{
-            insertSquadra = connection.prepareStatement("INSERT INTO squadra VALUES (?,?,?,?,?)");
-
-            for(Militanza m : giocatore.getMilitanze()){
-                insertSquadra = connection.prepareStatement("INSERT INTO squadra (nome, nomenazione) VALUES (?,?)");
-                insertSquadra.setString(1, m.getSquadra().getNome());
-                insertSquadra.setString(2, m.getSquadra().getNazionalita());
+            insertSquadra = connection.prepareStatement("SELECT * FROM squadra WHERE nome = ?");
+            insertSquadra.setString(1, squadra.getNome());
+            ResultSet rs = insertSquadra.executeQuery();
+            if (rs.getRow() == 0) {
+                insertSquadra.close();
+                insertSquadra = connection.prepareStatement("INSERT INTO squadra (nome, nomenazione) VALUES (?, ?)");
+                insertSquadra.setString(1, squadra.getNome());
+                insertSquadra.setString(2, squadra.getNazionalita());
                 insertSquadra.executeUpdate();
             }
+            rs.close();
+            insertSquadra.close();
+            connection.close();
         }catch (SQLException e){
             JOptionPane.showMessageDialog(null, "Errore nel caricamento delle squadre", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();

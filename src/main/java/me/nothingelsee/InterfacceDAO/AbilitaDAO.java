@@ -2,7 +2,10 @@ package me.nothingelsee.InterfacceDAO;
 
 import me.nothingelsee.Model.Giocatore;
 
+import java.util.ArrayList;
+
 public interface AbilitaDAO {
     void getAbilities(Giocatore giocatore);
-    void caricaAbilita(Giocatore giocatore);
+    void insertAbilita(ArrayList<Integer> abilita);
+    void updateAbilita(int idGiocatore, ArrayList<Integer> abilita);
 }

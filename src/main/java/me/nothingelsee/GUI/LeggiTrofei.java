@@ -177,7 +177,7 @@ public class LeggiTrofei {
 
         DefaultTableModel model = (DefaultTableModel) trofeiTable.getModel();
         ArrayList<Trofeo> trofei = controller.getGiocatoreCercato().getTrofei();
-
+        model.setRowCount(0);
         for(Trofeo t : trofei){
             model.addRow(new Object[]{t.getNome(), t.getData(), t.getTipo(), t.getSquadra()});
         }
@@ -185,11 +185,12 @@ public class LeggiTrofei {
 
     private void eliminaTrofeo() {
             int row = trofeiTable.getSelectedRow();
-            if(controller.getGiocatoreCercato().getTrofei().get(row).getId() != -1) controller.deleteTrofeo(controller.getGiocatoreCercato().getTrofei().get(row));
+            controller.deleteVittoria(controller.getGiocatoreCercato().getTrofei().get(row));
             controller.getGiocatoreCercato().getTrofei().remove(row);
             trofeiTable.clearSelection();
             eliminaButton.setVisible(false);
             modificaButton.setVisible(false);
+            caricaDati();
     }
     private void modificaTrofeo() {
 

@@ -1,12 +1,11 @@
 package me.nothingelsee.Controller;
 
+import me.nothingelsee.ENUM.RUOLO;
 import me.nothingelsee.ImplementazioniPostgresDAO.*;
 import me.nothingelsee.InterfacceDAO.*;
-import me.nothingelsee.Model.Giocatore;
-import me.nothingelsee.Model.Militanza;
-import me.nothingelsee.Model.Partita;
-import me.nothingelsee.Model.Trofeo;
+import me.nothingelsee.Model.*;
 
+import javax.naming.PartialResultException;
 import java.util.ArrayList;
 
 public class Controller {
@@ -83,8 +82,10 @@ public class Controller {
     public void addFiltri(String filtro) { filtriRicerca.add(filtro);}
 
     public void setGiocatoreCercato(Giocatore giocatoreCercato) { this.giocatoreCercato = giocatoreCercato;}
-
     public void setMilitanzaCercata(Militanza militanzaCercata) { this.militanzaCercata = militanzaCercata;}
+    public void setTrofeoCercato(Trofeo trofeo) {
+        trofeoCercato = trofeo;
+    }
 
     public boolean isIn(String username, String password) {
         AccountDAO accountDAO = new AccountImplementazionePostgresDAO();
@@ -101,69 +102,129 @@ public class Controller {
         naDAO.getNazionalita(nazionalita);
     }
 
-    private void caricaGiocatore(Giocatore giocatore) {
+    public void caricaGiocatore(Giocatore giocatore) {
 
         GiocatoreDAO giocatoreDAO = new GiocatoreImplementazionePostgresDAO();
-        giocatoreDAO.caricaGiocatore(giocatore);
+        giocatoreDAO.insertGiocatore(giocatore);
     }
-    private void caricaRuoli(Giocatore giocatore) {
-        PosizioneDAO psDAO = new PosizioneImplementazionePostgresDAO();
-        psDAO.caricaPosizione(giocatoreCercato);
+    public void updateGiocatore(Giocatore giocatore) {
+        GiocatoreDAO giDAO = new GiocatoreImplementazionePostgresDAO();
+        giDAO.updateGiocatore(giocatore);
     }
-    private void caricaSkill(Giocatore giocatore) {
-        SkillDAO sDAO = new SkillImplementazionePostgresDAO();
-        sDAO.caricaSkill(giocatore);
-    }
-    private void caricaAbilta(Giocatore giocatore) {
-        AbilitaDAO aDAO = new AbilitaImplementazionePostgresDAO();
-        aDAO.caricaAbilita(giocatore);
-    }
-    private void caricaNazionalita(Giocatore giocatore) {
-        NazionalitaDAO naDAO = new NazionalitaImplementazionePostgresDAO();
-        naDAO.caricaNazionalita(giocatore);
-    }
-    private void caricaSquadra(Giocatore giocatore) {
-        SquadraDAO sDAO = new SquadraImplementazionePostgresDAO();
-        sDAO.caricaSquadra(giocatore);
-    }
-    private void caricaMilitanza(Giocatore giocatore) {
-        MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
-        mDAO.caricaMilitanta(giocatore);
-    }
-    private void caricaTrofeo(Giocatore giocatore) {
-        TrofeoDAO tDAO = new TrofeoImplementazionePostgresDAO();
-        tDAO.caricaTrofeo(giocatore);
-        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
-        vitDAO.caricaVittoria(giocatore);
-    }
-    private void caricaPartita(Giocatore giocatore) {
-        PartitaDAO pDAO = new PartitaImplementazionePostgresDAO();
-        pDAO.caricaPartita(giocatore);
-    }
-
     public void deleteGiocatore(Giocatore giocatore) {
         GiocatoreDAO gioDAO = new GiocatoreImplementazionePostgresDAO();
         gioDAO.deleteGiocatore(giocatore);
     }
 
-    public void deleteTrofeo(Trofeo trofeo) {
-        TrofeoDAO trDAO = new TrofeoImplementazionePostgresDAO();
-        trDAO.deleteTrofeo(trofeo);
+    public void caricaRuoli(int id, ArrayList<RUOLO> ruoli) {
+        PosizioneDAO psDAO = new PosizioneImplementazionePostgresDAO();
+        psDAO.insertPosizione(id, ruoli);
+    }
+    public void updateRuoli(int id, ArrayList<RUOLO> ruoli) {
+        PosizioneDAO psDAO = new PosizioneImplementazionePostgresDAO();
+        psDAO.updatePosizione(id, ruoli);
     }
 
-    public void setTrofeoCercato(Trofeo trofeo) {
-        trofeoCercato = trofeo;
+    public void caricaSkill(ArrayList<Integer> skill) {
+        SkillDAO sDAO = new SkillImplementazionePostgresDAO();
+        sDAO.insertSkill(skill);
+    }
+    public void updateSkill(int id, ArrayList<Integer> skill) {
+        SkillDAO sDAO = new SkillImplementazionePostgresDAO();
+        sDAO.updateSkill(id, skill);
     }
 
-    public void caricaTutto(Giocatore giocatoreCercato) {
-        caricaGiocatore(giocatoreCercato);
-        caricaRuoli(giocatoreCercato);
-        caricaSkill(giocatoreCercato);
-        caricaAbilta(giocatoreCercato);
-        caricaNazionalita(giocatoreCercato);
-        caricaSquadra(giocatoreCercato);
-        caricaMilitanza(giocatoreCercato);
-        caricaTrofeo(giocatoreCercato);
-        caricaPartita(giocatoreCercato);
+    public void caricaAbilita(ArrayList<Integer> abilita) {
+        AbilitaDAO aDAO = new AbilitaImplementazionePostgresDAO();
+        aDAO.insertAbilita(abilita);
     }
+    public void updateAbilita(int id, ArrayList<Integer> skill) {
+        AbilitaDAO aDAO = new AbilitaImplementazionePostgresDAO();
+        aDAO.updateAbilita(id, skill);
+    }
+
+    public void caricaNazionalita(int id, String nazionalita) {
+        NazionalitaDAO naDAO = new NazionalitaImplementazionePostgresDAO();
+        naDAO.insertNazionalita(id, nazionalita);
+    }
+    public void updateNazionalita(int id, String nazionalita) {
+        NazionalitaDAO naDAO = new NazionalitaImplementazionePostgresDAO();
+        naDAO.updateNazionalita(id, nazionalita);
+    }
+
+    public void caricaSquadra(Squadra squadra) {
+        SquadraDAO sDAO = new SquadraImplementazionePostgresDAO();
+        sDAO.insertSquadra(squadra);
+    }
+
+    public void caricaMilitanza(int id, Militanza militanza) {
+        MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
+        mDAO.insertMilitanza( id, militanza);
+    }
+    public void upgrateMilitanza(Militanza militanza) {
+        MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
+        mDAO.updateMilitanza(militanza);
+    }
+    public void deleteMilitanza(Militanza militanza) {
+        MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
+        mDAO.deleteMilitanza(militanza);
+    }
+
+    public void caricaTrofeo(Trofeo trofeo) {
+        if(trofeo.getId()==-1) {
+            TrofeoDAO tDAO = new TrofeoImplementazionePostgresDAO();
+            tDAO.insertTrofeo(trofeo);
+        }
+    }
+    public void caricaVittoriaIndividuale(int id, Trofeo trofeo) {
+        caricaTrofeo(trofeo);
+        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
+        vitDAO.insertVittoriaIndividuale(id, trofeo);
+    }
+    public void caricaVittoriaSquadra(Trofeo trofeo) {
+        caricaTrofeo(trofeo);
+        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
+        vitDAO.insertVittoriaSquadra(trofeo);
+    }
+    public void deleteVittoria(Trofeo trofeo) {
+        VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
+        vitDAO.deleteVittoria(trofeo);
+    }
+
+    public void caricaPartita(int id, Partita partita) {
+        PartitaDAO pDAO = new PartitaImplementazionePostgresDAO();
+        pDAO.insertPartita(id, partita);
+    }
+    public void updatePartita(Partita partita) {
+        PartitaDAO pDAO = new PartitaImplementazionePostgresDAO();
+        pDAO.updatePartita(partita);
+    }
+    public void deletePartita(Partita partita) {
+        PartitaDAO pDAO = new PartitaImplementazionePostgresDAO();
+        pDAO.deletePartita(partita);
+    }
+
+    public void caricaPartecipazione(String casa, String trasferta) {
+        PartecipazioneDAO pDAO = new PartecipazioneImplementazionePostgresDAO();
+        pDAO.insertPartecipazione(casa, trasferta);
+    }
+
+    public void caricaStatistica(Statistiche statistiche) {
+        StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
+        sDAO.insertStatistiche(statistiche);
+    }
+    public void updateStatistica(int idPartita, Statistiche statistiche) {
+        StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
+        sDAO.updateStatistiche(idPartita, statistiche);
+    }
+
+    public void caricaStatisticaPor(Statistiche statistiche) {
+        StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
+        sDAO.insertStatistichePor(statistiche);
+    }
+    public void updateStatisticaPor(int idPartita, Statistiche statistiche) {
+        StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
+        sDAO.updateStatistichePor(idPartita, statistiche);
+    }
+
 }

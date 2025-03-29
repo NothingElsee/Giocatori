@@ -22,7 +22,7 @@
             <properties>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
-              <text value="Chiudi"/>
+              <text value="Annulla"/>
               <verticalAlignment value="0"/>
             </properties>
           </component>
@@ -45,6 +45,7 @@
             </constraints>
             <properties>
               <background color="-65536"/>
+              <foreground color="-1"/>
               <text value="Elimina"/>
             </properties>
           </component>
@@ -211,7 +212,7 @@
               </component>
             </children>
           </grid>
-          <grid id="2e786" binding="squadraPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="2e786" binding="squadraPanel" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="1" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -224,10 +225,10 @@
             <children>
               <scrollpane id="2c68" binding="squadreScrollPanel">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
-                <border type="empty">
+                <border type="none">
                   <font name="Arial" size="16" style="1"/>
                   <title-color color="-16777216"/>
                   <color color="-2104859"/>
@@ -267,6 +268,17 @@
                 </constraints>
                 <properties>
                   <text value="Aggiungi"/>
+                </properties>
+              </component>
+              <component id="c0612" class="javax.swing.JButton" binding="eliminaMilitanzaButton">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-65536"/>
+                  <foreground color="-1"/>
+                  <text value="Elimina"/>
+                  <toolTipText value="Clicca per eliminare la militanza"/>
                 </properties>
               </component>
             </children>
@@ -529,7 +541,7 @@
               </component>
               <component id="ccd35" class="javax.swing.JFormattedTextField" binding="dataNascitaText">
                 <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <font size="16"/>
@@ -539,7 +551,7 @@
               </component>
               <component id="4b654" class="javax.swing.JFormattedTextField" binding="dataRitiroText">
                 <constraints>
-                  <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="7" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <font size="16"/>
@@ -617,7 +629,9 @@
                     <properties>
                       <layoutOrientation value="2"/>
                       <model/>
-                      <visibleRowCount value="4"/>
+                      <selectionMode value="2"/>
+                      <valueIsAdjusting value="false"/>
+                      <visibleRowCount value="3"/>
                     </properties>
                   </component>
                 </children>

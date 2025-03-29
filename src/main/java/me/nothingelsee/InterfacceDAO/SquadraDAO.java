@@ -7,5 +7,5 @@ import java.util.ArrayList;
 
 public interface SquadraDAO {
     public ArrayList<String> getSquadreNomi();
-    void caricaSquadra(Giocatore gicoatore);
+    void insertSquadra(Squadra squadra);
 }

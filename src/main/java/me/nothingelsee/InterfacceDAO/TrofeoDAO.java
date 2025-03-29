@@ -7,9 +7,7 @@ import java.util.ArrayList;
 
 public interface TrofeoDAO {
     public void getTrofei(Giocatore giocatore);
-    public void caricaTrofeo(Giocatore giocatore);
+    public void insertTrofeo(Trofeo trofeo);
 
     void getTrofeiNome(ArrayList<String> trofeiNome);
-
-    void deleteTrofeo(Trofeo trofeo);
 }

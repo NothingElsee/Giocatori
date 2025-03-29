@@ -14,8 +14,7 @@ public class Partita {
     private String nomeCompetizione;
     private Statistiche stat;
 
-    public Partita(int id, String squadraCasa, String squadraTrasferta, int goalCasa, int goalTrasferta, String data, Statistiche stat) {
-        id_partita = id;
+    public Partita(String squadraCasa, String squadraTrasferta, int goalCasa, int goalTrasferta, String data, Statistiche stat) {
         this.squadraCasa = squadraCasa;
         this.squadraTrasferta = squadraTrasferta;
         this.goalCasa = goalCasa;
@@ -47,6 +46,7 @@ public class Partita {
     public String getCompetizione() {return competizione.toString();}
     public Statistiche getStat(){return stat;}
 
+    public void setId(int id) {this.id_partita = id;}
     public void setSquadraCasa (String squadraCasa){
         this.squadraCasa = squadraCasa;
     }

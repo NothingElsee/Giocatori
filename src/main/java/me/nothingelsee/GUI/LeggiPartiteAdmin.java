@@ -56,6 +56,7 @@ public class LeggiPartiteAdmin {
     private JButton modificaButton;
     private JButton resetButton;
     private JButton eliminaButton;
+    private JButton eliminaButton1;
     private DatePicker dataInizioPicker;
     private DatePicker dataFinePicker;
     private DatePicker dataPartitaPicker;
@@ -104,7 +105,7 @@ public class LeggiPartiteAdmin {
         modificaButton.setEnabled(false);
         eliminaButton.setEnabled(false);
         selezionaButton.setEnabled(false);
-        aggiungiPartitaButton.setEnabled(false);
+        aggiungiPartitaButton.setEnabled(true);
         infoPartita.setVisible(false);
 
         dataInizioPicker = new DatePicker();
@@ -124,6 +125,13 @@ public class LeggiPartiteAdmin {
                 new String[]{
                         "Avversario", "Data"
                 }));
+
+        if(militanza != null) {
+            nomeSquadraText.setSelectedItem(militanza.getSquadra().getNome());
+            dataInizioPicker.setSelectedDate(LocalDate.parse(militanza.getDataInizio()));
+            dataFinePicker.setSelectedDate(LocalDate.parse(militanza.getDataFine()));
+            aggiornaTable();
+        }
 
         frame.setVisible(true);
     }
@@ -179,13 +187,16 @@ public class LeggiPartiteAdmin {
                         squadraTrasferta = nomeSquadraText.getSelectedItem().toString();
                     }
 
-                    militanza.addPartita(new Partita(-1, squadraCasa, squadraTrasferta, Integer.getInteger(goalCasaText.getText()), Integer.getInteger(goalTrafertText.getText()),
-                            dtf.format(dataPartitaPicker.getSelectedDate()), stat));
+                    Partita p = new Partita(squadraCasa, squadraTrasferta, Integer.getInteger(goalCasaText.getText()), Integer.getInteger(goalTrafertText.getText()),
+                            dtf.format(dataPartitaPicker.getSelectedDate()), stat);
 
-                    DefaultTableModel model = (DefaultTableModel) partiteTable.getModel();
-                    model.addRow(new Object[]{nomeAvversarioText.getSelectedItem().toString(), dtf.format(dataPartitaPicker.getSelectedDate())});
-
+                    controller.caricaPartita(militanza.getId(), p);
+                    militanza.addPartita(p);
+                    aggiornaTable();
                     controller.setMilitanzaCercata(militanza);
+
+                    resetInfoPartita();
+                    aggiungiPartitaButton.setEnabled(false);
                 }
             }
         });
@@ -217,10 +228,14 @@ public class LeggiPartiteAdmin {
                     p.setData(dtf.format(dataPartitaPicker.getSelectedDate()));
                     p.setStat(stat);
 
+                    controller.updatePartita(p);
+
                     modificaButton.setEnabled(false);
                     eliminaButton.setEnabled(false);
                     selezionaButton.setEnabled(false);
+                    resetInfoPartita();
                     partiteTable.clearSelection();
+                    aggiungiPartitaButton.setEnabled(true);
                 }
             }
         });
@@ -228,24 +243,13 @@ public class LeggiPartiteAdmin {
         eliminaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int index = partiteTable.getSelectedRow();
-                militanza.getPartite().remove(index);
-
-                eliminaButton.setEnabled(false);
-                modificaButton.setEnabled(false);
-                selezionaButton.setEnabled(false);
+                eliminaPartita();
             }
     });
-
         eliminaPopup.addActionListener(new ActionListener() {
            @Override
            public void actionPerformed(ActionEvent e) {
-               int index = partiteTable.getSelectedRow();
-               militanza.getPartite().remove(index);
-
-               eliminaButton.setEnabled(false);
-               modificaButton.setEnabled(false);
-               selezionaButton.setEnabled(false);
+               eliminaPartita();
            }
         });
 
@@ -284,6 +288,7 @@ public class LeggiPartiteAdmin {
 
                 if (partiteTable.getSelectedRow() >= 0 && partiteTable.getSelectedRow() < partiteTable.getRowCount()) {
 
+                    aggiungiPartitaButton.setEnabled(false);
                     selezionaButton.setEnabled(true);
                     eliminaButton.setEnabled(true);
                     modificaButton.setEnabled(true);
@@ -297,6 +302,7 @@ public class LeggiPartiteAdmin {
                     popupMenu.show(partiteTable, e.getX(), e.getY());
 
                     partiteTable.setRowSelectionInterval(row, row);
+                    aggiungiPartitaButton.setEnabled(false);
                     selezionaButton.setEnabled(true);
                     eliminaButton.setEnabled(true);
                     modificaButton.setEnabled(true);
@@ -317,7 +323,6 @@ public class LeggiPartiteAdmin {
         selezionaItem.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed (ActionEvent e){
-
             caricaInfoPartita();
         }
     });
@@ -375,6 +380,7 @@ private void creaMilitanza() {
         militanza = new Militanza(-1, dtf.format(ldI), dtf.format(ldF), new Squadra(nomeSquadraText.getSelectedItem().toString()));
         militanza.setPartite(new ArrayList<Partita>());
 
+        controller.caricaMilitanza(controller.getGiocatoreCercato().getId(), militanza);
         controller.getGiocatoreCercato().addMilitanza(militanza);
     }
 }
@@ -430,6 +436,33 @@ private boolean checkMilCampi() {
     }
 
     return true;
+}
+
+private void eliminaPartita() {
+    int index = partiteTable.getSelectedRow();
+    controller.deletePartita(militanza.getPartite().get(index));
+    militanza.getPartite().remove(index);
+    partiteTable.clearSelection();
+    aggiornaTable();
+    resetInfoPartita();
+
+    eliminaButton.setEnabled(false);
+    modificaButton.setEnabled(false);
+    selezionaButton.setEnabled(false);
+    aggiungiPartitaButton.setEnabled(true);
+}
+
+private void aggiornaTable() {
+        DefaultTableModel model = (DefaultTableModel) partiteTable.getModel();
+
+        model.setRowCount(0);
+        String avversario = null;
+
+        for(Partita partita : militanza.getPartite()) {
+            avversario = militanza.getSquadra().getNome().equals(partita.getSquadraCasa()) ? partita.getSquadraCasa() : partita.getSquadraTrasferta();
+
+            model.addRow(new Object[]{avversario, partita.getData()});
+        }
 }
 
 

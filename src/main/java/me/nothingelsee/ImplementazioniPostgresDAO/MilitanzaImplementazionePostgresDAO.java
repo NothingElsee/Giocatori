@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class MilitanzaImplementazionePostgresDAO implements MilitanzaDAO {
 
@@ -48,21 +49,63 @@ public class MilitanzaImplementazionePostgresDAO implements MilitanzaDAO {
     }
 
     @Override
-    public void caricaMilitanta(Giocatore giocatore) {
+    public void insertMilitanza(int id_giocatore, Militanza militanza) {
         PreparedStatement caricaMilitanza = null;
 
         try{
             caricaMilitanza = connection.prepareStatement("INSERT INTO Militanza(id_giocatore, nomesquadra, datainizio, datafine) VALUES (?,?,?,?)");
-            for(Militanza m : giocatore.getMilitanze()){
-                caricaMilitanza.setInt(1, giocatore.getId());
-                caricaMilitanza.setString(2, m.getSquadra().getNome());
-                caricaMilitanza.setString(3, m.getDataInizio());
-                caricaMilitanza.setString(4, m.getDataFine());
+                caricaMilitanza.setInt(1, id_giocatore);
+                caricaMilitanza.setString(2, militanza.getSquadra().getNome());
+                caricaMilitanza.setString(3, militanza.getDataInizio());
+                caricaMilitanza.setString(4, militanza.getDataFine());
                 caricaMilitanza.executeUpdate();
-            }
-            caricaMilitanza.close();
+
+                PreparedStatement mil = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('militanza','id_militanza'))");
+                ResultSet rs = mil.executeQuery();
+                militanza.setId(rs.getInt(1));
+                rs.close();
+                caricaMilitanza.close();
+                connection.close();
+
         }catch (SQLException e){
             JOptionPane.showMessageDialog(null, "Errore durante il caricamento delle militanze", "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateMilitanza(Militanza militanza) {
+        PreparedStatement caricaMilitanza = null;
+
+        try{
+            caricaMilitanza = connection.prepareStatement("UPDATE Militanza SET nomesquadra = ?, datainizio = ?, datafine = ? WHERE id_militanza = ?");
+            caricaMilitanza.setString(1, militanza.getSquadra().getNome());
+            caricaMilitanza.setString(2, militanza.getDataInizio());
+            caricaMilitanza.setString(3, militanza.getDataFine());
+            caricaMilitanza.setInt(4, militanza.getId());
+            caricaMilitanza.executeUpdate();
+
+            caricaMilitanza.close();
+            connection.close();
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore durante la modifica della militanza", "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteMilitanza(Militanza militanza) {
+        PreparedStatement caricaMilitanza = null;
+
+        try{
+            caricaMilitanza = connection.prepareStatement("DELETE FROM militanza WHERE id_militanza = ?");
+            caricaMilitanza.setInt(1, militanza.getId());
+            caricaMilitanza.executeUpdate();
+
+            caricaMilitanza.close();
+            connection.close();
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore durante l'eliminazione della militanza", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }

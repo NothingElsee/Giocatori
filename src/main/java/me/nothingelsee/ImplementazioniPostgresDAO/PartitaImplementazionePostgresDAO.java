@@ -28,11 +28,11 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
     }
 
     @Override
-    public void getPartite(Militanza militanza){
+    public void getPartite(Militanza militanza) {
 
         PreparedStatement leggiPartite;
 
-        try{
+        try {
 
             leggiPartite = connection.prepareStatement(
                     "SELECT Ma.id_partita, MA.datapartita, MA.goalcasa, Ma.goaltrasferta, MA.nomecomp, MA.tipocomp, P.squadracasa, P.squadratrasferta " +
@@ -43,39 +43,80 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
 
             ResultSet rs = leggiPartite.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 militanza.getPartite().add(new Partita(rs.getInt("id_partita"), rs.getString("squadracasa"), rs.getString("squadratrasferta"), rs.getInt("goalcasa"), rs.getInt("goaltrasferta"), rs.getString("datapartita"), rs.getString("tipocomp"), rs.getString("nomecomp")));
             }
 
             rs.close();
             connection.close();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void caricaPartita(Giocatore giocatore) {
+    public void insertPartita(int idMilitanza, Partita p) {
         PreparedStatement insertPartite;
 
-        try{
+        try {
 
             insertPartite = connection.prepareStatement("insert into match(id_militanza, datapartita, goalcasa, goaltrasferta) values(?,?,?,?)");
 
-            for(int i=0; i<giocatore.getMilitanze().size(); i++) {
-                for (Partita partita : giocatore.getMilitanze().get(i).getPartite()){
-                    insertPartite.setInt(1, giocatore.getMilitanze().get(i).getId());
-                    insertPartite.setString(2, partita.getData());
-                    insertPartite.setInt(3, partita.getGoalCasa());
-                    insertPartite.setInt(4, partita.getGoalTrasferta());
-                    insertPartite.executeUpdate();
-                }
-            }
+
+            insertPartite.setInt(1, idMilitanza);
+            insertPartite.setString(2, p.getData());
+            insertPartite.setInt(3, p.getGoalCasa());
+            insertPartite.setInt(4, p.getGoalTrasferta());
+            insertPartite.executeUpdate();
+            insertPartite.close();
+            insertPartite = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('match','id_partita'))");
+            ResultSet rs = insertPartite.executeQuery();
+            p.setId(rs.getInt(1));
+            rs.close();
             insertPartite.close();
             connection.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel caricamento delle partite!", "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updatePartita(Partita p) {
+        PreparedStatement insertPartite;
+
+        try {
+
+            insertPartite = connection.prepareStatement("update match SET datapartita = ?, goalcasa = ?, goaltrasferta = ?)WHERE id_partita = ?");
+            insertPartite.setString(1, p.getData());
+            insertPartite.setInt(2, p.getGoalCasa());
+            insertPartite.setInt(3, p.getGoalTrasferta());
+            insertPartite.setInt(4, p.getId());
+            insertPartite.executeUpdate();
+
+            insertPartite.close();
+            connection.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Errore nel caricamento delle partite!", "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deletePartita(Partita p){
+        PreparedStatement deleteP = null;
+
+        try{
+            deleteP = connection.prepareStatement("DELETE FROM match WHERE id_partita = ?");
+            deleteP.setInt(1, p.getId());
+            deleteP.executeUpdate();
+
+            deleteP.close();
+            connection.close();
+
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore durante l'eliminazione della partita", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }

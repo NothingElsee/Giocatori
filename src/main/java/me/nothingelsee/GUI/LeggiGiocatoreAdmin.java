@@ -10,11 +10,11 @@ import raven.datetime.DatePicker;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class LeggiGiocatoreAdmin {
@@ -52,7 +52,6 @@ public class LeggiGiocatoreAdmin {
     private JPanel middlePanel;
     private JScrollPane squadreScrollPanel;
     private JButton trofeiButton;
-    private JButton caricaGiocatoreButton;
     private JComboBox nazionalitaBox;
     private JComboBox piedeBox;
     private JList ruoliList;
@@ -61,9 +60,10 @@ public class LeggiGiocatoreAdmin {
     private JButton modificaButton;
     private JButton caricaButton;
     private JButton eliminaButton;
+    private JButton eliminaMilitanzaButton;
     private JPopupMenu popupSquadre;
     private JMenuItem eliminaPopup;
-    private JPopupMenu modificaPopup;
+    private JMenuItem modificaPopup;
     private JMenuItem annullaPopupSquadre;
     private DatePicker dataNascita;
     private DatePicker dataRitiro;
@@ -87,7 +87,7 @@ public class LeggiGiocatoreAdmin {
         frame.setSize(1000, 600);
 
         popupSquadre = new JPopupMenu("Squadre");
-        modificaPopup = new JPopupMenu("Modifica");
+        modificaPopup = new JMenuItem("Modifica");
         eliminaPopup = new JMenuItem("Elimina");
         annullaPopupSquadre = new JMenuItem("Annulla");
 
@@ -101,8 +101,9 @@ public class LeggiGiocatoreAdmin {
 
         dataNascita.setEditor(dataNascitaText);
         dataRitiro.setEditor(dataRitiroText);
-        modificaButton.setVisible(false);
-        eliminaButton.setVisible(false);
+        eliminaMilitanzaButton.setEnabled(false);
+        modificaButton.setEnabled(false);
+        eliminaButton.setEnabled(false);
         dataNascita.setDateSelectionMode(DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
         dataRitiro.setDateSelectionMode(DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
 
@@ -132,6 +133,7 @@ public class LeggiGiocatoreAdmin {
 
         if (giocatore != null) {
             caricaDati();
+            eliminaButton.setEnabled(true);
         }
 
         frame.setVisible(true);
@@ -146,9 +148,12 @@ public class LeggiGiocatoreAdmin {
         squadreScrollPanel.setBackground(Estetica.filterBackgorundColor);
         buttonPanel.setBackground(Estetica.filterBackgorundColor);
 
+        Estetica.setMenuItemColor(modificaPopup);
         Estetica.setMenuItemColor(annullaPopupSquadre);
         Estetica.setButtonColor(trofeiButton);
         Estetica.setButtonColor(chiudiButton);
+        Estetica.setButtonColor(modificaButton);
+        Estetica.setButtonColor(aggiungiSquadra);
 
         Estetica.setHeaderTable(storicoSquadreTable);
     }
@@ -170,6 +175,7 @@ public class LeggiGiocatoreAdmin {
                     if (row >= 0 && row < storicoSquadreTable.getRowCount()) {
                         controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
                         modificaButton.setEnabled(true);
+                        eliminaMilitanzaButton.setEnabled(true);
                     }
 
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -182,6 +188,7 @@ public class LeggiGiocatoreAdmin {
                         int row = storicoSquadreTable.getSelectedRow();
                         controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
                         modificaButton.setEnabled(true);
+                        eliminaMilitanzaButton.setEnabled(true);
                     } else {
                         storicoSquadreTable.clearSelection();
                     }
@@ -210,22 +217,34 @@ public class LeggiGiocatoreAdmin {
         eliminaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.deleteGiocatore(controller.getGiocatoreCercato());
+                controller.deleteGiocatore(giocatore);
+                controller.setGiocatoreCercato(null);
             }
         });
 
         eliminaPopup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                controller.deleteMilitanza(giocatore.getMilitanze().get(storicoSquadreTable.getSelectedRow()));
                 giocatore.getMilitanze().remove(storicoSquadreTable.getSelectedRow());
             }
+        });
+
+        eliminaMilitanzaButton.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               controller.deleteMilitanza(controller.getMilitanzaCercata());
+               eliminaMilitanzaButton.setEnabled(false);
+               modificaButton.setEnabled(false);
+               aggiornaTable();
+           }
         });
 
         caricaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                creaGiocatore();
-                if(giocatore!=null) controller.caricaTutto(controller.getGiocatoreCercato());
+                if(giocatore == null) creaGiocatore();
+                else controller.updateGiocatore(giocatore);
             }
         });
 
@@ -240,6 +259,7 @@ public class LeggiGiocatoreAdmin {
         trofeiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                creaGiocatore();
                 LeggiTrofei trofeiVis = new LeggiTrofei(controller, frame, true);
                 frame.setVisible(false);
             }
@@ -254,6 +274,14 @@ public class LeggiGiocatoreAdmin {
         });
     }
 
+    private void aggiornaTable() {
+        DefaultTableModel model = (DefaultTableModel) storicoSquadreTable.getModel();
+        ArrayList<Militanza> militanze = giocatore.getMilitanze();
+        for (Militanza m : militanze) {
+            model.addRow(new Object[]{m.getSquadra().getNome(), m.getSquadra().getNazionalita(), m.getDataInizio(), m.getDataFine()});
+        }
+    }
+
     public void caricaDati() {
 
         nomeText.setText(giocatore.getNome());
@@ -266,7 +294,7 @@ public class LeggiGiocatoreAdmin {
         controller.getSkill(giocatore);
         controller.getRuoli(giocatore);
         controller.getTrofei(giocatore);
-        caricaAbilità(giocatore);
+        caricaAbilita(giocatore);
         caricaSkill(giocatore);
         DefaultListModel modelList = (DefaultListModel) ruoliList.getModel();
         modelList.addElement(giocatore.getRuoli());
@@ -280,27 +308,27 @@ public class LeggiGiocatoreAdmin {
         }
     }
 
-    private void caricaAbilità(Giocatore giocatore) {
-        HashMap<String, Integer> abilita = giocatore.getAbilita();
+    private void caricaAbilita(Giocatore giocatore) {
+        ArrayList<Integer> abilita = giocatore.getAbilita();
 
-        velocitaText.setText(String.valueOf(abilita.get("velocità")));
-        tiroText.setText(abilita.get("tiro").toString());
-        passaggioText.setText(String.valueOf(abilita.get("passaggio")));
-        piedeDeboleText.setText(String.valueOf(abilita.get("piededebole")));
-        restistenzaText.setText(String.valueOf(abilita.get("resistenza")));
-        difesaText.setText(String.valueOf(abilita.get("difesa")));
-        punizioneText.setText(String.valueOf(abilita.get("tirosupunizione")));
+        velocitaText.setText(abilita.get(0).toString());
+        tiroText.setText(abilita.get(1).toString());
+        passaggioText.setText(abilita.get(2).toString());
+        piedeDeboleText.setText(abilita.get(3).toString());
+        restistenzaText.setText(abilita.get(4).toString());
+        difesaText.setText(abilita.get(5).toString());
+        punizioneText.setText(abilita.get(6).toString());
     }
 
     private void caricaSkill(Giocatore giocatore) {
-        HashMap<String, Integer> skill = giocatore.getSkill();
+        ArrayList<Integer> skill = giocatore.getSkill();
 
-        taccoText.setText(String.valueOf(skill.get("colpoditacco")));
-        rovesciataText.setText(String.valueOf(skill.get("rovesciata")));
-        testaText.setText(String.valueOf(skill.get("colpoditesta")));
-        dribblingText.setText(String.valueOf(skill.get("dribbling")));
-        sforbiciataText.setText(String.valueOf(skill.get("sforbiciata")));
-        controlloText.setText(String.valueOf(skill.get("controllopalla")));
+        taccoText.setText(skill.get(0).toString());
+        rovesciataText.setText(skill.get(1).toString());
+        testaText.setText(skill.get(2).toString());
+        dribblingText.setText(skill.get(3).toString());
+        sforbiciataText.setText(skill.get(4).toString());
+        controlloText.setText(skill.get(5).toString());
     }
 
     private void visualizzaSquadra() {
@@ -373,6 +401,7 @@ public class LeggiGiocatoreAdmin {
             if (giocatore == null) {
                 giocatore = new Giocatore(nomeText.getText(), cognomeText.getText(), dtf.format(dataNascita.getSelectedDate()), nazionalitaBox.getSelectedItem().toString(),
                         dtf.format(dataRitiro.getSelectedDate()), (PIEDE) piedeBox.getSelectedItem(), skills, abilita, ruoli);
+                controller.caricaGiocatore(giocatore);
             } else {
                 giocatore.setNome(nomeText.getText());
                 giocatore.setCognome(cognomeText.getText());
@@ -380,6 +409,7 @@ public class LeggiGiocatoreAdmin {
                 giocatore.setNazionalita(nazionalitaBox.getSelectedItem().toString());
                 giocatore.setDataRitiro(dtf.format(dataRitiro.getSelectedDate()));
                 giocatore.setPiede(PIEDE.valueOf(piedeDeboleText.getText()));
+                System.out.println(piedeDeboleText.getText());
                 giocatore.setSkills(skills);
                 giocatore.setAbilita(abilita);
                 giocatore.setRuoli(ruoli);

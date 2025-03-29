@@ -1,8 +1,11 @@
 package me.nothingelsee.InterfacceDAO;
 
 import me.nothingelsee.Model.Giocatore;
+import me.nothingelsee.Model.Trofeo;
 
 public interface VittoriaDAO {
-    void caricaVittoria(Giocatore giocatore);
+    void insertVittoriaIndividuale(int idGiocatore, Trofeo trofeo);
+    void insertVittoriaSquadra(Trofeo trofeo);
+    void deleteVittoria(Trofeo trofeo);
 
 }

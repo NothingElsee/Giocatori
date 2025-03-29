@@ -7,11 +7,11 @@ public class Trofeo {
     private String squadra;
     private String tipo;
 
-    public Trofeo (int idTrofeo, String nome, String data, String tipo) {
-        this.idTrofeo = idTrofeo;
+    public Trofeo (String nome, String data, String tipo, String squadra) {
         this.nome = nome;
         this.data = data;
         this.tipo = tipo;
+        this.squadra = squadra;
     }
 
     public Trofeo (int idTrofeo, String nome, String data,  String squadra, String tipo) {

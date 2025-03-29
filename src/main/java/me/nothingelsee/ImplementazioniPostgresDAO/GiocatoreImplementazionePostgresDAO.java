@@ -5,10 +5,7 @@ import me.nothingelsee.InterfacceDAO.GiocatoreDAO;
 import me.nothingelsee.Model.Giocatore;
 
 import javax.swing.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
@@ -81,24 +78,40 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
     }
 
     @Override
-    public void caricaGiocatore(Giocatore giocatore){
+    public void insertGiocatore(Giocatore giocatore){
         try{
             PreparedStatement insGio = connection.prepareStatement("INSERT INTO Giocatore(nome, cognome, datanascita, dataritiro, piede) VALUES (?,?,?,?,?)");
             insGio.setString(1, giocatore.getNome());
             insGio.setString(2, giocatore.getCognome());
-            insGio.setString(3, giocatore.getDataNascita());
-            insGio.setString(4, giocatore.getDataRitiro());
+            insGio.setDate(3, Date.valueOf(giocatore.getDataNascita()));
+            insGio.setDate(4, Date.valueOf(giocatore.getDataRitiro()));
             insGio.setString(5, giocatore.getPiede().toString());
 
             insGio.executeUpdate();
 
             insGio.close();
-            if(giocatore.getId() == -1){
-                insGio = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('giocatore','id_giocatore'))");
-                ResultSet rs = insGio.executeQuery();
-                giocatore.setId(rs.getInt(1));
-            }
+            insGio = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('giocatore','id_giocatore'))");
+            ResultSet rs = insGio.executeQuery();
+            giocatore.setId(rs.getInt(1));
 
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateGiocatore(Giocatore giocatore){
+        try{
+            PreparedStatement insGio = connection.prepareStatement("UPDATE Giocatore " +
+                    "SET nome = " + giocatore.getNome()
+                    + " ,cognome = " + giocatore.getCognome()
+                    + " ,dataNascita = " + giocatore.getDataNascita()
+                    + " ,dataRitiro = " + giocatore.getDataRitiro()
+                    + " ,piede = " + giocatore.getPiede()
+                    + " WHERE id_giocatore = " + giocatore.getId()
+            );
+
+            insGio.executeUpdate();
         }catch (SQLException e){
             e.printStackTrace();
         }
@@ -109,7 +122,7 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
         PreparedStatement delGiocatore = null;
 
         try{
-            delGiocatore = connection.prepareStatement("DELETE FROM Giocatore WHERE id_giocatore = ? CASCADE");
+            delGiocatore = connection.prepareStatement("DELETE FROM Giocatore WHERE id_giocatore = ?");
 
             delGiocatore.setInt(1, giocatore.getId());
             delGiocatore.executeUpdate();

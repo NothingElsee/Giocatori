@@ -197,7 +197,7 @@ public class RicercaGiocatori {
             gbc.gridx = 2;
             filterPanel.add(modificaButton, gbc);
 
-            gbc.gridx = 2;
+            gbc.gridx = 3;
             filterPanel.add(aggiungiButton, gbc);
         }
     }

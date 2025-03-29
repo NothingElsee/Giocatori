@@ -9,6 +9,7 @@ import me.nothingelsee.Model.Giocatore;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
 
@@ -23,14 +24,14 @@ public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
     }
 
     @Override
-    public void caricaPosizione(Giocatore giocatore) {
+    public void insertPosizione(int idGiocatore, ArrayList<RUOLO> listaRuoli) {
         PreparedStatement insertPosizione = null;
 
         try {
-            for (int i = 0; i < giocatore.getRuoli().size(); i++) {
+            for (int i = 0; i < listaRuoli.size(); i++) {
                 insertPosizione = connection.prepareStatement("insert into posizione values (?,?)");
-                insertPosizione.setInt(1, giocatore.getId());
-                insertPosizione.setInt(2, giocatore.getRuoli().get(i).ordinal());
+                insertPosizione.setInt(1, idGiocatore);
+                insertPosizione.setInt(2, listaRuoli.get(i).ordinal());
                 insertPosizione.executeUpdate();
                 insertPosizione.close();
             }
@@ -38,4 +39,31 @@ public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void updatePosizione(int idGiocatore, ArrayList<RUOLO> listaRuoli) {
+        PreparedStatement insertPosizione = null;
+
+        try {
+            insertPosizione = connection.prepareStatement("DELETE FROM posizione WHERE idGiocatore=?");
+            insertPosizione.setInt(1, idGiocatore);
+            insertPosizione.executeUpdate();
+            insertPosizione.close();
+
+            insertPosizione = connection.prepareStatement("insert into posizione values (?,?)");
+            for (int i = 0; i < listaRuoli.size(); i++) {
+                insertPosizione.setInt(1, idGiocatore);
+                insertPosizione.setInt(2, listaRuoli.get(i).ordinal());
+                insertPosizione.executeUpdate();
+            }
+
+            insertPosizione.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

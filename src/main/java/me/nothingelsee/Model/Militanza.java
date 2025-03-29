@@ -30,6 +30,7 @@ public class Militanza {
     public Squadra getSquadra() {return squadra;}
     public ArrayList<Partita> getPartite() {return partite;}
 
+    public void setId(int id) {this.id = id;}
     public void setPartite(ArrayList<Partita> partite) {this.partite = partite;}
     public void addPartita(Partita p){partite.add(p);}
 }

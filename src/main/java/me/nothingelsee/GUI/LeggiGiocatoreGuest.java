@@ -9,8 +9,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-
 public class LeggiGiocatoreGuest {
 
     private Controller controller;
@@ -209,26 +207,26 @@ public class LeggiGiocatoreGuest {
     }
 
     private void caricaAbilità(Giocatore giocatore) {
-        HashMap<String, Integer> abilita = giocatore.getAbilita();
+        ArrayList<Integer> abilita = giocatore.getAbilita();
 
-        velocitaLabel.setText(String.valueOf(abilita.get("velocità")));
-        tiroLabel.setText(abilita.get("tiro").toString());
-        passaggioLabel.setText(String.valueOf(abilita.get("passaggio")));
-        piedeDeboleLabel.setText(String.valueOf(abilita.get("piededebole")));
-        restistenzaLabel.setText(String.valueOf(abilita.get("resistenza")));
-        difesaLabel.setText(String.valueOf(abilita.get("difesa")));
-        punizioneLabel.setText(String.valueOf(abilita.get("tirosupunizione")));
+        velocitaLabel.setText(abilita.get(0).toString());
+        tiroLabel.setText(abilita.get(1).toString());
+        passaggioLabel.setText(abilita.get(2).toString());
+        piedeDeboleLabel.setText(abilita.get(3).toString());
+        restistenzaLabel.setText(abilita.get(4).toString());
+        difesaLabel.setText(abilita.get(5).toString());
+        punizioneLabel.setText(abilita.get(6).toString());
     }
 
     private void caricaSkill(Giocatore giocatore) {
-        HashMap<String, Integer> skill = giocatore.getSkill();
+        ArrayList<Integer> skill = giocatore.getSkill();
 
-        taccoLabel.setText(String.valueOf(skill.get("colpoditacco")));
-        rovesciataLabel.setText(String.valueOf(skill.get("rovesciata")));
-        testaLabel.setText(String.valueOf(skill.get("colpoditesta")));
-        dribblingLabel.setText(String.valueOf(skill.get("dribbling")));
-        sforbiciataLabel.setText(String.valueOf(skill.get("sforbiciata")));
-        controlloLabel.setText(String.valueOf(skill.get("controllopalla")));
+        taccoLabel.setText(skill.get(0).toString());
+        rovesciataLabel.setText(skill.get(1).toString());
+        testaLabel.setText(skill.get(2).toString());
+        dribblingLabel.setText(skill.get(3).toString());
+        sforbiciataLabel.setText(skill.get(4).toString());
+        controlloLabel.setText(skill.get(5).toString());
     }
 
     private void visualizzaSquadra() {

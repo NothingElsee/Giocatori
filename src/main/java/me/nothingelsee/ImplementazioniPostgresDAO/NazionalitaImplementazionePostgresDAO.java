@@ -4,6 +4,7 @@ import me.nothingelsee.Database.ConnessioneDatabase;
 import me.nothingelsee.InterfacceDAO.NazionalitaDAO;
 import me.nothingelsee.Model.Giocatore;
 
+import javax.print.attribute.standard.Destination;
 import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +30,7 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
         PreparedStatement leggiNazioni = null;
 
         try{
-            leggiNazioni = connection.prepareStatement("select nome from 'Nazionalità'");
+            leggiNazioni = connection.prepareStatement("select nome FROM nazionalità");
 
             ResultSet rs = leggiNazioni.executeQuery();
 
@@ -39,6 +40,7 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
 
             rs.close();
             leggiNazioni.close();
+            connection.close();
         }catch (SQLException e){
             e.printStackTrace();
         }
@@ -46,24 +48,62 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
     }
 
     @Override
-    public void caricaNazionalita(Giocatore giocatore) {
+    public void insertNazionalita(int idGiocatore, String nome) {
         PreparedStatement caricaNazionalita = null;
         PreparedStatement caricaAppartenenza = null;
+        PreparedStatement esisteNazionalita = null;
 
         try{
-            caricaNazionalita = connection.prepareStatement("INSERT INTO 'Nazionalità'(nome)" + " VALUES (?)");
-            caricaNazionalita.setString(1, giocatore.getNazionalita());
-
-            caricaAppartenenza = connection.prepareStatement("INSERT INTO appartiene (ig_giocatore, 'nomenazionalità') VALUES (?,?)");
-            caricaAppartenenza.setInt(1, giocatore.getId());
-            caricaAppartenenza.setString(2, giocatore.getNazionalita());
-
-            caricaNazionalita.executeUpdate();
+            esisteNazionalita= connection.prepareStatement("Select * from Nazionalita where nome = ?");
+            esisteNazionalita.setString(1, nome);
+            ResultSet rs = esisteNazionalita.executeQuery();
+            if(rs.getRow() == 0){
+                caricaNazionalita = connection.prepareStatement("INSERT INTO 'Nazionalità'(nome)" + " VALUES (?)");
+                caricaNazionalita.setString(1, nome);
+                caricaNazionalita.executeUpdate();
+                caricaNazionalita.close();
+            }
+            caricaAppartenenza = connection.prepareStatement("INSERT INTO appartiene (id_giocatore, 'nomenazionalità') VALUES (?,?)");
+            caricaAppartenenza.setInt(1, idGiocatore);
+            caricaAppartenenza.setString(2, nome);
             caricaAppartenenza.executeUpdate();
-            caricaNazionalita.close();
+
             caricaAppartenenza.close();
+            rs.close();
+            connection.close();
         }catch (SQLException e){
-            JOptionPane.showMessageDialog(null, "Errore nel caricamento della nazionalità", "Errore", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Errore durante l'inserimento della nazionalità", "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateNazionalita(int idGiocatore, String nome) {
+        PreparedStatement caricaNazionalita = null;
+        PreparedStatement caricaAppartenenza = null;
+        PreparedStatement esisteNazionalita = null;
+
+        try{
+            esisteNazionalita= connection.prepareStatement("Select * from Nazionalita where nome = ?");
+            esisteNazionalita.setString(1, nome);
+            ResultSet rs = esisteNazionalita.executeQuery();
+            if(rs.getRow() == 0){
+                caricaNazionalita = connection.prepareStatement("INSERT INTO 'Nazionalità'(nome)" + " VALUES (?)");
+                caricaNazionalita.setString(1, nome);
+                caricaNazionalita.executeUpdate();
+                caricaNazionalita.close();
+            }
+            caricaAppartenenza = connection.prepareStatement("UPDATE appartiene SET id_giocatore = ?, 'nomenazionalità' = ? WHERE id_giocatore = ?");
+            caricaAppartenenza.setInt(1, idGiocatore);
+            caricaAppartenenza.setString(2, nome);
+            caricaAppartenenza.setInt(3, idGiocatore);
+            caricaAppartenenza.executeUpdate();
+
+            caricaAppartenenza.close();
+            rs.close();
+            connection.close();
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Errore l'aggiornamento della nazionalità", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
