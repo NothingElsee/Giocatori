@@ -8,4 +8,5 @@ import java.util.ArrayList;
 public interface SquadraDAO {
     public ArrayList<String> getSquadreNomi();
     void insertSquadra(Squadra squadra);
+    ArrayList<String> getSquadreGiocatore(int id);
 }

@@ -28,6 +28,7 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
     @Override
     public void getSkills(Giocatore giocatore) {
         PreparedStatement leggiSkill;
+        ArrayList<Integer> skills = new ArrayList<>();
 
         try{
             leggiSkill = connection.prepareStatement(
@@ -36,12 +37,13 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
 
             ResultSet rs = leggiSkill.executeQuery();
 
-            int i=1;
-            while (rs.next()) {
-                giocatore.addSkill(rs.getInt(i));
+            int i=2;
+            rs.next();
+            while (i<8) {
+                skills.add(rs.getInt(i));
                 i++;
             }
-
+            giocatore.setSkills(skills);
             rs.close();
             connection.close();
         } catch(SQLException e){
@@ -50,21 +52,25 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
     }
 
     @Override
-    public void insertSkill(ArrayList<Integer> skill) {
+    public boolean insertSkill(int idGiocatore, ArrayList<Integer> skill) {
         PreparedStatement caricaSkill;
         try{
-            caricaSkill = connection.prepareStatement("INSERT INTO 'Skill'(colpoditacco, colpoditesta, rovesciata, sforbiciata, dribbling, controllopalla)" +
-                    "VALUES (?, ?, ?, ?, ?, ?);");
+            caricaSkill = connection.prepareStatement("INSERT INTO Skill (id_giocatore, colpoditacco, colpoditesta, rovesciata, sforbiciata, dribbling, controllopalla)" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?);");
+
+            caricaSkill.setInt(1, idGiocatore);
 
             for(int i=0; i<skill.size(); i++){
-                caricaSkill.setInt(i+1, skill.get(i));
+                caricaSkill.setInt(i+2, skill.get(i));
             }
             caricaSkill.executeUpdate();
             caricaSkill.close();
         }catch (SQLException e){
             JOptionPane.showMessageDialog(null, "Errore nel caricamento delle skill", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     @Override
@@ -72,20 +78,21 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
         PreparedStatement caricaAbilita;
 
         try{
-            caricaAbilita = connection.prepareStatement("UPDATE 'Abilità' " +
-                    "SET 'velocità' = " + skill.get(0) +
-                    " ,colpoditacco" + skill.get(1) +
-                    " ,colpoditesta = " + skill.get(2) +
-                    " ,rovesciata = " + skill.get(3) +
-                    " ,sforbiciata = " + skill.get(4) +
-                    " ,dribbling = " + skill.get(5) +
-                    " ,controllopalla = " +skill.get(6) +
+            caricaAbilita = connection.prepareStatement("UPDATE Skill " +
+                    "SET "+
+                    " colpoditacco = " + skill.get(0) +
+                    " ,colpoditesta = " + skill.get(1) +
+                    " ,rovesciata = " + skill.get(2) +
+                    " ,sforbiciata = " + skill.get(3) +
+                    " ,dribbling = " + skill.get(4) +
+                    " ,controllopalla = " +skill.get(5) +
                     " WHERE id_giocatore = " + idGiocatore);
 
             caricaAbilita.executeUpdate();
             caricaAbilita.close();
+            connection.close();
         } catch (SQLException e){
-            JOptionPane.showMessageDialog(null, "Errore nel caricamento delle abilità", "Errore", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Errore nel caricamento delle skill", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }

@@ -6,6 +6,6 @@ import java.util.ArrayList;
 
 public interface AbilitaDAO {
     void getAbilities(Giocatore giocatore);
-    void insertAbilita(ArrayList<Integer> abilita);
+    void insertAbilita(int idGiocatore, ArrayList<Integer> abilita);
     void updateAbilita(int idGiocatore, ArrayList<Integer> abilita);
 }

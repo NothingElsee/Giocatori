@@ -73,4 +73,23 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public ArrayList<String> getSquadreGiocatore(int id) {
+        ArrayList<String> squadre = new ArrayList<>();
+        PreparedStatement leggiSquadre;
+
+        try{
+            leggiSquadre = connection.prepareStatement("SELECT S.nome FROM squadra AS S JOIN Militanza AS M ON S.nome = M.nomesquadra JOIN Giocatore AS G ON M.id_giocatore = G.id_giocatore WHERE G.id_giocatore = ?");
+            leggiSquadre.setInt(1, id);
+            ResultSet rs = leggiSquadre.executeQuery();
+            while (rs.next()) {
+                squadre.add(rs.getString("nome"));
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return squadre;
+    }
 }

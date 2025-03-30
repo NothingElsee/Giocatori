@@ -2,12 +2,15 @@ package me.nothingelsee.GUI;
 
 import me.nothingelsee.Aesthetics.Estetica;
 import me.nothingelsee.Controller.Controller;
+import me.nothingelsee.Model.Militanza;
 import me.nothingelsee.Model.Trofeo;
 import raven.datetime.DatePicker;
+import raven.datetime.DateSelectionAble;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class AggiungiTrofeo {
@@ -45,12 +48,10 @@ public class AggiungiTrofeo {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setSize(300, 200);
+        frame.setSize(300, 400);
 
-
-        ArrayList<String> nomiSquadre = controller.getSquadreNomi();
-        for(String squadra : nomiSquadre){
-            squadraBox.addItem(squadra);
+        for(Militanza militanza : controller.getGiocatoreCercato().getMilitanze()){
+            squadraBox.addItem(militanza.getSquadra().getNome());
         }
 
         ArrayList<String> nomiTrofeo = new ArrayList<>();
@@ -60,6 +61,7 @@ public class AggiungiTrofeo {
         }
         dataPicker = new DatePicker();
         dataPicker.setEditor(dataText);
+        dataPicker.setDateSelectionMode(DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
 
         if(trofeo != null){
             caricaDati();
@@ -102,7 +104,6 @@ public class AggiungiTrofeo {
                 } else if(tipoTrofeoBox.getSelectedItem().equals("INDIVIDUALE")){
                     squadraBox.setVisible(false);
                     squadraLabel.setVisible(false);
-                    squadraBox.setSelectedItem(null);
                 }
                 checkParametri();
             }
@@ -127,8 +128,9 @@ public class AggiungiTrofeo {
         aggiungiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 if(checkParametri()) {
-                    trofeo = new Trofeo(trofeoBox.getSelectedItem().toString(), dataPicker.getSelectedDateAsString(), tipoTrofeoBox.getSelectedItem().toString(), squadraBox.getSelectedItem().toString());
+                    trofeo = new Trofeo(trofeoBox.getSelectedItem().toString(), formatter.format(dataPicker.getSelectedDate()), tipoTrofeoBox.getSelectedItem().toString(), squadraBox.getSelectedItem().toString());
                     aggiungiTrofeo();
                 }
             }
@@ -142,6 +144,13 @@ public class AggiungiTrofeo {
             }
         });
 
+        dataPicker.setDateSelectionAble(new DateSelectionAble() {
+            @Override
+            public boolean isDateSelectedAble(LocalDate localDate) {
+                return !localDate.isAfter(LocalDate.now());
+            }
+        });
+
         modificaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -151,8 +160,8 @@ public class AggiungiTrofeo {
     }
 
     private boolean checkParametri() {
-        if(trofeoBox.getSelectedItem().equals("") || !dataPicker.isDateSelected() && tipoTrofeoBox.getSelectedItem() == "INDIVIDUALE" ){return false;}
-        if(trofeoBox.getSelectedItem().equals("") || !dataPicker.isDateSelected() || squadraBox.getSelectedItem().equals("") && tipoTrofeoBox.getSelectedItem() == "SQUADRA" ){ return false;}
+        if(trofeoBox.getSelectedItem() == null || !dataPicker.isDateSelected() && tipoTrofeoBox.getSelectedItem() == "INDIVIDUALE" ){return false;}
+        if(trofeoBox.getSelectedItem() == null || !dataPicker.isDateSelected() || squadraBox.getSelectedItem() == null && tipoTrofeoBox.getSelectedItem() == "SQUADRA" ){ return false;}
         return true;
     }
 
@@ -160,7 +169,7 @@ public class AggiungiTrofeo {
         if(trofeo.getTipo().equals("INDIVIDUALE")){
             controller.caricaVittoriaIndividuale(controller.getGiocatoreCercato().getId(), trofeo);
         } else{
-            controller.caricaVittoriaSquadra(trofeo);
+            controller.caricaVittoriaSquadra(controller.getGiocatoreCercato().getId(), trofeo);
         }
 
         controller.getGiocatoreCercato().getTrofei().add(trofeo);
@@ -170,12 +179,12 @@ public class AggiungiTrofeo {
 
     private void modificaTrofeo() {
         trofeo.setNome(trofeoBox.getSelectedItem().toString());
-        trofeo.setData(dataPicker.getSelectedDateAsString());
+        trofeo.setData(dataPicker.getSelectedDate());
         trofeo.setTipo(tipoTrofeoBox.getSelectedItem().toString());
         if(trofeo.getTipo().equals("SQUADRA")){
             trofeo.setSquadra(squadraBox.getSelectedItem().toString());
             controller.deleteVittoria(trofeo);
-            controller.caricaVittoriaSquadra(trofeo);
+            controller.caricaVittoriaSquadra(controller.getGiocatoreCercato().getId(), trofeo);
             return;
         }
         controller.deleteVittoria(trofeo);
@@ -186,7 +195,7 @@ public class AggiungiTrofeo {
 
         trofeoBox.addItem(trofeo.getNome());
         trofeoBox.setSelectedItem(trofeo.getNome());
-        dataPicker.setSelectedDate(LocalDate.parse(trofeo.getData()));
+        dataPicker.setSelectedDate(trofeo.getData());
         tipoTrofeoBox.setSelectedItem(trofeo.getTipo());
 
         if(trofeo.getTipo().equals("SQUADRA")){

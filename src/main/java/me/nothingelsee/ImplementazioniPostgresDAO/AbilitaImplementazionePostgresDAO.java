@@ -29,6 +29,7 @@ public class AbilitaImplementazionePostgresDAO implements AbilitaDAO {
     @Override
     public void getAbilities(Giocatore giocatore){
         PreparedStatement leggiAbilita;
+        ArrayList<Integer> abilita = new ArrayList<>();
 
         try{
             leggiAbilita = connection.prepareStatement(
@@ -37,11 +38,14 @@ public class AbilitaImplementazionePostgresDAO implements AbilitaDAO {
 
             ResultSet rs = leggiAbilita.executeQuery();
 
-            int i = 1;
-            while(rs.next()){
-                giocatore.addAbilita(rs.getInt(i));
+            int i = 2;
+            rs.next();
+            while (i<9) {
+                abilita.add(rs.getInt(i));
+                i++;
             }
 
+            giocatore.setAbilita(abilita);
             rs.close();
             connection.close();
         } catch (SQLException e) {
@@ -50,15 +54,16 @@ public class AbilitaImplementazionePostgresDAO implements AbilitaDAO {
     }
 
     @Override
-    public void insertAbilita(ArrayList<Integer> abilita){
+    public void insertAbilita(int idGiocatore, ArrayList<Integer> abilita){
         PreparedStatement caricaAbilita;
 
         try{
-            caricaAbilita = connection.prepareStatement("INSERT INTO 'Abilità'('velocità', 'tiro', 'passaggio', 'piededebole', 'resistenza', 'difesa', 'tirosupunizione')" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?);");
+            caricaAbilita = connection.prepareStatement("INSERT INTO Abilità (id_giocatore, velocità, tiro, passaggio, piededebole, resistenza, difesa, tirosupunizione)" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 
+            caricaAbilita.setInt(1, idGiocatore);
             for(int i=0; i< abilita.size(); i++){
-                caricaAbilita.setInt(i+1, abilita.get(i));
+                caricaAbilita.setInt(i+2, abilita.get(i));
             }
             caricaAbilita.executeUpdate();
             caricaAbilita.close();
@@ -73,9 +78,9 @@ public class AbilitaImplementazionePostgresDAO implements AbilitaDAO {
         PreparedStatement caricaAbilita;
 
         try{
-            caricaAbilita = connection.prepareStatement("UPDATE 'Abilità' " +
-                    "SET 'velocità' = " + abilita.get(0) +
-                            " tiro" + abilita.get(1) +
+            caricaAbilita = connection.prepareStatement("UPDATE Abilità " +
+                    "SET velocità = " + abilita.get(0) +
+                    " ,tiro = " + abilita.get(1) +
                     " ,passaggio = " + abilita.get(2) +
                     " ,piededebole = " + abilita.get(3) +
                     " ,resistenza = " + abilita.get(4) +

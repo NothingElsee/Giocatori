@@ -19,19 +19,59 @@ public class Statistiche {
         this.numParate = numParate;
     }
 
-    public int getGoal() {return goal;}
-    public int getAssist() {return assist;}
-    public int getCartelliniRossi() {return cartelliniRossi;}
-    public int getCartelliniGialli() {return cartelliniGialli;}
-    public int getRigoriSegnati() {return rigoriSegnati;}
-    public int getGoalSubiti() {return goalSubiti;}
-    public int getNumParate() {return numParate;}
+    public int getGoal() {
+        return goal;
+    }
 
-    public void setGoal(int goal) {this.goal = goal;}
-    public void setAssist(int assist) {this.assist = assist;}
-    public void setCartelliniRossi(int cartelliniRossi) {this.cartelliniRossi = cartelliniRossi;}
-    public void setCartelliniGialli(int cartelliniGialli) {this.cartelliniGialli = cartelliniGialli;}
-    public void setRigoriSegnati(int rigoriSegnati) {this.rigoriSegnati = rigoriSegnati;}
-    public void setGoalSubiti(int goalSubiti) {this.goalSubiti = goalSubiti;}
-    public void setNumParate(int numParate) {this.numParate = numParate;}
+    public int getAssist() {
+        return assist;
+    }
+
+    public int getCartelliniRossi() {
+        return cartelliniRossi;
+    }
+
+    public int getCartelliniGialli() {
+        return cartelliniGialli;
+    }
+
+    public int getRigoriSegnati() {
+        return rigoriSegnati;
+    }
+
+    public int getGoalSubiti() {
+        return goalSubiti;
+    }
+
+    public int getNumParate() {
+        return numParate;
+    }
+
+    public void setGoal(int goal) {
+        this.goal = goal;
+    }
+
+    public void setAssist(int assist) {
+        this.assist = assist;
+    }
+
+    public void setCartelliniRossi(int cartelliniRossi) {
+        this.cartelliniRossi = cartelliniRossi;
+    }
+
+    public void setCartelliniGialli(int cartelliniGialli) {
+        this.cartelliniGialli = cartelliniGialli;
+    }
+
+    public void setRigoriSegnati(int rigoriSegnati) {
+        this.rigoriSegnati = rigoriSegnati;
+    }
+
+    public void setGoalSubiti(int goalSubiti) {
+        this.goalSubiti = goalSubiti;
+    }
+
+    public void setNumParate(int numParate) {
+        this.numParate = numParate;
+    }
 }

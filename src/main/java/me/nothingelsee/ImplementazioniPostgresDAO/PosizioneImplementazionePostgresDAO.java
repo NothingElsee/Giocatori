@@ -24,28 +24,30 @@ public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
     }
 
     @Override
-    public void insertPosizione(int idGiocatore, ArrayList<RUOLO> listaRuoli) {
+    public boolean insertPosizione(int idGiocatore, ArrayList<RUOLO> listaRuoli) {
         PreparedStatement insertPosizione = null;
 
         try {
             for (int i = 0; i < listaRuoli.size(); i++) {
-                insertPosizione = connection.prepareStatement("insert into posizione values (?,?)");
+                insertPosizione = connection.prepareStatement("insert into posizione values (?, ?)");
                 insertPosizione.setInt(1, idGiocatore);
-                insertPosizione.setInt(2, listaRuoli.get(i).ordinal());
+                insertPosizione.setInt(2, (listaRuoli.get(i).ordinal()+1));
                 insertPosizione.executeUpdate();
                 insertPosizione.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void updatePosizione(int idGiocatore, ArrayList<RUOLO> listaRuoli) {
+    public boolean updatePosizione(int idGiocatore, ArrayList<RUOLO> listaRuoli) {
         PreparedStatement insertPosizione = null;
 
         try {
-            insertPosizione = connection.prepareStatement("DELETE FROM posizione WHERE idGiocatore=?");
+            insertPosizione = connection.prepareStatement("DELETE FROM posizione WHERE id_giocatore=?");
             insertPosizione.setInt(1, idGiocatore);
             insertPosizione.executeUpdate();
             insertPosizione.close();
@@ -53,7 +55,7 @@ public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
             insertPosizione = connection.prepareStatement("insert into posizione values (?,?)");
             for (int i = 0; i < listaRuoli.size(); i++) {
                 insertPosizione.setInt(1, idGiocatore);
-                insertPosizione.setInt(2, listaRuoli.get(i).ordinal());
+                insertPosizione.setInt(2, (listaRuoli.get(i).ordinal()+1));
                 insertPosizione.executeUpdate();
             }
 
@@ -62,7 +64,9 @@ public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
 

@@ -29,14 +29,14 @@ public class LeggiTrofei {
     private JMenuItem annullaMenuItem;
     private boolean canModify = false;
 
-    public LeggiTrofei(Controller controller, JFrame frameChiamante, boolean canModify){
+    public LeggiTrofei(Controller controller, JFrame frameChiamante, boolean canModify) {
 
         inizializzaComponenti(controller, frameChiamante, canModify);
         impostaEstetica();
         implementaListeners();
     }
 
-    private void inizializzaComponenti (Controller controller, JFrame frameChiamante, boolean canModify){
+    private void inizializzaComponenti(Controller controller, JFrame frameChiamante, boolean canModify) {
         this.controller = controller;
         this.canModify = canModify;
         this.frameChiamante = frameChiamante;
@@ -48,7 +48,7 @@ public class LeggiTrofei {
 
         trofeiPopupMenu = new JPopupMenu();
 
-        if(canModify){
+        if (canModify) {
             eliminaButton.setVisible(true);
             aggiungiButton.setVisible(true);
             modificaButton.setVisible(true);
@@ -66,8 +66,8 @@ public class LeggiTrofei {
         caricaDati();
 
         trofeiTable.setModel(new DefaultTableModel(
-                new Object [][]{},
-                new String [] {"Nome", "Data", "Tipo", "Squadra"}
+                new Object[][]{},
+                new String[]{"Nome", "Data", "Tipo", "Squadra"}
         ));
 
         frame.setVisible(true);
@@ -78,12 +78,14 @@ public class LeggiTrofei {
         mainPanel.setBackground(Estetica.mainBackgroundColor);
         trofeiScrollPane.setBackground(Estetica.filterBackgorundColor);
         Estetica.setButtonColor(aggiungiButton);
-        Estetica.setButtonColor(modificaButton);
-        eliminaButton.setBackground(Color.RED);
-        Estetica.setButtonColor(chiudiButton);
-        eliminaMenuItem.setBackground(Color.RED);
-        Estetica.setMenuItemColor(modificaMenuItem);
-        Estetica.setMenuItemColor(annullaMenuItem);
+        if (canModify) {
+            Estetica.setButtonColor(modificaButton);
+            eliminaButton.setBackground(Color.RED);
+            Estetica.setButtonColor(chiudiButton);
+            eliminaMenuItem.setBackground(Color.RED);
+            Estetica.setMenuItemColor(modificaMenuItem);
+            Estetica.setMenuItemColor(annullaMenuItem);
+        }
         Estetica.setHeaderTable(trofeiTable);
     }
 
@@ -95,57 +97,59 @@ public class LeggiTrofei {
             }
         });
 
-        aggiungiButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.setTrofeoCercato(null);
-                AggiungiTrofeo aggiungiTrofeo = new AggiungiTrofeo(frame, controller);
-                frame.setVisible(false);
-            }
-        });
+        if (canModify) {
+            aggiungiButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    controller.setTrofeoCercato(null);
+                    AggiungiTrofeo aggiungiTrofeo = new AggiungiTrofeo(frame, controller);
+                    frame.setVisible(false);
+                }
+            });
 
-        eliminaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                eliminaTrofeo();
-                caricaDati();
-            }
-        });
-        eliminaMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               eliminaTrofeo();
-               caricaDati();
-            }
-        });
+            eliminaButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    eliminaTrofeo();
+                    caricaDati();
+                }
+            });
+            eliminaMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    eliminaTrofeo();
+                    caricaDati();
+                }
+            });
 
-        modificaButton.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               modificaTrofeo();
-           }
-        });
-        modificaMenuItem.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               modificaTrofeo();
-           }
-        });
+            modificaButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    modificaTrofeo();
+                }
+            });
+            modificaMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    modificaTrofeo();
+                }
+            });
 
-        annullaMenuItem.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               trofeiPopupMenu.hide();
-           }
-        });
+            annullaMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    trofeiPopupMenu.hide();
+                }
+            });
+        }
 
         trofeiTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                if(e.getButton() == MouseEvent.BUTTON1){
-                    if(trofeiTable.getSelectedRow() >= 0 && trofeiTable.getSelectedRow() < trofeiTable.getRowCount()){
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (trofeiTable.getSelectedRow() >= 0 && trofeiTable.getSelectedRow() < trofeiTable.getRowCount()) {
                         eliminaButton.setVisible(true);
                         modificaButton.setVisible(true);
                     }
@@ -153,7 +157,7 @@ public class LeggiTrofei {
                     int row;
 
                     row = trofeiTable.rowAtPoint(e.getPoint());
-                    if(row >= 0 && row < trofeiTable.getRowCount()){
+                    if (row >= 0 && row < trofeiTable.getRowCount()) {
                         trofeiPopupMenu.show(trofeiTable, e.getX(), e.getY());
 
                         trofeiTable.setRowSelectionInterval(row, row);
@@ -176,22 +180,24 @@ public class LeggiTrofei {
     private void caricaDati() {
 
         DefaultTableModel model = (DefaultTableModel) trofeiTable.getModel();
+        controller.getTrofei(controller.getGiocatoreCercato());
         ArrayList<Trofeo> trofei = controller.getGiocatoreCercato().getTrofei();
         model.setRowCount(0);
-        for(Trofeo t : trofei){
+        for (Trofeo t : trofei) {
             model.addRow(new Object[]{t.getNome(), t.getData(), t.getTipo(), t.getSquadra()});
         }
     }
 
     private void eliminaTrofeo() {
-            int row = trofeiTable.getSelectedRow();
-            controller.deleteVittoria(controller.getGiocatoreCercato().getTrofei().get(row));
-            controller.getGiocatoreCercato().getTrofei().remove(row);
-            trofeiTable.clearSelection();
-            eliminaButton.setVisible(false);
-            modificaButton.setVisible(false);
-            caricaDati();
+        int row = trofeiTable.getSelectedRow();
+        controller.deleteVittoria(controller.getGiocatoreCercato().getTrofei().get(row));
+        controller.getGiocatoreCercato().getTrofei().remove(row);
+        trofeiTable.clearSelection();
+        eliminaButton.setVisible(false);
+        modificaButton.setVisible(false);
+        caricaDati();
     }
+
     private void modificaTrofeo() {
 
         int row = trofeiTable.getSelectedRow();

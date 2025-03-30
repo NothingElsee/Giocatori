@@ -7,10 +7,7 @@ import me.nothingelsee.Model.Militanza;
 import me.nothingelsee.Model.Partita;
 
 import javax.swing.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class PartitaImplementazionePostgresDAO implements PartitaDAO {
 
@@ -35,7 +32,7 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
         try {
 
             leggiPartite = connection.prepareStatement(
-                    "SELECT Ma.id_partita, MA.datapartita, MA.goalcasa, Ma.goaltrasferta, MA.nomecomp, MA.tipocomp, P.squadracasa, P.squadratrasferta " +
+                    "SELECT MA.id_partita, MA.datapartita, MA.goalcasa, MA.goaltrasferta, MA.nomecomp, MA.tipocomp, P.squadracasa, P.squadratrasferta " +
                             "FROM Militanza AS M JOIN Match AS MA ON M.id_militanza = MA.id_militanza " +
                             "JOIN Partecipazione AS P ON MA.id_partita = P.id_partita " +
                             "WHERE M.id_militanza = " + militanza.getId()
@@ -65,14 +62,17 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
 
 
             insertPartite.setInt(1, idMilitanza);
-            insertPartite.setString(2, p.getData());
+            insertPartite.setDate(2, Date.valueOf(p.getData()));
             insertPartite.setInt(3, p.getGoalCasa());
             insertPartite.setInt(4, p.getGoalTrasferta());
             insertPartite.executeUpdate();
             insertPartite.close();
             insertPartite = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('match','id_partita'))");
             ResultSet rs = insertPartite.executeQuery();
+            rs.next();
+            System.out.println("currval: "+rs.getString(1));
             p.setId(rs.getInt(1));
+
             rs.close();
             insertPartite.close();
             connection.close();
@@ -88,8 +88,8 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
 
         try {
 
-            insertPartite = connection.prepareStatement("update match SET datapartita = ?, goalcasa = ?, goaltrasferta = ?)WHERE id_partita = ?");
-            insertPartite.setString(1, p.getData());
+            insertPartite = connection.prepareStatement("update match SET datapartita = ?, goalcasa = ?, goaltrasferta = ? WHERE id_partita = ?");
+            insertPartite.setDate(1, Date.valueOf(p.getData()));
             insertPartite.setInt(2, p.getGoalCasa());
             insertPartite.setInt(3, p.getGoalTrasferta());
             insertPartite.setInt(4, p.getId());

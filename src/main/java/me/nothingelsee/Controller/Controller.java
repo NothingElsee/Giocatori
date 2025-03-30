@@ -5,7 +5,6 @@ import me.nothingelsee.ImplementazioniPostgresDAO.*;
 import me.nothingelsee.InterfacceDAO.*;
 import me.nothingelsee.Model.*;
 
-import javax.naming.PartialResultException;
 import java.util.ArrayList;
 
 public class Controller {
@@ -125,18 +124,18 @@ public class Controller {
         psDAO.updatePosizione(id, ruoli);
     }
 
-    public void caricaSkill(ArrayList<Integer> skill) {
+    public void caricaSkill(int idGiocatore, ArrayList<Integer> skill) {
         SkillDAO sDAO = new SkillImplementazionePostgresDAO();
-        sDAO.insertSkill(skill);
+        sDAO.insertSkill(idGiocatore, skill);
     }
     public void updateSkill(int id, ArrayList<Integer> skill) {
         SkillDAO sDAO = new SkillImplementazionePostgresDAO();
         sDAO.updateSkill(id, skill);
     }
 
-    public void caricaAbilita(ArrayList<Integer> abilita) {
+    public void caricaAbilita(int idGiocatore, ArrayList<Integer> abilita) {
         AbilitaDAO aDAO = new AbilitaImplementazionePostgresDAO();
-        aDAO.insertAbilita(abilita);
+        aDAO.insertAbilita(idGiocatore, abilita);
     }
     public void updateAbilita(int id, ArrayList<Integer> skill) {
         AbilitaDAO aDAO = new AbilitaImplementazionePostgresDAO();
@@ -157,13 +156,13 @@ public class Controller {
         sDAO.insertSquadra(squadra);
     }
 
-    public void caricaMilitanza(int id, Militanza militanza) {
+    public boolean caricaMilitanza(int id, Militanza militanza) {
         MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
-        mDAO.insertMilitanza( id, militanza);
+        return mDAO.insertMilitanza( id, militanza);
     }
-    public void upgrateMilitanza(Militanza militanza) {
+    public boolean upgrateMilitanza(Militanza militanza) {
         MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
-        mDAO.updateMilitanza(militanza);
+        return mDAO.updateMilitanza(militanza);
     }
     public void deleteMilitanza(Militanza militanza) {
         MilitanzaDAO mDAO = new MilitanzaImplementazionePostgresDAO();
@@ -181,10 +180,10 @@ public class Controller {
         VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
         vitDAO.insertVittoriaIndividuale(id, trofeo);
     }
-    public void caricaVittoriaSquadra(Trofeo trofeo) {
+    public void caricaVittoriaSquadra(int idGiocatore, Trofeo trofeo) {
         caricaTrofeo(trofeo);
         VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
-        vitDAO.insertVittoriaSquadra(trofeo);
+        vitDAO.insertVittoriaSquadra(idGiocatore, trofeo);
     }
     public void deleteVittoria(Trofeo trofeo) {
         VittoriaDAO vitDAO = new VittoriaImplementazionePostgresDAO();
@@ -209,22 +208,26 @@ public class Controller {
         pDAO.insertPartecipazione(casa, trasferta);
     }
 
-    public void caricaStatistica(Statistiche statistiche) {
+    public void caricaStatistica(int idPartita, Statistiche statistiche) {
         StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
-        sDAO.insertStatistiche(statistiche);
+        sDAO.insertStatistiche(idPartita, statistiche);
     }
     public void updateStatistica(int idPartita, Statistiche statistiche) {
         StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
         sDAO.updateStatistiche(idPartita, statistiche);
     }
 
-    public void caricaStatisticaPor(Statistiche statistiche) {
+    public void caricaStatisticaPor(int idPartita, Statistiche statistiche) {
         StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
-        sDAO.insertStatistichePor(statistiche);
+        sDAO.insertStatistichePor(idPartita, statistiche);
     }
     public void updateStatisticaPor(int idPartita, Statistiche statistiche) {
         StatisticaDAO sDAO = new StatisticaImplementazionePostgresDAO();
         sDAO.updateStatistichePor(idPartita, statistiche);
     }
 
+    public ArrayList<String> getSquadreGiocatore(int id) {
+        SquadraDAO sDAO = new SquadraImplementazionePostgresDAO();
+        return sDAO.getSquadreGiocatore(id);
+    }
 }

@@ -54,16 +54,16 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
         PreparedStatement esisteNazionalita = null;
 
         try{
-            esisteNazionalita= connection.prepareStatement("Select * from Nazionalita where nome = ?");
+            esisteNazionalita= connection.prepareStatement("Select * from Nazionalità where nome = ?");
             esisteNazionalita.setString(1, nome);
             ResultSet rs = esisteNazionalita.executeQuery();
-            if(rs.getRow() == 0){
-                caricaNazionalita = connection.prepareStatement("INSERT INTO 'Nazionalità'(nome)" + " VALUES (?)");
+            if(!rs.next()){
+                caricaNazionalita = connection.prepareStatement("INSERT INTO Nazionalità(nome)" + " VALUES (?)");
                 caricaNazionalita.setString(1, nome);
                 caricaNazionalita.executeUpdate();
                 caricaNazionalita.close();
             }
-            caricaAppartenenza = connection.prepareStatement("INSERT INTO appartiene (id_giocatore, 'nomenazionalità') VALUES (?,?)");
+            caricaAppartenenza = connection.prepareStatement("INSERT INTO appartiene (id_giocatore, nomenazionalità) VALUES (?,?)");
             caricaAppartenenza.setInt(1, idGiocatore);
             caricaAppartenenza.setString(2, nome);
             caricaAppartenenza.executeUpdate();
@@ -84,16 +84,17 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
         PreparedStatement esisteNazionalita = null;
 
         try{
-            esisteNazionalita= connection.prepareStatement("Select * from Nazionalita where nome = ?");
+            esisteNazionalita= connection.prepareStatement("Select * from Nazionalità where nome = ?");
             esisteNazionalita.setString(1, nome);
             ResultSet rs = esisteNazionalita.executeQuery();
-            if(rs.getRow() == 0){
-                caricaNazionalita = connection.prepareStatement("INSERT INTO 'Nazionalità'(nome)" + " VALUES (?)");
+
+            if(!rs.next()){
+                caricaNazionalita = connection.prepareStatement("INSERT INTO Nazionalità(nome)" + " VALUES (?)");
                 caricaNazionalita.setString(1, nome);
                 caricaNazionalita.executeUpdate();
                 caricaNazionalita.close();
             }
-            caricaAppartenenza = connection.prepareStatement("UPDATE appartiene SET id_giocatore = ?, 'nomenazionalità' = ? WHERE id_giocatore = ?");
+            caricaAppartenenza = connection.prepareStatement("UPDATE appartiene SET id_giocatore = (?), nomenazionalità = (?) WHERE id_giocatore = (?)");
             caricaAppartenenza.setInt(1, idGiocatore);
             caricaAppartenenza.setString(2, nome);
             caricaAppartenenza.setInt(3, idGiocatore);

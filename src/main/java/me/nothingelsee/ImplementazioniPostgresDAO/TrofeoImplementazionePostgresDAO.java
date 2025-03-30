@@ -8,10 +8,7 @@ import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Trofeo;
 
 import javax.swing.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
@@ -38,7 +35,7 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
         try {
 
             leggiTrofeiIndividuali = connection.prepareStatement("select T.id_trofeo, T.nome, V.data, T.tipo from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
-                    "JOIN GIOCATORE AS G ON G.id_giocatore = V.id_giocatore\n" +
+                    "RIGHT JOIN GIOCATORE AS G ON G.id_giocatore = V.id_giocatore " +
                     "WHERE G.id_giocatore =  " + giocatore.getId());
 
             ResultSet rs = leggiTrofeiIndividuali.executeQuery();
@@ -90,13 +87,13 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
         PreparedStatement idTrofeo = null;
 
         try {
-            insertTrofeo = connection.prepareStatement("insert into trofeo (nome, data) values (?, ?)");
+            insertTrofeo = connection.prepareStatement("insert into trofeo (nome, tipo) values (?, \'" + trofeo.getTipo() + "\')");
             insertTrofeo.setString(1, trofeo.getNome());
-            insertTrofeo.setString(2, trofeo.getData());
             insertTrofeo.executeUpdate();
 
             idTrofeo = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('trofeo','id_trofeo'))");
             ResultSet rs = idTrofeo.executeQuery();
+            rs.next();
             trofeo.setId(rs.getInt(1));
 
             insertTrofeo.close();

@@ -1,6 +1,7 @@
 package me.nothingelsee.ImplementazioniPostgresDAO;
 
 import me.nothingelsee.Database.ConnessioneDatabase;
+import me.nothingelsee.ENUM.RUOLO;
 import me.nothingelsee.InterfacceDAO.RuoloDAO;
 import me.nothingelsee.Model.Giocatore;
 
@@ -8,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class RuoloImplementazionePostgresDAO implements RuoloDAO {
 
@@ -27,6 +29,7 @@ public class RuoloImplementazionePostgresDAO implements RuoloDAO {
     public void getRuoli(Giocatore giocatore) {
 
         PreparedStatement leggiRuoli;
+        ArrayList<RUOLO> ruoli = new ArrayList<>();
 
         try{
             leggiRuoli = connection.prepareStatement(
@@ -34,10 +37,11 @@ public class RuoloImplementazionePostgresDAO implements RuoloDAO {
                             "WHERE G.id_giocatore = " + giocatore.getId()
             );
             ResultSet rs = leggiRuoli.executeQuery();
-            giocatore.clearRuoli();
+
             while(rs.next()){
-                giocatore.addRuolo(rs.getString(1));
+                ruoli.add(RUOLO.valueOf(rs.getString(1)));
             }
+            giocatore.setRuoli(ruoli);
             rs.close();
             connection.close();
         } catch(SQLException e ){

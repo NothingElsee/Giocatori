@@ -246,6 +246,7 @@ public class RicercaGiocatori {
                         controller.setGiocatoreCercato(controller.getGiocatori().get(row));
                         visionaButton.setEnabled(true);
                         if(isAdmin) modificaButton.setEnabled(true);
+                        if(isAdmin) aggiungiButton.setEnabled(false);
 
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
 
@@ -259,6 +260,7 @@ public class RicercaGiocatori {
                             controller.setGiocatoreCercato(controller.getGiocatori().get(row));
                             visionaButton.setEnabled(true);
                             if(isAdmin) modificaButton.setEnabled(true);
+                            if(isAdmin) aggiungiButton.setEnabled(false);
                         } else {
                             giocatoriTable.clearSelection();
                         }
@@ -273,6 +275,8 @@ public class RicercaGiocatori {
             public void actionPerformed(ActionEvent e) {
                 visualizzaGiocatore();
                 visionaButton.setEnabled(false);
+                modificaButton.setEnabled(false);
+                giocatoriTable.clearSelection();
             }
         });
 
@@ -287,7 +291,10 @@ public class RicercaGiocatori {
         annullaPopup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                popup.hide();
+                giocatoriTable.clearSelection();
+                modificaButton.setEnabled(false);
+                aggiungiButton.setEnabled(true);
+                visionaButton.setEnabled(false);
             }
         });
 
@@ -318,6 +325,9 @@ public class RicercaGiocatori {
                     gioAdmin.frame.setVisible(true);
                     frame.setVisible(false);
                     modificaButton.setEnabled(false);
+                    visionaButton.setEnabled(false);
+                    aggiungiButton.setEnabled(true);
+                    giocatoriTable.clearSelection();
                 }
             });
 
@@ -337,6 +347,9 @@ public class RicercaGiocatori {
                     LeggiGiocatoreAdmin gioAdmin = new LeggiGiocatoreAdmin(controller, frame);
                     frame.setVisible(false);
                     modificaButton.setEnabled(false);
+                    visionaButton.setEnabled(false);
+                    aggiungiButton.setEnabled(true);
+                    giocatoriTable.clearSelection();
                 }
             });
         }

@@ -25,14 +25,38 @@ public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
     @Override
     public void insertVittoriaIndividuale(int idGiocatore, Trofeo trofeo) {
         PreparedStatement insertVittoria = null;
+        PreparedStatement esisteTrofeo = null;
+
 
         try {
+            esisteTrofeo = connection.prepareStatement("SELECT id_trofeo FROM trofeo WHERE nome=?");
+            esisteTrofeo.setString(1, trofeo.getNome());
+            ResultSet rs = esisteTrofeo.executeQuery();
+            if (!rs.next()) {
+                PreparedStatement insertTrofeo = null;
+                PreparedStatement idTrofeo = null;
+
+                insertTrofeo = connection.prepareStatement("insert into trofeo (nome, tipo) values (?, \'" + trofeo.getTipo() + "\')");
+                insertTrofeo.setString(1, trofeo.getNome());
+                insertTrofeo.executeUpdate();
+
+                idTrofeo = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('trofeo','id_trofeo'))");
+                ResultSet rs2 = idTrofeo.executeQuery();
+                rs2.next();
+                trofeo.setId(rs2.getInt(1));
+
+                rs2.close();
+                insertTrofeo.close();
+                idTrofeo.close();
+            }else trofeo.setId(rs.getInt(1));
+            esisteTrofeo.close();
+
             insertVittoria = connection.prepareStatement("insert into vittoria(id_trofeo, id_giocatore, nomesquadra, data) values(?,?,?,?)");
 
             insertVittoria.setInt(1, trofeo.getId());
             insertVittoria.setInt(2, idGiocatore);
             insertVittoria.setNull(3, Types.VARCHAR);
-            insertVittoria.setString(4, trofeo.getData());
+            insertVittoria.setDate(4, Date.valueOf(trofeo.getData()));
             insertVittoria.executeUpdate();
             insertVittoria.close();
             connection.close();
@@ -44,15 +68,38 @@ public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
     }
 
     @Override
-    public void insertVittoriaSquadra(Trofeo trofeo) {
+    public void insertVittoriaSquadra(int id_giocatore, Trofeo trofeo) {
         PreparedStatement insertVittoria = null;
+        PreparedStatement esisteTrofeo = null;
 
         try {
+            esisteTrofeo = connection.prepareStatement("SELECT id_trofeo FROM trofeo WHERE nome=?");
+            esisteTrofeo.setString(1, trofeo.getNome());
+            ResultSet rs = esisteTrofeo.executeQuery();
+            if (!rs.next()) {
+                PreparedStatement insertTrofeo = null;
+                PreparedStatement idTrofeo = null;
+
+                insertTrofeo = connection.prepareStatement("insert into trofeo (nome, tipo) values (?, \'" + trofeo.getTipo() + "\')");
+                insertTrofeo.setString(1, trofeo.getNome());
+                insertTrofeo.executeUpdate();
+
+                idTrofeo = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('trofeo','id_trofeo'))");
+                ResultSet rs2 = idTrofeo.executeQuery();
+                rs2.next();
+                trofeo.setId(rs2.getInt(1));
+
+                rs2.close();
+                insertTrofeo.close();
+                idTrofeo.close();
+            }else trofeo.setId(rs.getInt(1));
+            esisteTrofeo.close();
+
             insertVittoria = connection.prepareStatement("insert into vittoria(id_trofeo, id_giocatore, nomesquadra, data) values(?,?,?,?)");
             insertVittoria.setInt(1, trofeo.getId());
-            insertVittoria.setNull(2, Types.INTEGER);
+            insertVittoria.setInt(2, id_giocatore);
             insertVittoria.setString(3, trofeo.getSquadra());
-            insertVittoria.setString(4, trofeo.getData());
+            insertVittoria.setDate(4, Date.valueOf(trofeo.getData()));
 
             insertVittoria.executeUpdate();
             insertVittoria.close();
@@ -70,7 +117,7 @@ public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
 
             deleteVittoria = connection.prepareStatement("delete from vittoria where id_trofeo = ?, data = ?");
             deleteVittoria.setInt(1, trofeo.getId());
-            deleteVittoria.setString(2, trofeo.getData());
+            deleteVittoria.setDate(2, Date.valueOf(trofeo.getData()));
             deleteVittoria.executeUpdate();
             deleteVittoria.close();
             connection.close();

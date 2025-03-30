@@ -22,7 +22,7 @@
             <properties>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
-              <text value="Annulla"/>
+              <text value="Chiudi"/>
               <verticalAlignment value="0"/>
             </properties>
           </component>
@@ -141,7 +141,7 @@
               <component id="f344b" class="javax.swing.JTextField" binding="taccoText">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -153,7 +153,7 @@
               <component id="c6743" class="javax.swing.JTextField" binding="rovesciataText">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -165,7 +165,7 @@
               <component id="1a8fe" class="javax.swing.JTextField" binding="testaText">
                 <constraints>
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -177,7 +177,7 @@
               <component id="78c5a" class="javax.swing.JTextField" binding="dribblingText">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -189,7 +189,7 @@
               <component id="38d99" class="javax.swing.JTextField" binding="sforbiciataText">
                 <constraints>
                   <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -201,7 +201,7 @@
               <component id="f3786" class="javax.swing.JTextField" binding="controlloText">
                 <constraints>
                   <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -212,7 +212,7 @@
               </component>
             </children>
           </grid>
-          <grid id="2e786" binding="squadraPanel" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="2e786" binding="squadraPanel" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="1" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -225,7 +225,7 @@
             <children>
               <scrollpane id="2c68" binding="squadreScrollPanel">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none">
@@ -279,6 +279,16 @@
                   <foreground color="-1"/>
                   <text value="Elimina"/>
                   <toolTipText value="Clicca per eliminare la militanza"/>
+                </properties>
+              </component>
+              <component id="f9a93" class="javax.swing.JButton" binding="reloadTable">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <hideActionText value="false"/>
+                  <icon value="Icon/ReloadTable.png"/>
+                  <text value=""/>
                 </properties>
               </component>
             </children>
@@ -370,7 +380,7 @@
               <component id="19814" class="javax.swing.JTextField" binding="tiroText">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -382,7 +392,7 @@
               <component id="14e39" class="javax.swing.JTextField" binding="passaggioText">
                 <constraints>
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -394,7 +404,7 @@
               <component id="c1e0b" class="javax.swing.JTextField" binding="piedeDeboleText">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -406,7 +416,7 @@
               <component id="bce4c" class="javax.swing.JTextField" binding="restistenzaText">
                 <constraints>
                   <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -418,7 +428,7 @@
               <component id="d3e27" class="javax.swing.JTextField" binding="difesaText">
                 <constraints>
                   <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -430,7 +440,7 @@
               <component id="259c3" class="javax.swing.JTextField" binding="punizioneText">
                 <constraints>
                   <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -442,7 +452,7 @@
               <component id="318c2" class="javax.swing.JTextField" binding="velocitaText">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="25" height="-1"/>
+                    <preferred-size width="50" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -520,7 +530,9 @@
               </component>
               <component id="a2ae0" class="javax.swing.JTextField" binding="nomeText">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="7" anchor="4" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="100" height="-1"/>
+                  </grid>
                 </constraints>
                 <properties>
                   <enabled value="true"/>
@@ -531,7 +543,9 @@
               </component>
               <component id="f72" class="javax.swing.JTextField" binding="cognomeText">
                 <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="100" height="-1"/>
+                  </grid>
                 </constraints>
                 <properties>
                   <font size="16"/>
@@ -541,7 +555,9 @@
               </component>
               <component id="ccd35" class="javax.swing.JFormattedTextField" binding="dataNascitaText">
                 <constraints>
-                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="4" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="100" height="-1"/>
+                  </grid>
                 </constraints>
                 <properties>
                   <font size="16"/>
@@ -551,7 +567,9 @@
               </component>
               <component id="4b654" class="javax.swing.JFormattedTextField" binding="dataRitiroText">
                 <constraints>
-                  <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="7" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="7" anchor="4" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="100" height="-1"/>
+                  </grid>
                 </constraints>
                 <properties>
                   <font size="16"/>
@@ -566,6 +584,7 @@
                   </grid>
                 </constraints>
                 <properties>
+                  <editable value="false"/>
                   <font size="16"/>
                   <horizontalAlignment value="0"/>
                   <text value="0"/>
@@ -615,6 +634,7 @@
                 </constraints>
                 <properties>
                   <editable value="false"/>
+                  <model/>
                 </properties>
               </component>
               <scrollpane id="f139">
@@ -630,12 +650,21 @@
                       <layoutOrientation value="2"/>
                       <model/>
                       <selectionMode value="2"/>
+                      <toolTipText value="Per selezionare più ruoli tenere premuto il tasto Control"/>
                       <valueIsAdjusting value="false"/>
                       <visibleRowCount value="3"/>
                     </properties>
+                    <clientProperties>
+                      <List.isFileList class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
                   </component>
                 </children>
               </scrollpane>
+              <hspacer id="b5a8">
+                <constraints>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
             </children>
           </grid>
         </children>

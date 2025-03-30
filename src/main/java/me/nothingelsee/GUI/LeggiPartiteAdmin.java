@@ -2,6 +2,7 @@ package me.nothingelsee.GUI;
 
 import me.nothingelsee.Aesthetics.Estetica;
 import me.nothingelsee.Controller.Controller;
+import me.nothingelsee.ENUM.RUOLO;
 import me.nothingelsee.Model.Militanza;
 import me.nothingelsee.Model.Partita;
 import me.nothingelsee.Model.Squadra;
@@ -67,21 +68,22 @@ public class LeggiPartiteAdmin {
     private JMenuItem annullaItem;
     private Militanza militanza = null;
 
-    public LeggiPartiteAdmin(JFrame frame, Controller controller) {
+    public LeggiPartiteAdmin(JFrame frameChiamante, Controller controller) {
 
-        inizializzaComponenti(frame, controller);
+        inizializzaComponenti(frameChiamante, controller);
         impostaEstetica();
         implementaListeners();
     }
 
-    private void inizializzaComponenti(JFrame frame, Controller controller) {
+    private void inizializzaComponenti(JFrame frameChiamante, Controller controller) {
 
         this.controller = controller;
         militanza = controller.getMilitanzaCercata();
-        frameChiamante = frame;
+        this.frameChiamante = frameChiamante;
         frame = new JFrame("Modifica Militanza");
         frame.setContentPane(mainPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.pack();
         frame.setLocationRelativeTo(null);
 
         popupMenu = new JPopupMenu("Partite");
@@ -106,7 +108,6 @@ public class LeggiPartiteAdmin {
         eliminaButton.setEnabled(false);
         selezionaButton.setEnabled(false);
         aggiungiPartitaButton.setEnabled(true);
-        infoPartita.setVisible(false);
 
         dataInizioPicker = new DatePicker();
         dataFinePicker = new DatePicker();
@@ -126,10 +127,15 @@ public class LeggiPartiteAdmin {
                         "Avversario", "Data"
                 }));
 
-        if(militanza != null) {
+        if (militanza != null) {
             nomeSquadraText.setSelectedItem(militanza.getSquadra().getNome());
-            dataInizioPicker.setSelectedDate(LocalDate.parse(militanza.getDataInizio()));
-            dataFinePicker.setSelectedDate(LocalDate.parse(militanza.getDataFine()));
+            dataInizioPicker.setSelectedDate(militanza.getDataInizio());
+            dataFinePicker.setSelectedDate(militanza.getDataFine());
+            militanza.getPartite().clear();
+            controller.getPartite(militanza);
+            for(Partita p : militanza.getPartite()) {
+                controller.getStat(p);
+            }
             aggiornaTable();
         }
 
@@ -146,7 +152,7 @@ public class LeggiPartiteAdmin {
         Estetica.setButtonColor(caricaMilitanza);
         Estetica.setButtonColor(aggiungiPartitaButton);
         Estetica.setButtonColor(modificaButton);
-        Estetica.setButtonColor(resetButton);
+        Estetica.setButtonColor(resetButton);;
         Estetica.setMenuItemColor(modificaPopup);
         Estetica.setMenuItemColor(selezionaItem);
         Estetica.setMenuItemColor(annullaItem);
@@ -158,12 +164,22 @@ public class LeggiPartiteAdmin {
         caricaMilitanza.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if (militanza == null) creaMilitanza();
-
-                frame.dispose();
-                frameChiamante.setVisible(true);
+                    if (creaMilitanza()) {
+                        frame.dispose();
+                        frameChiamante.setVisible(true);
+                    }
             }
+        });
+
+        eliminaButton1.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               controller.deleteMilitanza(militanza);
+               controller.getGiocatoreCercato().getMilitanze().remove(militanza);
+               controller.setMilitanzaCercata(null);
+               frame.dispose();
+               frameChiamante.setVisible(true);
+           }
         });
 
         aggiungiPartitaButton.addActionListener(new ActionListener() {
@@ -171,7 +187,7 @@ public class LeggiPartiteAdmin {
             public void actionPerformed(ActionEvent e) {
                 if (checkAllCampi()) {
 
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
                     if (militanza == null) creaMilitanza();
 
@@ -187,16 +203,25 @@ public class LeggiPartiteAdmin {
                         squadraTrasferta = nomeSquadraText.getSelectedItem().toString();
                     }
 
-                    Partita p = new Partita(squadraCasa, squadraTrasferta, Integer.getInteger(goalCasaText.getText()), Integer.getInteger(goalTrafertText.getText()),
+                    Partita p = new Partita(squadraCasa, squadraTrasferta, Integer.parseInt(goalCasaText.getText()), Integer.parseInt(goalTrafertText.getText()),
                             dtf.format(dataPartitaPicker.getSelectedDate()), stat);
 
                     controller.caricaPartita(militanza.getId(), p);
+                    controller.caricaPartecipazione(squadraCasa, squadraTrasferta);
+                    controller.caricaStatistica(p.getId(), p.getStat());
                     militanza.addPartita(p);
                     aggiornaTable();
                     controller.setMilitanzaCercata(militanza);
 
+                    if(controller.getGiocatoreCercato().getRuoli().contains(RUOLO.GK)){
+                        controller.caricaStatisticaPor(p.getId(), stat);
+                    } else JOptionPane.showMessageDialog(frame,"Il giocatore non è un potiere!", "Errore", JOptionPane.ERROR_MESSAGE );
+
+                    partiteTable.clearSelection();
                     resetInfoPartita();
-                    aggiungiPartitaButton.setEnabled(false);
+                    aggiungiPartitaButton.setEnabled(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Errore dati paritita errati o mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -206,7 +231,6 @@ public class LeggiPartiteAdmin {
             public void actionPerformed(ActionEvent e) {
                 int index = partiteTable.getSelectedRow();
                 Partita p = militanza.getPartite().get(index);
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
                 if (checkAllCampi()) {
                     Statistiche stat = getStatistiche();
@@ -223,12 +247,17 @@ public class LeggiPartiteAdmin {
 
                     p.setSquadraCasa(squadraCasa);
                     p.setSquadraTrasferta(squadraTrasferta);
-                    p.setGoalCasa(Integer.getInteger(goalCasaText.getText()));
-                    p.setGoalTrasferta(Integer.getInteger(goalTrafertText.getText()));
-                    p.setData(dtf.format(dataPartitaPicker.getSelectedDate()));
+                    p.setGoalCasa(Integer.parseInt(goalCasaText.getText()));
+                    p.setGoalTrasferta(Integer.parseInt(goalTrafertText.getText()));
+                    p.setData(dataPartitaPicker.getSelectedDate());
                     p.setStat(stat);
 
                     controller.updatePartita(p);
+                    controller.updateStatistica(p.getId(), p.getStat());
+
+                    if(controller.getGiocatoreCercato().getRuoli().contains(RUOLO.GK)){
+                        controller.updateStatisticaPor(p.getId(), stat);
+                    } else JOptionPane.showMessageDialog(frame,"Il giocatore non è un potiere!", "Errore", JOptionPane.ERROR_MESSAGE );
 
                     modificaButton.setEnabled(false);
                     eliminaButton.setEnabled(false);
@@ -245,225 +274,232 @@ public class LeggiPartiteAdmin {
             public void actionPerformed(ActionEvent e) {
                 eliminaPartita();
             }
-    });
+        });
         eliminaPopup.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               eliminaPartita();
-           }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eliminaPartita();
+            }
         });
 
         dataInizioPicker.setDateSelectionAble(new
 
-    DateSelectionAble() {
-        @Override
-        public boolean isDateSelectedAble (LocalDate localDate){
-            return !localDate.isAfter(LocalDate.now());
-        }
-    });
+                                                      DateSelectionAble() {
+                                                          @Override
+                                                          public boolean isDateSelectedAble(LocalDate localDate) {
+                                                              return !localDate.isAfter(LocalDate.now());
+                                                          }
+                                                      });
         dataFinePicker.setDateSelectionAble(new
 
-    DateSelectionAble() {
-        @Override
-        public boolean isDateSelectedAble (LocalDate localDate){
-            return !localDate.isAfter(LocalDate.now());
-        }
-    });
+                                                    DateSelectionAble() {
+                                                        @Override
+                                                        public boolean isDateSelectedAble(LocalDate localDate) {
+                                                            return !localDate.isAfter(LocalDate.now());
+                                                        }
+                                                    });
         dataPartitaPicker.setDateSelectionAble(new
 
-    DateSelectionAble() {
-        @Override
-        public boolean isDateSelectedAble (LocalDate localDate){
-            return !localDate.isAfter(LocalDate.now());
-        }
-    });
+                                                       DateSelectionAble() {
+                                                           @Override
+                                                           public boolean isDateSelectedAble(LocalDate localDate) {
+                                                               return !localDate.isAfter(LocalDate.now());
+                                                           }
+                                                       });
 
         partiteTable.addMouseListener(new
 
-    MouseAdapter() {
+                                              MouseAdapter() {
 
-        @Override
-        public void mouseClicked (MouseEvent e){
-            if (e.getButton() == MouseEvent.BUTTON1) {
+                                                  @Override
+                                                  public void mouseClicked(MouseEvent e) {
+                                                      if (e.getButton() == MouseEvent.BUTTON1) {
 
-                if (partiteTable.getSelectedRow() >= 0 && partiteTable.getSelectedRow() < partiteTable.getRowCount()) {
+                                                          if (partiteTable.getSelectedRow() >= 0 && partiteTable.getSelectedRow() < partiteTable.getRowCount()) {
 
-                    aggiungiPartitaButton.setEnabled(false);
-                    selezionaButton.setEnabled(true);
-                    eliminaButton.setEnabled(true);
-                    modificaButton.setEnabled(true);
-                }
+                                                              aggiungiPartitaButton.setEnabled(false);
+                                                              selezionaButton.setEnabled(true);
+                                                              eliminaButton.setEnabled(true);
+                                                              modificaButton.setEnabled(true);
+                                                          }
 
-            } else if (e.getButton() == MouseEvent.BUTTON3) {
+                                                      } else if (e.getButton() == MouseEvent.BUTTON3) {
 
-                int row = partiteTable.rowAtPoint(e.getPoint());
-                if (row >= 0 && row < partiteTable.getRowCount()) {
+                                                          int row = partiteTable.rowAtPoint(e.getPoint());
+                                                          if (row >= 0 && row < partiteTable.getRowCount()) {
 
-                    popupMenu.show(partiteTable, e.getX(), e.getY());
+                                                              popupMenu.show(partiteTable, e.getX(), e.getY());
 
-                    partiteTable.setRowSelectionInterval(row, row);
-                    aggiungiPartitaButton.setEnabled(false);
-                    selezionaButton.setEnabled(true);
-                    eliminaButton.setEnabled(true);
-                    modificaButton.setEnabled(true);
-                }
-            }
-        }
-    });
+                                                              partiteTable.setRowSelectionInterval(row, row);
+                                                              aggiungiPartitaButton.setEnabled(false);
+                                                              selezionaButton.setEnabled(true);
+                                                              eliminaButton.setEnabled(true);
+                                                              modificaButton.setEnabled(true);
+                                                          }
+                                                      }
+                                                  }
+                                              });
 
         resetButton.addActionListener(new
 
-    ActionListener() {
-        @Override
-        public void actionPerformed (ActionEvent e){
-            resetInfoPartita();
-        }
-    });
+                                              ActionListener() {
+                                                  @Override
+                                                  public void actionPerformed(ActionEvent e) {
+                                                      resetInfoPartita();
+                                                  }
+                                              });
 
         selezionaItem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed (ActionEvent e){
-            caricaInfoPartita();
-        }
-    });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                caricaInfoPartita();
+            }
+        });
 
         annullaItem.addActionListener(new
 
-    ActionListener() {
+                                              ActionListener() {
 
-        @Override
-        public void actionPerformed (ActionEvent e){
-            popupMenu.hide();
-        }
-    });
+                                                  @Override
+                                                  public void actionPerformed(ActionEvent e) {
+                                                      partiteTable.clearSelection();
+                                                  }
+                                              });
 
         selezionaButton.addActionListener(new
 
-    ActionListener() {
-        @Override
-        public void actionPerformed (ActionEvent e){
+                                                  ActionListener() {
+                                                      @Override
+                                                      public void actionPerformed(ActionEvent e) {
 
-            caricaInfoPartita();
-        }
-    });
+                                                          caricaInfoPartita();
+                                                      }
+                                                  });
 
         chiudiButton.addActionListener(new
 
-    ActionListener() {
-        @Override
-        public void actionPerformed (ActionEvent e){
-            frame.dispose();
-            frameChiamante.setVisible(true);
+                                               ActionListener() {
+                                                   @Override
+                                                   public void actionPerformed(ActionEvent e) {
+                                                       frame.dispose();
+                                                       frameChiamante.setVisible(true);
+                                                   }
+                                               });
+    }
+
+    private void resetInfoPartita() {
+
+        goalCasaText.setText("0");
+        goalTrafertText.setText("0");
+        goalText.setText("0");
+        assistText.setText("0");
+        rossiText.setText("0");
+        gialliText.setText("0");
+        rigoriSegnatiText.setText("0");
+        numeroParateText.setText("0");
+        goalSubitiText.setText("0");
+    }
+
+    private boolean creaMilitanza() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        if (checkMilCampi()) {
+            LocalDate ldI = dataInizioPicker.getSelectedDate();
+            LocalDate ldF = dataFinePicker.getSelectedDate();
+
+            if(militanza == null) {
+                militanza = new Militanza(-1, dtf.format(ldI), dtf.format(ldF), new Squadra(nomeSquadraText.getSelectedItem().toString()));
+                militanza.setPartite(new ArrayList<Partita>());
+                controller.getGiocatoreCercato().addMilitanza(militanza);
+                return controller.caricaMilitanza(controller.getGiocatoreCercato().getId(), militanza);
+            }else{
+                militanza.setDataInizio(dtf.format(ldI));
+                militanza.setDataFine(dtf.format(ldF));
+                militanza.setSquadra(new Squadra(nomeSquadraText.getSelectedItem().toString()));
+                return controller.upgrateMilitanza(militanza);
+            }
         }
-    });
-}
-
-private void resetInfoPartita() {
-
-    goalCasaText.setText("0");
-    goalTrafertText.setText("0");
-    goalText.setText("0");
-    assistText.setText("0");
-    rossiText.setText("0");
-    gialliText.setText("0");
-    rigoriSegnatiText.setText("0");
-    numeroParateText.setText("0");
-    goalSubitiText.setText("0");
-}
-
-private void creaMilitanza() {
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-    if (checkMilCampi()) {
-        LocalDate ldI = dataInizioPicker.getSelectedDate();
-        LocalDate ldF = dataFinePicker.getSelectedDate();
-        militanza = new Militanza(-1, dtf.format(ldI), dtf.format(ldF), new Squadra(nomeSquadraText.getSelectedItem().toString()));
-        militanza.setPartite(new ArrayList<Partita>());
-
-        controller.caricaMilitanza(controller.getGiocatoreCercato().getId(), militanza);
-        controller.getGiocatoreCercato().addMilitanza(militanza);
-    }
-}
-
-private Statistiche getStatistiche() {
-    return new Statistiche(Integer.getInteger(goalText.getText()), Integer.getInteger(assistText.getText()), Integer.getInteger(rossiText.getText()),
-            Integer.getInteger(gialliText.getText()), Integer.getInteger(rigoriSegnatiText.getText()), Integer.getInteger(goalSubitiText.getText()), Integer.getInteger(numeroParateText.getText()));
-}
-
-private void caricaInfoPartita() {
-    int index = partiteTable.getSelectedRow();
-
-    if (index >= 0) {
-        Partita p = militanza.getPartite().get(index);
-
-        String avversario = p.getSquadraCasa().equals(militanza.getSquadra().getNome()) ? p.getSquadraCasa() : p.getSquadraTrasferta();
-        nomeAvversarioText.setSelectedItem(avversario);
-        LocalDate data = LocalDate.parse(p.getData());
-        dataPartitaPicker.setSelectedDate(data);
-        int tipo = p.getSquadraCasa().equals(militanza.getSquadra().getNome()) ? 0 : 1;
-        tipoPartitaBox.setSelectedIndex(tipo);
-
-        goalCasaText.setText(Integer.toString(p.getGoalCasa()));
-        goalTrafertText.setText(Integer.toString(p.getGoalTrasferta()));
-        goalText.setText(Integer.toString(p.getStat().getGoal()));
-        assistText.setText(Integer.toString(p.getStat().getAssist()));
-        rossiText.setText(Integer.toString(p.getStat().getCartelliniRossi()));
-        gialliText.setText(Integer.toString(p.getStat().getCartelliniGialli()));
-        rigoriSegnatiText.setText(Integer.toString(p.getStat().getRigoriSegnati()));
-        numeroParateText.setText(Integer.toString(p.getStat().getNumParate()));
-        goalSubitiText.setText(Integer.toString(p.getStat().getGoalSubiti()));
-
-        modificaButton.setEnabled(true);
-    }
-
-}
-
-private boolean checkAllCampi() {
-
-    if (nomeSquadraText.getSelectedItem().equals("") || !dataInizioPicker.isDateSelected() || !dataFinePicker.isDateSelected() ||
-            !dataPartitaPicker.isDateSelected() || nomeAvversarioText.getSelectedItem().equals("")) {
-        JOptionPane.showMessageDialog(frame, "Campi della Militanza non validi o mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
         return false;
     }
 
-    return true;
-}
-
-private boolean checkMilCampi() {
-    if (nomeSquadraText.getSelectedItem().equals("") || !dataInizioPicker.isDateSelected() || !dataFinePicker.isDateSelected()) {
-        JOptionPane.showMessageDialog(frame, "Campi della Militanza non validi o mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
-        return false;
+    private Statistiche getStatistiche() {
+        return new Statistiche(Integer.parseInt(goalText.getText()), Integer.parseInt(assistText.getText()), Integer.parseInt(rossiText.getText()),
+                Integer.parseInt(gialliText.getText()), Integer.parseInt(rigoriSegnatiText.getText()), Integer.parseInt(goalSubitiText.getText()), Integer.parseInt(numeroParateText.getText()));
     }
 
-    return true;
-}
+    private void caricaInfoPartita() {
+        int index = partiteTable.getSelectedRow();
 
-private void eliminaPartita() {
-    int index = partiteTable.getSelectedRow();
-    controller.deletePartita(militanza.getPartite().get(index));
-    militanza.getPartite().remove(index);
-    partiteTable.clearSelection();
-    aggiornaTable();
-    resetInfoPartita();
+        if (index >= 0) {
+            Partita p = militanza.getPartite().get(index);
 
-    eliminaButton.setEnabled(false);
-    modificaButton.setEnabled(false);
-    selezionaButton.setEnabled(false);
-    aggiungiPartitaButton.setEnabled(true);
-}
+            String avversario = p.getSquadraCasa().equals(militanza.getSquadra().getNome()) ? p.getSquadraTrasferta() : p.getSquadraCasa();
+            nomeAvversarioText.setSelectedItem(avversario);
+            dataPartitaPicker.setSelectedDate(p.getData());
+            int tipo = p.getSquadraCasa().equals(militanza.getSquadra().getNome()) ? 0 : 1;
+            tipoPartitaBox.setSelectedIndex(tipo);
 
-private void aggiornaTable() {
+            goalCasaText.setText(String.valueOf(p.getGoalCasa()));
+            goalTrafertText.setText(String.valueOf(p.getGoalTrasferta()));
+            goalText.setText(String.valueOf(p.getStat().getGoal()));
+            assistText.setText(String.valueOf(p.getStat().getAssist()));
+            rossiText.setText(String.valueOf(p.getStat().getCartelliniRossi()));
+            gialliText.setText(String.valueOf(p.getStat().getCartelliniGialli()));
+            rigoriSegnatiText.setText(String.valueOf(p.getStat().getRigoriSegnati()));
+            numeroParateText.setText(String.valueOf(p.getStat().getNumParate()));
+            goalSubitiText.setText(String.valueOf(p.getStat().getGoalSubiti()));
+
+            modificaButton.setEnabled(true);
+        }
+
+    }
+
+    private boolean checkAllCampi() {
+
+        if (nomeSquadraText.getSelectedItem().equals("") || !dataInizioPicker.isDateSelected() || !dataFinePicker.isDateSelected() ||
+                !dataPartitaPicker.isDateSelected() || nomeAvversarioText.getSelectedItem().equals("")) {
+            JOptionPane.showMessageDialog(frame, "Campi della Militanza non validi o mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkMilCampi() {
+        if (nomeSquadraText.getSelectedItem().equals("") || !dataInizioPicker.isDateSelected() || !dataFinePicker.isDateSelected()) {
+            JOptionPane.showMessageDialog(frame, "Campi della Militanza non validi o mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void eliminaPartita() {
+        int index = partiteTable.getSelectedRow();
+        controller.deletePartita(militanza.getPartite().get(index));
+        militanza.getPartite().remove(index);
+        partiteTable.clearSelection();
+        aggiornaTable();
+        resetInfoPartita();
+
+        eliminaButton.setEnabled(false);
+        modificaButton.setEnabled(false);
+        selezionaButton.setEnabled(false);
+        aggiungiPartitaButton.setEnabled(true);
+    }
+
+    private void aggiornaTable() {
         DefaultTableModel model = (DefaultTableModel) partiteTable.getModel();
 
         model.setRowCount(0);
         String avversario = null;
 
-        for(Partita partita : militanza.getPartite()) {
+        for (Partita partita : militanza.getPartite()) {
             avversario = militanza.getSquadra().getNome().equals(partita.getSquadraCasa()) ? partita.getSquadraCasa() : partita.getSquadraTrasferta();
 
             model.addRow(new Object[]{avversario, partita.getData()});
         }
-}
+    }
 
 
 }

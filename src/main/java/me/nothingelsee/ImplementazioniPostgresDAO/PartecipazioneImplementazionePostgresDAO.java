@@ -26,7 +26,7 @@ public class PartecipazioneImplementazionePostgresDAO implements PartecipazioneD
         PreparedStatement ps = null;
 
         try {
-            ps = connection.prepareStatement("INSERT INTO partecipazione VALUES (?,?)");
+            ps = connection.prepareStatement("INSERT INTO partecipazione(squadracasa, squadratrasferta) VALUES (?,?)");
             ps.setString(1, casa);
             ps.setString(2, trasferta);
             ps.executeUpdate();

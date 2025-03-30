@@ -8,6 +8,7 @@ import me.nothingelsee.Model.Militanza;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 public class LeggiGiocatoreGuest {
 
@@ -49,6 +50,7 @@ public class LeggiGiocatoreGuest {
     private JPanel middlePanel;
     private JScrollPane squadreScrollPanel;
     private JButton trofeiButton;
+    private JLabel nazionalitaLabel;
     private JPopupMenu popupSquadre;
     private JMenuItem visionaPopupSquadre;
     private JMenuItem annullaPopupSquadre;
@@ -115,11 +117,13 @@ public class LeggiGiocatoreGuest {
     }
 
     public void caricaDati() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         nomeLabel.setText(controller.getGiocatoreCercato().getNome());
         cognomeLabel.setText(controller.getGiocatoreCercato().getCognome());
-        dataNascitaLabel.setText(controller.getGiocatoreCercato().getDataNascita());
-        dataRitiroLabel.setText(controller.getGiocatoreCercato().getDataRitiro());
+        dataNascitaLabel.setText(controller.getGiocatoreCercato().getDataNascitaAsString());
+        dataRitiroLabel.setText(controller.getGiocatoreCercato().getDataRitiroAsString());
+        nazionalitaLabel.setText(controller.getGiocatoreCercato().getNazionalita());
         piedeLabel.setText(controller.getGiocatoreCercato().getPiede().toString());
         controller.getAbilita(controller.getGiocatoreCercato());
         controller.getSkill(controller.getGiocatoreCercato());
