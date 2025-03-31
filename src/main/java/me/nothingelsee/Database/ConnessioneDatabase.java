@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * The type Connessione database.
+ */
 public class ConnessioneDatabase {
 
     private static ConnessioneDatabase instance;
@@ -14,26 +17,42 @@ public class ConnessioneDatabase {
     private String driver = "org.postgresql.Driver";
 
 
+    /**
+     * Instantiates a new Connessione database.
+     *
+     * @throws SQLException the sql exception
+     */
     public ConnessioneDatabase() throws SQLException {
-        try{
+        try {
             Class.forName(driver);
             connection = DriverManager.getConnection(url, nome, password);
-        }catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             System.out.println("Database connection failed: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public Connection getConnection(){
+    /**
+     * Get connection connection.
+     *
+     * @return the connection
+     */
+    public Connection getConnection() {
         return connection;
     }
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     * @throws SQLException the sql exception
+     */
     public static ConnessioneDatabase getInstance() throws SQLException {
-        if(instance == null){
+        if (instance == null) {
             instance = new ConnessioneDatabase();
         } else if (instance.getConnection().isClosed()) {
             instance = new ConnessioneDatabase();
-            
+
         }
         return instance;
     }

@@ -1,5 +1,17 @@
 package me.nothingelsee.ENUM;
 
+/**
+ * The enum Trofeo.
+ */
 public enum TROFEO {
-    INDIVIDUALE,SQUADRA
+
+    /**
+     * Individuale trofeo.
+     */
+    INDIVIDUALE,
+
+    /**
+     * Squadra trofeo.
+     */
+    SQUADRA
 }

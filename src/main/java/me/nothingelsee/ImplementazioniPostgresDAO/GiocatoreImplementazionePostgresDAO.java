@@ -11,10 +11,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * The type Giocatore implementazione postgres dao.
+ */
 public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Giocatore implementazione postgres dao.
+     */
     public GiocatoreImplementazionePostgresDAO() {
         try {
             connection = ConnessioneDatabase.getInstance().getConnection();
@@ -81,13 +87,13 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
     }
 
     @Override
-    public void insertGiocatore(Giocatore giocatore){
-        try{
+    public void insertGiocatore(Giocatore giocatore) {
+        try {
             PreparedStatement insGio = connection.prepareStatement("INSERT INTO Giocatore(nome, cognome, datanascita, dataritiro, piede) VALUES (?,?,?,?," + "\'" + giocatore.getPiede().name() + "\')");
             insGio.setString(1, giocatore.getNome());
             insGio.setString(2, giocatore.getCognome());
             insGio.setDate(3, Date.valueOf(giocatore.getDataNascita()));
-            if(giocatore.getDataRitiro() != null) insGio.setDate(4, Date.valueOf(giocatore.getDataRitiro()));
+            if (giocatore.getDataRitiro() != null) insGio.setDate(4, Date.valueOf(giocatore.getDataRitiro()));
             else insGio.setDate(4, null);
 
             insGio.executeUpdate();
@@ -98,36 +104,36 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
             rs.next();
             giocatore.setId(rs.getInt(1));
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateGiocatore(Giocatore giocatore){
-        try{
-            PreparedStatement insGio = connection.prepareStatement("UPDATE Giocatore SET nome = ?, cognome = ?, datanascita = ?, dataritiro = ?, piede = \'" + giocatore.getPiede().toString() +"\' WHERE id_giocatore = ?");
+    public void updateGiocatore(Giocatore giocatore) {
+        try {
+            PreparedStatement insGio = connection.prepareStatement("UPDATE Giocatore SET nome = ?, cognome = ?, datanascita = ?, dataritiro = ?, piede = \'" + giocatore.getPiede().toString() + "\' WHERE id_giocatore = ?");
 
 
             insGio.setString(1, giocatore.getNome());
             insGio.setString(2, giocatore.getCognome());
             insGio.setDate(3, Date.valueOf(giocatore.getDataNascita()));
-            if(giocatore.getDataRitiro() != null) insGio.setDate(4, Date.valueOf(giocatore.getDataRitiro()));
+            if (giocatore.getDataRitiro() != null) insGio.setDate(4, Date.valueOf(giocatore.getDataRitiro()));
             else insGio.setNull(4, Types.DATE);
             insGio.setInt(5, giocatore.getId());
             insGio.executeUpdate();
 
             insGio.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void deleteGiocatore(Giocatore giocatore){
+    public void deleteGiocatore(Giocatore giocatore) {
         PreparedStatement delGiocatore = null;
 
-        try{
+        try {
             delGiocatore = connection.prepareStatement("DELETE FROM Giocatore WHERE id_giocatore = ?");
 
             delGiocatore.setInt(1, giocatore.getId());
@@ -136,7 +142,7 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
             connection.close();
 
             JOptionPane.showMessageDialog(null, "Giocatore " + giocatore.getNome() + " " + giocatore.getCognome() + " eliminato con successo!");
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

@@ -8,26 +8,32 @@ import me.nothingelsee.Model.Statistiche;
 import javax.swing.*;
 import java.sql.*;
 
+/**
+ * The type Statistica implementazione postgres dao.
+ */
 public class StatisticaImplementazionePostgresDAO implements StatisticaDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Statistica implementazione postgres dao.
+     */
     public StatisticaImplementazionePostgresDAO() {
-        try{
+        try {
 
             connection = ConnessioneDatabase.getInstance().getConnection();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void getStat(Partita partita){
+    public void getStat(Partita partita) {
 
         PreparedStatement leggiStat;
 
-        try{
+        try {
 
             leggiStat = connection.prepareStatement(
                     "SELECT S.goal, S.assist, S.cartellinirossi, S.cartellinigialli, S.rigorisegnati, SP.numparate, SP.goalsubiti " +
@@ -36,20 +42,20 @@ public class StatisticaImplementazionePostgresDAO implements StatisticaDAO {
             );
             ResultSet rs = leggiStat.executeQuery();
 
-            while(rs.next()){
-                partita.setStat(new Statistiche(rs.getInt("goal"), rs.getInt("assist"), rs.getInt("cartellinirossi"), rs.getInt("cartellinigialli"), rs.getInt("rigorisegnati"), rs.getInt("numparate"), rs.getInt("goalsubiti")));
+            while (rs.next()) {
+                partita.setStat(new Statistiche(rs.getInt("goal"), rs.getInt("assist"), rs.getInt("cartellinirossi"), rs.getInt("cartellinigialli"), rs.getInt("rigorisegnati"), rs.getInt("goalsubiti"), rs.getInt("numparate")));
             }
             leggiStat.close();
             rs.close();
             connection.close();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void insertStatistiche(int id_partita, Statistiche statistiche){
+    public void insertStatistiche(int id_partita, Statistiche statistiche) {
         PreparedStatement insStat;
 
         try {
@@ -63,14 +69,14 @@ public class StatisticaImplementazionePostgresDAO implements StatisticaDAO {
             insStat.executeUpdate();
             insStat.close();
             connection.close();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel inserimento delle statisthe", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateStatistiche(int idPartita, Statistiche statistiche){
+    public void updateStatistiche(int idPartita, Statistiche statistiche) {
         PreparedStatement insStat;
 
         try {
@@ -84,14 +90,14 @@ public class StatisticaImplementazionePostgresDAO implements StatisticaDAO {
             insStat.executeUpdate();
             insStat.close();
             connection.close();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel inserimento delle statisthe", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
 
     @Override
-    public void insertStatistichePor(int idPartita, Statistiche statistiche){
+    public void insertStatistichePor(int idPartita, Statistiche statistiche) {
         PreparedStatement insStat;
 
         try {
@@ -102,14 +108,14 @@ public class StatisticaImplementazionePostgresDAO implements StatisticaDAO {
             insStat.executeUpdate();
             insStat.close();
             connection.close();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel inserimento delle statisthe", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateStatistichePor(int idPartita, Statistiche statistiche){
+    public void updateStatistichePor(int idPartita, Statistiche statistiche) {
         PreparedStatement insStat;
 
         try {
@@ -120,7 +126,7 @@ public class StatisticaImplementazionePostgresDAO implements StatisticaDAO {
             insStat.executeUpdate();
             insStat.close();
             connection.close();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel inserimento delle statisthe", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }

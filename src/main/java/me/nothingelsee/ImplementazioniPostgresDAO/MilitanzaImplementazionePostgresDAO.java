@@ -10,10 +10,16 @@ import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * The type Militanza implementazione postgres dao.
+ */
 public class MilitanzaImplementazionePostgresDAO implements MilitanzaDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Militanza implementazione postgres dao.
+     */
     public MilitanzaImplementazionePostgresDAO() {
         try {
             connection = ConnessioneDatabase.getInstance().getConnection();
@@ -48,8 +54,21 @@ public class MilitanzaImplementazionePostgresDAO implements MilitanzaDAO {
     @Override
     public boolean insertMilitanza(int id_giocatore, Militanza militanza) {
         PreparedStatement caricaMilitanza = null;
+        PreparedStatement leggiSquadra = null;
 
         try {
+            leggiSquadra = connection.prepareStatement("Select * FROM Squadra WHERE nome = ?");
+            leggiSquadra.setString(1, militanza.getSquadra().getNome());
+            ResultSet rs2 = leggiSquadra.executeQuery();
+            if (!rs2.next()) {
+                PreparedStatement caricaSquadra = connection.prepareStatement("INSERT INTO Squadra(nome) VALUES (?)");
+                caricaSquadra.setString(1, militanza.getSquadra().getNome());
+                caricaSquadra.executeUpdate();
+                caricaSquadra.close();
+                rs2.close();
+            }
+            leggiSquadra.close();
+
             caricaMilitanza = connection.prepareStatement("INSERT INTO Militanza(id_giocatore, nomesquadra, datainizio, datafine) VALUES (?,?,?,?)");
             caricaMilitanza.setInt(1, id_giocatore);
             caricaMilitanza.setString(2, militanza.getSquadra().getNome());
@@ -82,7 +101,7 @@ public class MilitanzaImplementazionePostgresDAO implements MilitanzaDAO {
             caricaMilitanza = connection.prepareStatement("UPDATE Militanza SET nomesquadra = ?, datainizio = ?, datafine = ? WHERE id_militanza = ?");
             caricaMilitanza.setString(1, militanza.getSquadra().getNome());
             caricaMilitanza.setDate(2, Date.valueOf(militanza.getDataInizio()));
-            if(militanza.getDataFine() == null) caricaMilitanza.setNull(3, Types.DATE);
+            if (militanza.getDataFine() == null) caricaMilitanza.setNull(3, Types.DATE);
             else caricaMilitanza.setDate(3, Date.valueOf(militanza.getDataFine()));
             caricaMilitanza.setInt(4, militanza.getId());
             caricaMilitanza.executeUpdate();

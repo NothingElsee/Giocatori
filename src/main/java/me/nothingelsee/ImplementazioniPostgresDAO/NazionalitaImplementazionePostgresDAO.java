@@ -12,36 +12,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * The type Nazionalita implementazione postgres dao.
+ */
 public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Nazionalita implementazione postgres dao.
+     */
     public NazionalitaImplementazionePostgresDAO() {
-        try{
+        try {
             connection = ConnessioneDatabase.getInstance().getConnection();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void getNazionalita(ArrayList<String> nazioni){
+    public void getNazionalita(ArrayList<String> nazioni) {
 
         PreparedStatement leggiNazioni = null;
 
-        try{
+        try {
             leggiNazioni = connection.prepareStatement("select nome FROM nazionalità");
 
             ResultSet rs = leggiNazioni.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 nazioni.add(rs.getString(1));
             }
 
             rs.close();
             leggiNazioni.close();
             connection.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -53,11 +59,11 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
         PreparedStatement caricaAppartenenza = null;
         PreparedStatement esisteNazionalita = null;
 
-        try{
-            esisteNazionalita= connection.prepareStatement("Select * from Nazionalità where nome = ?");
+        try {
+            esisteNazionalita = connection.prepareStatement("Select * from Nazionalità where nome = ?");
             esisteNazionalita.setString(1, nome);
             ResultSet rs = esisteNazionalita.executeQuery();
-            if(!rs.next()){
+            if (!rs.next()) {
                 caricaNazionalita = connection.prepareStatement("INSERT INTO Nazionalità(nome)" + " VALUES (?)");
                 caricaNazionalita.setString(1, nome);
                 caricaNazionalita.executeUpdate();
@@ -71,7 +77,7 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
             caricaAppartenenza.close();
             rs.close();
             connection.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore durante l'inserimento della nazionalità", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -83,12 +89,12 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
         PreparedStatement caricaAppartenenza = null;
         PreparedStatement esisteNazionalita = null;
 
-        try{
-            esisteNazionalita= connection.prepareStatement("Select * from Nazionalità where nome = ?");
+        try {
+            esisteNazionalita = connection.prepareStatement("Select * from Nazionalità where nome = ?");
             esisteNazionalita.setString(1, nome);
             ResultSet rs = esisteNazionalita.executeQuery();
 
-            if(!rs.next()){
+            if (!rs.next()) {
                 caricaNazionalita = connection.prepareStatement("INSERT INTO Nazionalità(nome)" + " VALUES (?)");
                 caricaNazionalita.setString(1, nome);
                 caricaNazionalita.executeUpdate();
@@ -103,7 +109,7 @@ public class NazionalitaImplementazionePostgresDAO implements NazionalitaDAO {
             caricaAppartenenza.close();
             rs.close();
             connection.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore l'aggiornamento della nazionalità", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }

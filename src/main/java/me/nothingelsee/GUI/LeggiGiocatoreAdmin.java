@@ -17,9 +17,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Leggi giocatore admin.
+ */
 public class LeggiGiocatoreAdmin {
 
     private Controller controller;
+    /**
+     * The Frame.
+     */
     JFrame frame;
     private JFrame frameChiamante;
     private JTable storicoSquadreTable;
@@ -70,12 +76,24 @@ public class LeggiGiocatoreAdmin {
     private DatePicker dataRitiro;
     private Giocatore giocatore = null;
 
+    /**
+     * Instantiates a new Leggi giocatore admin.
+     *
+     * @param controller     the controller
+     * @param frameChiamante the frame chiamante
+     */
     public LeggiGiocatoreAdmin(Controller controller, JFrame frameChiamante) {
         inizializzaComponenti(frameChiamante, controller);
         impostaEstetica();
         implementaListeners();
     }
 
+    /**
+     * Inizializza componenti.
+     *
+     * @param frameChiamante the frame chiamante
+     * @param controller     the controller
+     */
     public void inizializzaComponenti(JFrame frameChiamante, Controller controller) {
         this.controller = controller;
         this.frameChiamante = frameChiamante;
@@ -139,6 +157,9 @@ public class LeggiGiocatoreAdmin {
         frame.setVisible(true);
     }
 
+    /**
+     * Imposta estetica.
+     */
     public void impostaEstetica() {
 
         mainPanel.setBackground(Estetica.mainBackgroundColor);
@@ -183,6 +204,7 @@ public class LeggiGiocatoreAdmin {
                         controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
                         modificaButton.setEnabled(true);
                         eliminaMilitanzaButton.setEnabled(true);
+                        aggiungiSquadra.setEnabled(false);
                     }
 
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -196,6 +218,7 @@ public class LeggiGiocatoreAdmin {
                         controller.setMilitanzaCercata(controller.getMilitanzeDaGiocatore().get(row));
                         modificaButton.setEnabled(true);
                         eliminaMilitanzaButton.setEnabled(true);
+                        aggiungiSquadra.setEnabled(false);
                     } else {
                         storicoSquadreTable.clearSelection();
                     }
@@ -230,6 +253,14 @@ public class LeggiGiocatoreAdmin {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (creaGiocatore()) visualizzaSquadra();
+                storicoSquadreTable.clearSelection();
+            }
+        });
+        modificaPopup.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (creaGiocatore()) visualizzaSquadra();
+                storicoSquadreTable.clearSelection();
             }
         });
 
@@ -268,19 +299,22 @@ public class LeggiGiocatoreAdmin {
             @Override
             public void actionPerformed(ActionEvent e) {
                 storicoSquadreTable.clearSelection();
+                aggiungiSquadra.setEnabled(true);
             }
         });
 
         caricaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                creaGiocatore();
-                controller.updateGiocatore(giocatore);
-                controller.updateRuoli(giocatore.getId(), giocatore.getRuoli());
-                controller.updateSkill(giocatore.getId(), giocatore.getSkill());
-                controller.updateAbilita(giocatore.getId(), giocatore.getAbilita());
-                controller.updateNazionalita(giocatore.getId(), giocatore.getNazionalita());
-
+                if (creaGiocatore()) {
+                    controller.updateGiocatore(giocatore);
+                    controller.updateRuoli(giocatore.getId(), giocatore.getRuoli());
+                    controller.updateSkill(giocatore.getId(), giocatore.getSkill());
+                    controller.updateAbilita(giocatore.getId(), giocatore.getAbilita());
+                    controller.updateNazionalita(giocatore.getId(), giocatore.getNazionalita());
+                    frame.dispose();
+                    frame.dispose();
+                }
             }
         });
 
@@ -295,10 +329,10 @@ public class LeggiGiocatoreAdmin {
         trofeiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (giocatore == null) creaGiocatore();
-
-                LeggiTrofei trofeiVis = new LeggiTrofei(controller, frame, true);
-                frame.setVisible(false);
+                if (creaGiocatore()) {
+                    LeggiTrofei trofeiVis = new LeggiTrofei(controller, frame, true);
+                    frame.setVisible(false);
+                }
             }
         });
 
@@ -320,6 +354,9 @@ public class LeggiGiocatoreAdmin {
         }
     }
 
+    /**
+     * Carica dati.
+     */
     public void caricaDati() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -342,7 +379,7 @@ public class LeggiGiocatoreAdmin {
         DefaultTableModel model = (DefaultTableModel) storicoSquadreTable.getModel();
         ArrayList<Militanza> militanze = controller.getMilitanzeDaGiocatore();
         for (Militanza m : militanze) {
-            model.addRow(new Object[]{m.getSquadra().getNome(), m.getSquadra().getNazionalita(), m.getDataInizio(), m.getDataFine()});
+            model.addRow(new Object[]{m.getSquadra().getNome(), m.getDataInizio(), m.getDataFine()});
         }
     }
 
@@ -380,7 +417,7 @@ public class LeggiGiocatoreAdmin {
         if (nomeText.getText().isEmpty() || cognomeText.getText().isEmpty() || !dataNascita.isDateSelected() ||
                 nazionalitaBox.getSelectedItem().equals("")) {
 
-            JOptionPane.showMessageDialog(null, "Dati giocatore mancanti");
+            JOptionPane.showMessageDialog(null, "Dati giocatore mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -393,6 +430,12 @@ public class LeggiGiocatoreAdmin {
             JOptionPane.showMessageDialog(null, "Skill giocatore mancanti");
             return false;
         }
+        if (!isInRange(taccoText.getText()) || !isInRange(rovesciataText.getText()) || !isInRange(testaText.getText()) || !isInRange(dribblingText.getText())
+                || !isInRange(sforbiciataText.getText()) || !isInRange(controlloText.getText())) {
+            JOptionPane.showMessageDialog(null, "Range skill non valido!", "Errore", JOptionPane.ERROR_MESSAGE);
+            System.out.println(taccoText.getText().length());
+            return false;
+        }
         return true;
     }
 
@@ -400,6 +443,11 @@ public class LeggiGiocatoreAdmin {
         if (velocitaText.getText().isEmpty() || tiroText.getText().isEmpty() || passaggioText.getText().isEmpty() ||
                 piedeDeboleText.getText().isEmpty() || restistenzaText.getText().isEmpty() || difesaText.getText().isEmpty() || punizioneText.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Abilità giocatore mancanti");
+            return false;
+        }
+        if (!isInRange(velocitaText.getText()) || !isInRange(tiroText.getText()) || !isInRange(passaggioText.getText()) || !isInRange(piedeDeboleText.getText())
+                || !isInRange(restistenzaText.getText()) || !isInRange(difesaText.getText()) || !isInRange(punizioneText.getText())) {
+            JOptionPane.showMessageDialog(null, "Range abilità non valido!", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -462,9 +510,19 @@ public class LeggiGiocatoreAdmin {
             }
             controller.setGiocatoreCercato(giocatore);
         } else {
-            JOptionPane.showMessageDialog(null, "Attributi giocatore mancanti o errati!", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
+    }
+
+    private boolean isInRange(String s) {
+        if (s == null) return false;
+        try {
+            Integer i = Integer.parseInt(s);
+            if (i.intValue() >= 0 && i < 100) return true;
+            else return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

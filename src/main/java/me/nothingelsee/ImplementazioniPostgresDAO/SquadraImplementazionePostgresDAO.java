@@ -13,17 +13,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * The type Squadra implementazione postgres dao.
+ */
 public class SquadraImplementazionePostgresDAO implements SquadraDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Squadra implementazione postgres dao.
+     */
     public SquadraImplementazionePostgresDAO() {
 
-        try{
+        try {
 
             connection = ConnessioneDatabase.getInstance().getConnection();
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -34,7 +40,7 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
         PreparedStatement leggiSquadra;
         ArrayList<String> squadre = new ArrayList<>();
 
-        try{
+        try {
 
             leggiSquadra = connection.prepareStatement("SELECT nome FROM squadra");
 
@@ -44,7 +50,7 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
                 squadre.add(rs.getString("nome"));
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return squadre;
@@ -54,7 +60,7 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
     public void insertSquadra(Squadra squadra) {
         PreparedStatement insertSquadra = null;
 
-        try{
+        try {
             insertSquadra = connection.prepareStatement("SELECT * FROM squadra WHERE nome = ?");
             insertSquadra.setString(1, squadra.getNome());
             ResultSet rs = insertSquadra.executeQuery();
@@ -68,7 +74,7 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
             rs.close();
             insertSquadra.close();
             connection.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel caricamento delle squadre", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -79,7 +85,7 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
         ArrayList<String> squadre = new ArrayList<>();
         PreparedStatement leggiSquadre;
 
-        try{
+        try {
             leggiSquadre = connection.prepareStatement("SELECT S.nome FROM squadra AS S JOIN Militanza AS M ON S.nome = M.nomesquadra JOIN Giocatore AS G ON M.id_giocatore = G.id_giocatore WHERE G.id_giocatore = ?");
             leggiSquadre.setInt(1, id);
             ResultSet rs = leggiSquadre.executeQuery();
@@ -87,7 +93,7 @@ public class SquadraImplementazionePostgresDAO implements SquadraDAO {
                 squadre.add(rs.getString("nome"));
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return squadre;

@@ -11,6 +11,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+/**
+ * The type Ricerca giocatori.
+ */
 public class RicercaGiocatori {
 
     private static JFrame frame;
@@ -44,6 +47,12 @@ public class RicercaGiocatori {
     private JMenuItem annullaPopup;
     private boolean isAdmin = false;
 
+    /**
+     * Instantiates a new Ricerca giocatori.
+     *
+     * @param frameChiamante the frame chiamante
+     * @param isAdmin        the is admin
+     */
     public RicercaGiocatori(JFrame frameChiamante, boolean isAdmin) {
         controller = new Controller();
         frameChiamante.setVisible(false);
@@ -53,6 +62,12 @@ public class RicercaGiocatori {
         frame.setVisible(true);
     }
 
+    /**
+     * Inizializza componenti.
+     *
+     * @param isAdmin        the is admin
+     * @param frameChiamante the frame chiamante
+     */
     public void inizializzaComponenti(boolean isAdmin, JFrame frameChiamante) {
 
         this.isAdmin = isAdmin;
@@ -70,7 +85,7 @@ public class RicercaGiocatori {
         annullaPopup = new JMenuItem("Annulla");
 
         //Aggiunge Modifica al Popup e il Bottone Modifica alla GUI
-        if(isAdmin){
+        if (isAdmin) {
             modificaPopup = new JMenuItem("Modifica");
             popup.add(modificaPopup);
             popup.addSeparator();
@@ -193,7 +208,7 @@ public class RicercaGiocatori {
         gbc.gridx = 1;
         filterPanel.add(visionaButton, gbc);
 
-        if(isAdmin){
+        if (isAdmin) {
             gbc.gridx = 2;
             filterPanel.add(modificaButton, gbc);
 
@@ -202,6 +217,9 @@ public class RicercaGiocatori {
         }
     }
 
+    /**
+     * Implementa listeners.
+     */
     public void implementaListeners() {
 
         cercaButton.addActionListener(new ActionListener() {
@@ -245,8 +263,8 @@ public class RicercaGiocatori {
                         int row = giocatoriTable.getSelectedRow();
                         controller.setGiocatoreCercato(controller.getGiocatori().get(row));
                         visionaButton.setEnabled(true);
-                        if(isAdmin) modificaButton.setEnabled(true);
-                        if(isAdmin) aggiungiButton.setEnabled(false);
+                        if (isAdmin) modificaButton.setEnabled(true);
+                        if (isAdmin) aggiungiButton.setEnabled(false);
 
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
 
@@ -259,8 +277,8 @@ public class RicercaGiocatori {
                             int row = giocatoriTable.getSelectedRow();
                             controller.setGiocatoreCercato(controller.getGiocatori().get(row));
                             visionaButton.setEnabled(true);
-                            if(isAdmin) modificaButton.setEnabled(true);
-                            if(isAdmin) aggiungiButton.setEnabled(false);
+                            if (isAdmin) modificaButton.setEnabled(true);
+                            if (isAdmin) aggiungiButton.setEnabled(false);
                         } else {
                             giocatoriTable.clearSelection();
                         }
@@ -317,7 +335,7 @@ public class RicercaGiocatori {
             }
         });
 
-        if(isAdmin) {
+        if (isAdmin) {
             modificaPopup.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -363,6 +381,12 @@ public class RicercaGiocatori {
         });
     }
 
+    /**
+     * Capitalize first letter string.
+     *
+     * @param s the s
+     * @return the string
+     */
     public String capitalizeFirstLetter(String s) {
         if (s.equals("")) return "";
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
@@ -416,6 +440,13 @@ public class RicercaGiocatori {
 
     }
 
-    public void setIsAdmin(boolean isAdmin){ this.isAdmin = isAdmin;}
+    /**
+     * Set is admin.
+     *
+     * @param isAdmin the is admin
+     */
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 
 }

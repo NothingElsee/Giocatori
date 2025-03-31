@@ -11,16 +11,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * The type Skill implementazione postgres dao.
+ */
 public class SkillImplementazionePostgresDAO implements SkillDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Skill implementazione postgres dao.
+     */
     public SkillImplementazionePostgresDAO() {
-        try{
+        try {
 
             connection = ConnessioneDatabase.getInstance().getConnection();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -30,23 +36,23 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
         PreparedStatement leggiSkill;
         ArrayList<Integer> skills = new ArrayList<>();
 
-        try{
+        try {
             leggiSkill = connection.prepareStatement(
                     "SELECT * FROM Skill WHERE id_giocatore = " + giocatore.getId()
             );
 
             ResultSet rs = leggiSkill.executeQuery();
 
-            int i=2;
+            int i = 2;
             rs.next();
-            while (i<8) {
+            while (i < 8) {
                 skills.add(rs.getInt(i));
                 i++;
             }
             giocatore.setSkills(skills);
             rs.close();
             connection.close();
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -54,18 +60,18 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
     @Override
     public boolean insertSkill(int idGiocatore, ArrayList<Integer> skill) {
         PreparedStatement caricaSkill;
-        try{
+        try {
             caricaSkill = connection.prepareStatement("INSERT INTO Skill (id_giocatore, colpoditacco, colpoditesta, rovesciata, sforbiciata, dribbling, controllopalla)" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?);");
 
             caricaSkill.setInt(1, idGiocatore);
 
-            for(int i=0; i<skill.size(); i++){
-                caricaSkill.setInt(i+2, skill.get(i));
+            for (int i = 0; i < skill.size(); i++) {
+                caricaSkill.setInt(i + 2, skill.get(i));
             }
             caricaSkill.executeUpdate();
             caricaSkill.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel caricamento delle skill", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return false;
@@ -74,24 +80,24 @@ public class SkillImplementazionePostgresDAO implements SkillDAO {
     }
 
     @Override
-    public void updateSkill(int idGiocatore, ArrayList<Integer> skill){
+    public void updateSkill(int idGiocatore, ArrayList<Integer> skill) {
         PreparedStatement caricaAbilita;
 
-        try{
+        try {
             caricaAbilita = connection.prepareStatement("UPDATE Skill " +
-                    "SET "+
+                    "SET " +
                     " colpoditacco = " + skill.get(0) +
                     " ,colpoditesta = " + skill.get(1) +
                     " ,rovesciata = " + skill.get(2) +
                     " ,sforbiciata = " + skill.get(3) +
                     " ,dribbling = " + skill.get(4) +
-                    " ,controllopalla = " +skill.get(5) +
+                    " ,controllopalla = " + skill.get(5) +
                     " WHERE id_giocatore = " + idGiocatore);
 
             caricaAbilita.executeUpdate();
             caricaAbilita.close();
             connection.close();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore nel caricamento delle skill", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }

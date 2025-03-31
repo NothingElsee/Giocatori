@@ -1,5 +1,22 @@
 package me.nothingelsee.ENUM;
 
+/**
+ * The enum Piede.
+ */
 public enum PIEDE {
-    DESTRO,SINISTRO,ENTRAMBI
+
+    /**
+     * Destro piede.
+     */
+    DESTRO,
+
+    /**
+     * Sinistro piede.
+     */
+    SINISTRO,
+
+    /**
+     * Entrambi piede.
+     */
+    ENTRAMBI
 }

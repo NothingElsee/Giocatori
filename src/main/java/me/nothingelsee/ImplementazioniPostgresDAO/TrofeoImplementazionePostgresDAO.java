@@ -11,10 +11,16 @@ import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * The type Trofeo implementazione postgres dao.
+ */
 public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Trofeo implementazione postgres dao.
+     */
     public TrofeoImplementazionePostgresDAO() {
 
         try {
@@ -31,34 +37,35 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
 
         PreparedStatement leggiTrofeiIndividuali = null;
         PreparedStatement leggiTrofeiSquadra = null;
+        ArrayList<Trofeo> trofei = new ArrayList<>();
 
         try {
 
             leggiTrofeiIndividuali = connection.prepareStatement("select T.id_trofeo, T.nome, V.data, T.tipo from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
-                    "RIGHT JOIN GIOCATORE AS G ON G.id_giocatore = V.id_giocatore " +
-                    "WHERE G.id_giocatore =  " + giocatore.getId());
+                    "JOIN GIOCATORE AS G ON G.id_giocatore = V.id_giocatore " +
+                    "WHERE T.tipo = 'INDIVIDUALE' AND G.id_giocatore =  " + giocatore.getId());
 
             ResultSet rs = leggiTrofeiIndividuali.executeQuery();
 
             while (rs.next()) {
-                giocatore.addTrofeo(new Trofeo(rs.getInt("id_trofeo"), rs.getString("nome"), rs.getString("data"), null ,rs.getString("tipo")));
+                trofei.add(new Trofeo(rs.getInt("id_trofeo"), rs.getString("nome"), rs.getString("data"), null, rs.getString("tipo")));
             }
 
             rs.close();
+            leggiTrofeiIndividuali.close();
 
-            leggiTrofeiSquadra = connection.prepareStatement("select T.id_trofeo, T.nome, V.data, T.tipo, V.nomesquadra from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
-                    "JOIN Squadra AS S ON S.nome = V.nomesquadra " +
-                    "JOIN Militanza AS M ON M.nomesquadra = S.nome " +
-                    "JOIN Giocatore AS G ON G.id_giocatore = M.id_giocatore " +
-                    "WHERE G.id_giocatore = " + giocatore.getId());
+            leggiTrofeiSquadra = connection.prepareStatement("select T.id_trofeo, T.nome, V.data, V.nomesquadra, T.tipo from trofeo AS T JOIN Vittoria AS V ON V.id_trofeo = T.id_trofeo " +
+                    "JOIN GIOCATORE AS G ON G.id_giocatore = V.id_giocatore " +
+                    "WHERE T.tipo = 'SQUADRA' AND G.id_giocatore =  " + giocatore.getId());
 
-            rs = leggiTrofeiSquadra.executeQuery();
+            ResultSet rs2 = leggiTrofeiSquadra.executeQuery();
 
-            while (rs.next()) {
-                giocatore.addTrofeo(new Trofeo(rs.getInt("id_trofeo"), rs.getString("nome"), rs.getString("data"), rs.getString("nomesquadra"), rs.getString("tipo")));
+            while (rs2.next()) {
+                trofei.add(new Trofeo(rs2.getInt("id_trofeo"), rs2.getString("nome"), rs2.getString("data"), rs2.getString("nomesquadra"), rs2.getString("tipo")));
             }
-
-            rs.close();
+            giocatore.setTrofei(trofei);
+            rs2.close();
+            leggiTrofeiSquadra.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -103,6 +110,21 @@ public class TrofeoImplementazionePostgresDAO implements TrofeoDAO {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore durante il caricamento dei trofei", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTrofeo(Trofeo trofeo) {
+        PreparedStatement updateTrofeo = null;
+
+        try {
+            updateTrofeo = connection.prepareStatement("UPDATE trofeo SET nome = ?, tipo = \'" + trofeo.getTipo() + "\' WHERE id_trofeo = ?");
+            updateTrofeo.setString(1, trofeo.getNome());
+            updateTrofeo.setInt(2, trofeo.getId());
+            updateTrofeo.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Errore nella modifica del trofeo", "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

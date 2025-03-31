@@ -9,10 +9,16 @@ import me.nothingelsee.Model.Partita;
 import javax.swing.*;
 import java.sql.*;
 
+/**
+ * The type Partita implementazione postgres dao.
+ */
 public class PartitaImplementazionePostgresDAO implements PartitaDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Partita implementazione postgres dao.
+     */
     public PartitaImplementazionePostgresDAO() {
 
         try {
@@ -70,7 +76,7 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
             insertPartite = connection.prepareStatement("SELECT currval(pg_get_serial_sequence('match','id_partita'))");
             ResultSet rs = insertPartite.executeQuery();
             rs.next();
-            System.out.println("currval: "+rs.getString(1));
+            System.out.println("currval: " + rs.getString(1));
             p.setId(rs.getInt(1));
 
             rs.close();
@@ -104,10 +110,10 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
     }
 
     @Override
-    public void deletePartita(Partita p){
+    public void deletePartita(Partita p) {
         PreparedStatement deleteP = null;
 
-        try{
+        try {
             deleteP = connection.prepareStatement("DELETE FROM match WHERE id_partita = ?");
             deleteP.setInt(1, p.getId());
             deleteP.executeUpdate();
@@ -115,7 +121,7 @@ public class PartitaImplementazionePostgresDAO implements PartitaDAO {
             deleteP.close();
             connection.close();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore durante l'eliminazione della partita", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }

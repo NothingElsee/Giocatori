@@ -9,8 +9,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+/**
+ * The type Leggi partite guest.
+ */
 public class LeggiPartiteGuest {
 
+    /**
+     * The Frame.
+     */
     JFrame frame;
     private Controller controller;
     private JPanel mainPanel;
@@ -40,6 +46,12 @@ public class LeggiPartiteGuest {
     private JMenuItem annullaItem;
 
 
+    /**
+     * Instantiates a new Leggi partite guest.
+     *
+     * @param controller     the controller
+     * @param frameChiamante the frame chiamante
+     */
     public LeggiPartiteGuest(Controller controller, JFrame frameChiamante) {
 
         inizializzaComponenti(controller, frameChiamante);
@@ -78,6 +90,7 @@ public class LeggiPartiteGuest {
         mainPanel.setBackground(Estetica.mainBackgroundColor);
         topPanel.setBackground(Estetica.filterBackgorundColor);
         middlePanel.setBackground(Estetica.filterBackgorundColor);
+        infoPartita.setBackground(Estetica.filterBackgorundColor);
         Estetica.setMenuItemColor(selezionaItem);
         Estetica.setMenuItemColor(annullaItem);
         Estetica.setButtonColor(selezionaButton);
@@ -107,11 +120,11 @@ public class LeggiPartiteGuest {
         partiteTable.addMouseListener(new MouseAdapter() {
 
             @Override
-            public void mouseClicked (MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
 
                 if (e.getButton() == MouseEvent.BUTTON1) {
 
-                    if(partiteTable.getSelectedRow() >= 0 && partiteTable.getSelectedRow() < partiteTable.getRowCount()) {
+                    if (partiteTable.getSelectedRow() >= 0 && partiteTable.getSelectedRow() < partiteTable.getRowCount()) {
 
                         selezionaButton.setEnabled(true);
                     }
@@ -119,7 +132,7 @@ public class LeggiPartiteGuest {
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
 
                     int row = partiteTable.rowAtPoint(e.getPoint());
-                    if(row >= 0 && row < partiteTable.getRowCount()) {
+                    if (row >= 0 && row < partiteTable.getRowCount()) {
 
                         popupMenu.show(partiteTable, e.getX(), e.getY());
 
@@ -142,7 +155,8 @@ public class LeggiPartiteGuest {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                popupMenu.hide();
+                partiteTable.clearSelection();
+                selezionaButton.setEnabled(false);
             }
         });
 

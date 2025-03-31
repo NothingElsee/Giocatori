@@ -10,10 +10,17 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+/**
+ * The type Leggi giocatore guest.
+ */
 public class LeggiGiocatoreGuest {
 
     private Controller controller;
 
+    /**
+     * The Frame.
+     */
     JFrame frame;
     private JFrame frameChiamante;
     private Estetica e;
@@ -55,6 +62,12 @@ public class LeggiGiocatoreGuest {
     private JMenuItem visionaPopupSquadre;
     private JMenuItem annullaPopupSquadre;
 
+    /**
+     * Instantiates a new Leggi giocatore guest.
+     *
+     * @param controller     the controller
+     * @param frameChiamante the frame chiamante
+     */
     public LeggiGiocatoreGuest(Controller controller, JFrame frameChiamante) {
         this.controller = controller;
         inizializzaComponenti(frameChiamante);
@@ -63,6 +76,11 @@ public class LeggiGiocatoreGuest {
         implementaListeners();
     }
 
+    /**
+     * Inizializza componenti.
+     *
+     * @param frameChiamante the frame chiamante
+     */
     public void inizializzaComponenti(JFrame frameChiamante) {
         this.frameChiamante = frameChiamante;
         frame = new JFrame("Informazioni Giocatore");
@@ -98,24 +116,28 @@ public class LeggiGiocatoreGuest {
         Estetica.setHeaderTable(storicoSquadreTable);
     }
 
+    /**
+     * Imposta background.
+     */
     public void impostaBackground() {
 
         //BorderLayout e Margini MainPanel
-        mainPanel.setBackground(Estetica.mainBackgroundColor);
+        mainPanel.setBackground(Estetica.corallo);
         //BorderLayout e Margini GeneraliPanel
-        generaliPanel.setBackground(Estetica.filterBackgorundColor);
+        generaliPanel.setBackground(Estetica.bluAcqua);
         //BorderLayout e Margini AbilitaPanel
-        abilitaPanel.setBackground(Estetica.filterBackgorundColor);
+        abilitaPanel.setBackground(Estetica.bluAcqua);
         //BorderLayout e Margini SkillPanel
-        skillPanel.setBackground(Estetica.filterBackgorundColor);
-
-        squadreScrollPanel.setBackground(Estetica.filterBackgorundColor);
-
-        buttonPanel.setBackground(Estetica.filterBackgorundColor);
+        skillPanel.setBackground(Estetica.bluAcqua);
+        squadreScrollPanel.setBackground(Estetica.bluAcqua);
+        buttonPanel.setBackground(Estetica.bluAcqua);
 
 
     }
 
+    /**
+     * Carica dati.
+     */
     public void caricaDati() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -142,6 +164,9 @@ public class LeggiGiocatoreGuest {
         }
     }
 
+    /**
+     * Implementa listeners.
+     */
     public void implementaListeners() {
 
         chiudiButton.addActionListener(new ActionListener() {
@@ -185,13 +210,16 @@ public class LeggiGiocatoreGuest {
             @Override
             public void actionPerformed(ActionEvent e) {
                 visualizzaSquadra();
+                storicoSquadreTable.clearSelection();
+                apriButton.setEnabled(false);
             }
         });
 
         annullaPopupSquadre.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                popupSquadre.hide();
+                storicoSquadreTable.clearSelection();
+                apriButton.setEnabled(false);
             }
         });
 

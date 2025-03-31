@@ -11,10 +11,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * The type Posizione implementazione postgres dao.
+ */
 public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Posizione implementazione postgres dao.
+     */
     public PosizioneImplementazionePostgresDAO() {
         try {
             connection = ConnessioneDatabase.getInstance().getConnection();
@@ -31,7 +37,7 @@ public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
             for (int i = 0; i < listaRuoli.size(); i++) {
                 insertPosizione = connection.prepareStatement("insert into posizione values (?, ?)");
                 insertPosizione.setInt(1, idGiocatore);
-                insertPosizione.setInt(2, (listaRuoli.get(i).ordinal()+1));
+                insertPosizione.setInt(2, (listaRuoli.get(i).ordinal() + 1));
                 insertPosizione.executeUpdate();
                 insertPosizione.close();
             }
@@ -55,7 +61,7 @@ public class PosizioneImplementazionePostgresDAO implements PosizioneDAO {
             insertPosizione = connection.prepareStatement("insert into posizione values (?,?)");
             for (int i = 0; i < listaRuoli.size(); i++) {
                 insertPosizione.setInt(1, idGiocatore);
-                insertPosizione.setInt(2, (listaRuoli.get(i).ordinal()+1));
+                insertPosizione.setInt(2, (listaRuoli.get(i).ordinal() + 1));
                 insertPosizione.executeUpdate();
             }
 

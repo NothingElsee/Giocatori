@@ -1,5 +1,22 @@
 package me.nothingelsee.ENUM;
 
+/**
+ * The enum Competizione.
+ */
 public enum COMPETIZIONE {
-    LEGA, COPPA, SUPER_COPPA
+
+    /**
+     * Lega competizione.
+     */
+    LEGA,
+
+    /**
+     * Coppa competizione.
+     */
+    COPPA,
+
+    /**
+     * Super coppa competizione.
+     */
+    SUPER_COPPA
 }

@@ -10,8 +10,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+/**
+ * The type Leggi trofei.
+ */
 public class LeggiTrofei {
 
+    /**
+     * The Frame.
+     */
     JFrame frame;
     private JFrame frameChiamante;
     private Controller controller;
@@ -23,17 +29,27 @@ public class LeggiTrofei {
     private JButton aggiungiButton;
     private JButton modificaButton;
     private JButton eliminaButton;
+    private JPanel trofeiPanel;
+    private JButton reloadTable;
     private JPopupMenu trofeiPopupMenu;
     private JMenuItem eliminaMenuItem;
     private JMenuItem modificaMenuItem;
     private JMenuItem annullaMenuItem;
     private boolean canModify = false;
 
+    /**
+     * Instantiates a new Leggi trofei.
+     *
+     * @param controller     the controller
+     * @param frameChiamante the frame chiamante
+     * @param canModify      the can modify
+     */
     public LeggiTrofei(Controller controller, JFrame frameChiamante, boolean canModify) {
 
         inizializzaComponenti(controller, frameChiamante, canModify);
         impostaEstetica();
         implementaListeners();
+
     }
 
     private void inizializzaComponenti(Controller controller, JFrame frameChiamante, boolean canModify) {
@@ -45,6 +61,7 @@ public class LeggiTrofei {
         frame.setContentPane(mainPanel);
         frame.pack();
         frame.setLocationRelativeTo(null);
+        frame.setSize(400, 700);
 
         trofeiPopupMenu = new JPopupMenu();
 
@@ -63,12 +80,12 @@ public class LeggiTrofei {
             trofeiPopupMenu.add(annullaMenuItem);
         }
 
-        caricaDati();
-
         trofeiTable.setModel(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{"Nome", "Data", "Tipo", "Squadra"}
         ));
+
+        caricaDati();
 
         frame.setVisible(true);
     }
@@ -111,6 +128,9 @@ public class LeggiTrofei {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     eliminaTrofeo();
+                    modificaButton.setEnabled(false);
+                    eliminaButton.setEnabled(false);
+                    trofeiTable.clearSelection();
                     caricaDati();
                 }
             });
@@ -118,6 +138,10 @@ public class LeggiTrofei {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     eliminaTrofeo();
+                    modificaButton.setEnabled(false);
+                    eliminaButton.setEnabled(false);
+                    aggiungiButton.setEnabled(true);
+                    trofeiTable.clearSelection();
                     caricaDati();
                 }
             });
@@ -126,19 +150,29 @@ public class LeggiTrofei {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     modificaTrofeo();
+                    modificaButton.setEnabled(false);
+                    eliminaButton.setEnabled(false);
+                    aggiungiButton.setEnabled(true);
+                    trofeiTable.clearSelection();
                 }
             });
             modificaMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     modificaTrofeo();
+                    modificaButton.setEnabled(false);
+                    eliminaButton.setEnabled(false);
+                    trofeiTable.clearSelection();
                 }
             });
 
             annullaMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    trofeiPopupMenu.hide();
+                    trofeiTable.clearSelection();
+                    modificaButton.setEnabled(false);
+                    eliminaButton.setEnabled(false);
+                    aggiungiButton.setEnabled(true);
                 }
             });
         }
@@ -150,8 +184,11 @@ public class LeggiTrofei {
 
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (trofeiTable.getSelectedRow() >= 0 && trofeiTable.getSelectedRow() < trofeiTable.getRowCount()) {
-                        eliminaButton.setVisible(true);
-                        modificaButton.setVisible(true);
+                        if (canModify) {
+                            eliminaButton.setEnabled(true);
+                            modificaButton.setEnabled(true);
+                            aggiungiButton.setEnabled(false);
+                        }
                     }
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     int row;
@@ -161,10 +198,20 @@ public class LeggiTrofei {
                         trofeiPopupMenu.show(trofeiTable, e.getX(), e.getY());
 
                         trofeiTable.setRowSelectionInterval(row, row);
-                        eliminaButton.setVisible(true);
-                        modificaButton.setVisible(true);
+                        if (canModify) {
+                            eliminaButton.setEnabled(true);
+                            modificaButton.setEnabled(true);
+                            aggiungiButton.setEnabled(false);
+                        }
                     }
                 }
+            }
+        });
+
+        reloadTable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                caricaDati();
             }
         });
 
@@ -180,9 +227,9 @@ public class LeggiTrofei {
     private void caricaDati() {
 
         DefaultTableModel model = (DefaultTableModel) trofeiTable.getModel();
+        model.setRowCount(0);
         controller.getTrofei(controller.getGiocatoreCercato());
         ArrayList<Trofeo> trofei = controller.getGiocatoreCercato().getTrofei();
-        model.setRowCount(0);
         for (Trofeo t : trofei) {
             model.addRow(new Object[]{t.getNome(), t.getData(), t.getTipo(), t.getSquadra()});
         }
@@ -193,8 +240,8 @@ public class LeggiTrofei {
         controller.deleteVittoria(controller.getGiocatoreCercato().getTrofei().get(row));
         controller.getGiocatoreCercato().getTrofei().remove(row);
         trofeiTable.clearSelection();
-        eliminaButton.setVisible(false);
-        modificaButton.setVisible(false);
+        eliminaButton.setEnabled(false);
+        modificaButton.setEnabled(false);
         caricaDati();
     }
 
@@ -203,8 +250,10 @@ public class LeggiTrofei {
         int row = trofeiTable.getSelectedRow();
 
         controller.setTrofeoCercato(controller.getGiocatoreCercato().getTrofei().get(row));
+        AggiungiTrofeo aggiungiTrofeo = new AggiungiTrofeo(frame, controller);
+        frame.setVisible(false);
 
-        eliminaButton.setVisible(false);
-        modificaButton.setVisible(false);
+        eliminaButton.setEnabled(false);
+        modificaButton.setEnabled(false);
     }
 }

@@ -9,10 +9,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The type Account implementazione postgres dao.
+ */
 public class AccountImplementazionePostgresDAO implements AccountDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Account implementazione postgres dao.
+     */
     public AccountImplementazionePostgresDAO() {
         try {
             connection = ConnessioneDatabase.getInstance().getConnection();

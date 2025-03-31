@@ -9,10 +9,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 
+/**
+ * The type Vittoria implementazione postgres dao.
+ */
 public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Vittoria implementazione postgres dao.
+     */
     public VittoriaImplementazionePostgresDAO() {
         try {
             connection = ConnessioneDatabase.getInstance().getConnection();
@@ -48,7 +54,7 @@ public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
                 rs2.close();
                 insertTrofeo.close();
                 idTrofeo.close();
-            }else trofeo.setId(rs.getInt(1));
+            } else trofeo.setId(rs.getInt(1));
             esisteTrofeo.close();
 
             insertVittoria = connection.prepareStatement("insert into vittoria(id_trofeo, id_giocatore, nomesquadra, data) values(?,?,?,?)");
@@ -92,7 +98,7 @@ public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
                 rs2.close();
                 insertTrofeo.close();
                 idTrofeo.close();
-            }else trofeo.setId(rs.getInt(1));
+            } else trofeo.setId(rs.getInt(1));
             esisteTrofeo.close();
 
             insertVittoria = connection.prepareStatement("insert into vittoria(id_trofeo, id_giocatore, nomesquadra, data) values(?,?,?,?)");
@@ -111,17 +117,17 @@ public class VittoriaImplementazionePostgresDAO implements VittoriaDAO {
     }
 
     @Override
-    public void deleteVittoria(Trofeo trofeo){
+    public void deleteVittoria(Trofeo trofeo) {
         PreparedStatement deleteVittoria = null;
-        try{
+        try {
 
-            deleteVittoria = connection.prepareStatement("delete from vittoria where id_trofeo = ?, data = ?");
+            deleteVittoria = connection.prepareStatement("delete from vittoria where id_trofeo = ? AND data = ?");
             deleteVittoria.setInt(1, trofeo.getId());
             deleteVittoria.setDate(2, Date.valueOf(trofeo.getData()));
             deleteVittoria.executeUpdate();
             deleteVittoria.close();
             connection.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Errore durante l'eliminazione del trofeo", "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }

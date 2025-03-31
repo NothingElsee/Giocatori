@@ -10,9 +10,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The type Partecipazione implementazione postgres dao.
+ */
 public class PartecipazioneImplementazionePostgresDAO implements PartecipazioneDAO {
     private Connection connection;
 
+    /**
+     * Instantiates a new Partecipazione implementazione postgres dao.
+     */
     public PartecipazioneImplementazionePostgresDAO() {
         try {
             connection = ConnessioneDatabase.getInstance().getConnection();

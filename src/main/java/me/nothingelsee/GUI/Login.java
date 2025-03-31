@@ -6,9 +6,15 @@ import me.nothingelsee.Controller.Controller;
 import javax.swing.*;
 import java.awt.event.*;
 
+/**
+ * The type Login.
+ */
 public class Login {
 
     private Controller controller;
+    /**
+     * The Frame.
+     */
     static JFrame frame;
     private JFrame frameChiamante;
     private JPanel mainPanel;
@@ -20,6 +26,11 @@ public class Login {
     private String username;
     private String password;
 
+    /**
+     * Instantiates a new Login.
+     *
+     * @param frameChiamante the frame chiamante
+     */
     public Login(JFrame frameChiamante) {
         inizializzazioneComponenti(frameChiamante);
         impostaEstetica();
@@ -76,7 +87,7 @@ public class Login {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     accediButtonFun();
                 }
-                if(e.getKeyCode() == KeyEvent.VK_TAB) {
+                if (e.getKeyCode() == KeyEvent.VK_TAB) {
                     passField.setText("");
                 }
             }

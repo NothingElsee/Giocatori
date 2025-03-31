@@ -21,10 +21,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * The type Leggi partite admin.
+ */
 public class LeggiPartiteAdmin {
 
     private Controller controller;
     private JFrame frameChiamante;
+    /**
+     * The Frame.
+     */
     JFrame frame;
     private JPanel mainPanel;
     private JPanel topPanel;
@@ -63,11 +69,16 @@ public class LeggiPartiteAdmin {
     private DatePicker dataPartitaPicker;
     private JPopupMenu popupMenu;
     private JMenuItem eliminaPopup;
-    private JMenuItem modificaPopup;
     private JMenuItem selezionaItem;
     private JMenuItem annullaItem;
     private Militanza militanza = null;
 
+    /**
+     * Instantiates a new Leggi partite admin.
+     *
+     * @param frameChiamante the frame chiamante
+     * @param controller     the controller
+     */
     public LeggiPartiteAdmin(JFrame frameChiamante, Controller controller) {
 
         inizializzaComponenti(frameChiamante, controller);
@@ -88,12 +99,11 @@ public class LeggiPartiteAdmin {
 
         popupMenu = new JPopupMenu("Partite");
         eliminaPopup = new JMenuItem("Elimina");
-        modificaPopup = new JMenuItem("Modifica");
         selezionaItem = new JMenuItem("Seleziona");
         annullaItem = new JMenuItem("Annulla");
 
         popupMenu.add(eliminaPopup);
-        popupMenu.add(modificaPopup);
+        popupMenu.add(selezionaItem);
         popupMenu.addSeparator();
         popupMenu.add(annullaItem);
 
@@ -133,7 +143,7 @@ public class LeggiPartiteAdmin {
             dataFinePicker.setSelectedDate(militanza.getDataFine());
             militanza.getPartite().clear();
             controller.getPartite(militanza);
-            for(Partita p : militanza.getPartite()) {
+            for (Partita p : militanza.getPartite()) {
                 controller.getStat(p);
             }
             aggiornaTable();
@@ -152,8 +162,7 @@ public class LeggiPartiteAdmin {
         Estetica.setButtonColor(caricaMilitanza);
         Estetica.setButtonColor(aggiungiPartitaButton);
         Estetica.setButtonColor(modificaButton);
-        Estetica.setButtonColor(resetButton);;
-        Estetica.setMenuItemColor(modificaPopup);
+        Estetica.setButtonColor(resetButton);
         Estetica.setMenuItemColor(selezionaItem);
         Estetica.setMenuItemColor(annullaItem);
         eliminaPopup.setBackground(Color.RED);
@@ -164,22 +173,22 @@ public class LeggiPartiteAdmin {
         caricaMilitanza.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    if (creaMilitanza()) {
-                        frame.dispose();
-                        frameChiamante.setVisible(true);
-                    }
+                if (creaMilitanza()) {
+                    frame.dispose();
+                    frameChiamante.setVisible(true);
+                }
             }
         });
 
         eliminaButton1.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               controller.deleteMilitanza(militanza);
-               controller.getGiocatoreCercato().getMilitanze().remove(militanza);
-               controller.setMilitanzaCercata(null);
-               frame.dispose();
-               frameChiamante.setVisible(true);
-           }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.deleteMilitanza(militanza);
+                controller.getGiocatoreCercato().getMilitanze().remove(militanza);
+                controller.setMilitanzaCercata(null);
+                frame.dispose();
+                frameChiamante.setVisible(true);
+            }
         });
 
         aggiungiPartitaButton.addActionListener(new ActionListener() {
@@ -213,9 +222,10 @@ public class LeggiPartiteAdmin {
                     aggiornaTable();
                     controller.setMilitanzaCercata(militanza);
 
-                    if(controller.getGiocatoreCercato().getRuoli().contains(RUOLO.GK)){
+                    if (controller.getGiocatoreCercato().getRuoli().contains(RUOLO.GK)) {
                         controller.caricaStatisticaPor(p.getId(), stat);
-                    } else JOptionPane.showMessageDialog(frame,"Il giocatore non è un potiere!", "Errore", JOptionPane.ERROR_MESSAGE );
+                    } else
+                        JOptionPane.showMessageDialog(frame, "Il giocatore non è un potiere!", "Errore", JOptionPane.ERROR_MESSAGE);
 
                     partiteTable.clearSelection();
                     resetInfoPartita();
@@ -255,9 +265,10 @@ public class LeggiPartiteAdmin {
                     controller.updatePartita(p);
                     controller.updateStatistica(p.getId(), p.getStat());
 
-                    if(controller.getGiocatoreCercato().getRuoli().contains(RUOLO.GK)){
-                        controller.updateStatisticaPor(p.getId(), stat);
-                    } else JOptionPane.showMessageDialog(frame,"Il giocatore non è un potiere!", "Errore", JOptionPane.ERROR_MESSAGE );
+                    if (controller.getGiocatoreCercato().getRuoli().contains(RUOLO.GK)) {
+                        controller.updateStatisticaPor(p.getId(), p.getStat());
+                    } else
+                        JOptionPane.showMessageDialog(frame, "Il giocatore non è un potiere!", "Errore", JOptionPane.ERROR_MESSAGE);
 
                     modificaButton.setEnabled(false);
                     eliminaButton.setEnabled(false);
@@ -265,6 +276,8 @@ public class LeggiPartiteAdmin {
                     resetInfoPartita();
                     partiteTable.clearSelection();
                     aggiungiPartitaButton.setEnabled(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Dati Partita mancanti o non validi ", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -407,12 +420,12 @@ public class LeggiPartiteAdmin {
             LocalDate ldI = dataInizioPicker.getSelectedDate();
             LocalDate ldF = dataFinePicker.getSelectedDate();
 
-            if(militanza == null) {
+            if (militanza == null) {
                 militanza = new Militanza(-1, dtf.format(ldI), dtf.format(ldF), new Squadra(nomeSquadraText.getSelectedItem().toString()));
                 militanza.setPartite(new ArrayList<Partita>());
                 controller.getGiocatoreCercato().addMilitanza(militanza);
                 return controller.caricaMilitanza(controller.getGiocatoreCercato().getId(), militanza);
-            }else{
+            } else {
                 militanza.setDataInizio(dtf.format(ldI));
                 militanza.setDataFine(dtf.format(ldF));
                 militanza.setSquadra(new Squadra(nomeSquadraText.getSelectedItem().toString()));
@@ -424,7 +437,8 @@ public class LeggiPartiteAdmin {
 
     private Statistiche getStatistiche() {
         return new Statistiche(Integer.parseInt(goalText.getText()), Integer.parseInt(assistText.getText()), Integer.parseInt(rossiText.getText()),
-                Integer.parseInt(gialliText.getText()), Integer.parseInt(rigoriSegnatiText.getText()), Integer.parseInt(goalSubitiText.getText()), Integer.parseInt(numeroParateText.getText()));
+                Integer.parseInt(gialliText.getText()), Integer.parseInt(rigoriSegnatiText.getText()), Integer.parseInt(goalSubitiText.getText()),
+                Integer.parseInt(numeroParateText.getText()));
     }
 
     private void caricaInfoPartita() {
@@ -456,8 +470,8 @@ public class LeggiPartiteAdmin {
 
     private boolean checkAllCampi() {
 
-        if (nomeSquadraText.getSelectedItem().equals("") || !dataInizioPicker.isDateSelected() || !dataFinePicker.isDateSelected() ||
-                !dataPartitaPicker.isDateSelected() || nomeAvversarioText.getSelectedItem().equals("")) {
+        if (nomeSquadraText.getSelectedItem() == null || !dataInizioPicker.isDateSelected() || !dataFinePicker.isDateSelected() ||
+                !dataPartitaPicker.isDateSelected() || nomeAvversarioText.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(frame, "Campi della Militanza non validi o mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }

@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * The type Home.
+ */
 public class Home {
 
     private static JFrame frame;
@@ -17,6 +20,9 @@ public class Home {
     private JPanel buttonPanel;
     private JPanel selectPanel;
 
+    /**
+     * Instantiates a new Home.
+     */
     public Home() {
         impostaEstetica();
         implementazioneListeners();
@@ -30,7 +36,7 @@ public class Home {
         frame.pack();
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
-        frame.setSize(400,450);
+        frame.setSize(400, 450);
     }
 
     private void impostaEstetica() {
@@ -47,7 +53,7 @@ public class Home {
 
         guestButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
 
                 RicercaGiocatori giocatori = new RicercaGiocatori(frame, false);
                 frame.setVisible(false);
@@ -56,17 +62,23 @@ public class Home {
 
         adminButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 Login login = new Login(frame);
             }
         });
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch(Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
         inizializzaComponenti();
     }
