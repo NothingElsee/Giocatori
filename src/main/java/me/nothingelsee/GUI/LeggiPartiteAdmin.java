@@ -509,7 +509,7 @@ public class LeggiPartiteAdmin {
         String avversario = null;
 
         for (Partita partita : militanza.getPartite()) {
-            avversario = militanza.getSquadra().getNome().equals(partita.getSquadraCasa()) ? partita.getSquadraCasa() : partita.getSquadraTrasferta();
+            avversario = militanza.getSquadra().getNome().equals(partita.getSquadraCasa()) ? partita.getSquadraTrasferta() : partita.getSquadraCasa();
 
             model.addRow(new Object[]{avversario, partita.getData()});
         }

@@ -1,158 +1,158 @@
 CODICE SQL PER LA CREAZIONE DEL DATABASE:
 
-CREATE DOMAIN PasswordDomain AS VARCHAR(255) CHECK ( LENGTH(VALUE) BETWEEN 8 AND 255 AND VALUE ~ '[0-9]'  AND VALUE ~ '[A-Z]' AND VALUE ~ '[a-z]'  AND VALUE ~ '[^a-zA-Z0-9]' );
+    CREATE DOMAIN PasswordDomain AS VARCHAR(255) CHECK ( LENGTH(VALUE) BETWEEN 8 AND 255 AND VALUE ~ '[0-9]'  AND VALUE ~ '[A-Z]' AND VALUE ~ '[a-z]'  AND VALUE ~ '[^a-zA-Z0-9]' );
 
-CREATE DOMAIN UsernameDomain AS VARCHAR(20) CHECK ( LENGTH(VALUE) BETWEEN 4 AND 20 AND VALUE ~ '^[A-Za-z0-9._-]+$');
+    CREATE DOMAIN UsernameDomain AS VARCHAR(20) CHECK ( LENGTH(VALUE) BETWEEN 4 AND 20 AND VALUE ~ '^[A-Za-z0-9._-]+$');
 
-CREATE DOMAIN CodiceDomain AS VARCHAR(3) CHECK (VALUE ~ '^[A-Z]{3}$');
+    CREATE DOMAIN CodiceDomain AS VARCHAR(3) CHECK (VALUE ~ '^[A-Z]{3}$');
 
-CREATE TYPE enPiede AS ENUM ('SINISTRO', 'DESTRO', 'ENTRAMBI');
+    CREATE TYPE enPiede AS ENUM ('SINISTRO', 'DESTRO', 'ENTRAMBI');
 
-CREATE TYPE enRuolo AS ENUM ('GK', 'LB', 'RB', 'RCB', 'LCB', 'CB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'ST');
+    CREATE TYPE enRuolo AS ENUM ('GK', 'LB', 'RB', 'RCB', 'LCB', 'CB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'ST');
 
-CREATE TYPE enCompetizione AS ENUM ('LEGA', 'COPPA', 'SUPER_COPPA');
+    CREATE TYPE enCompetizione AS ENUM ('LEGA', 'COPPA', 'SUPER_COPPA');
 
-CREATE TYPE enTrofeo AS ENUM ('INDIVIDUALE', 'SQUADRA');
+    CREATE TYPE enTrofeo AS ENUM ('INDIVIDUALE', 'SQUADRA');
 
-CREATE TABLE Account( Username UsernameDomain NOT NULL, Pass PasswordDomain NOT NULL,
+    CREATE TABLE Account( Username UsernameDomain NOT NULL, Pass PasswordDomain NOT NULL,
 
-PRIMARY KEY(Username,Pass) );
+    PRIMARY KEY(Username,Pass) );
 
-CREATE TABLE Ruolo ( ID_Ruolo SERIAL NOT NULL, Tipo enRuolo NOT NULL,
+    CREATE TABLE Ruolo ( ID_Ruolo SERIAL NOT NULL, Tipo enRuolo NOT NULL,
 
-Primary Key (ID_Ruolo) );
+    Primary Key (ID_Ruolo) );
 
-CREATE TABLE Giocatore(
+    CREATE TABLE Giocatore(
 
-ID_Giocatore SERIAL NOT NULL, Nome VARCHAR(25) NOT NULL, Cognome VARCHAR(25) NOT NULL, DataNascita DATE NOT NULL, DataRitiro DATE, Piede enPiede NOT NULL,
+    ID_Giocatore SERIAL NOT NULL, Nome VARCHAR(25) NOT NULL, Cognome VARCHAR(25) NOT NULL, DataNascita DATE NOT NULL, DataRitiro DATE, Piede enPiede NOT NULL,
 
-PRIMARY KEY(ID_Giocatore)
+    PRIMARY KEY(ID_Giocatore)
 
-);
+    );
 
-CREATE TABLE Nazionalità(
+    CREATE TABLE Nazionalità(
 
-Nome VARCHAR(50) NOT NULL, Codice CodiceDomain, Continente VARCHAR(15),
+    Nome VARCHAR(50) NOT NULL, Codice CodiceDomain, Continente VARCHAR(15),
 
-PRIMARY KEY(Nome) );
+    PRIMARY KEY(Nome) );
 
-CREATE TABLE Squadra(
+    CREATE TABLE Squadra(
 
-Nome VARCHAR(25) NOT NULL, Nomenazione VARCHAR(50),
+    Nome VARCHAR(25) NOT NULL, Nomenazione VARCHAR(50),
 
-PRIMARY KEY(Nome), CONSTRAINT fk_Squadra_Nazionalità FOREIGN KEY(Nomenazione) REFERENCES Nazionalità(Nome)
+    PRIMARY KEY(Nome), CONSTRAINT fk_Squadra_Nazionalità FOREIGN KEY(Nomenazione) REFERENCES Nazionalità(Nome)
 
-);
+    );
 
-CREATE TABLE Militanza(
+    CREATE TABLE Militanza(
 
-ID_Militanza SERIAL NOT NULL, ID_Giocatore INTEGER NOT NULL, NomeSquadra VARCHAR(50) NOT NULL, DataInizio DATE, DataFine DATE, NumeroPartiteGiocate INTEGER DEFAULT 0,
+    ID_Militanza SERIAL NOT NULL, ID_Giocatore INTEGER NOT NULL, NomeSquadra VARCHAR(50) NOT NULL, DataInizio DATE, DataFine DATE, NumeroPartiteGiocate INTEGER DEFAULT 0,
 
-PRIMARY KEY(ID_Militanza), CONSTRAINT fk_Militanza_Squadra FOREIGN KEY (NomeSquadra) REFERENCES Squadra(Nome), CONSTRAINT fk_Militanza_Giocatore FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
+    PRIMARY KEY(ID_Militanza), CONSTRAINT fk_Militanza_Squadra FOREIGN KEY (NomeSquadra) REFERENCES Squadra(Nome), CONSTRAINT fk_Militanza_Giocatore FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
 
-);
+    );
 
-CREATE TABLE Posizione(
+    CREATE TABLE Posizione(
 
-ID_Giocatore INTEGER NOT NULL, ID_Ruolo INTEGER NOT NULL,
+    ID_Giocatore INTEGER NOT NULL, ID_Ruolo INTEGER NOT NULL,
 
-PRIMARY KEY(ID_Giocatore, ID_Ruolo), CONSTRAINT fk_Ruolo_Giocatore FOREIGN KEY (ID_Ruolo) REFERENCES Ruolo(ID_Ruolo), CONSTRAINT fk_Giocatore_Ruolo FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
+    PRIMARY KEY(ID_Giocatore, ID_Ruolo), CONSTRAINT fk_Ruolo_Giocatore FOREIGN KEY (ID_Ruolo) REFERENCES Ruolo(ID_Ruolo), CONSTRAINT fk_Giocatore_Ruolo FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
 
-);
+    );
 
-CREATE TABLE Abilità(
+    CREATE TABLE Abilità(
 
-ID_Giocatore INTEGER NOT NULL, Velocità INTEGER DEFAULT 0, Tiro INTEGER DEFAULT 0, Passaggio INTEGER DEFAULT 0, PiedeDebole INTEGER DEFAULT 0, Resistenza INTEGER DEFAULT 0, Difesa INTEGER DEFAULT 0, TiroSuPunizione INTEGER DEFAULT 0,
+    ID_Giocatore INTEGER NOT NULL, Velocità INTEGER DEFAULT 0, Tiro INTEGER DEFAULT 0, Passaggio INTEGER DEFAULT 0, PiedeDebole INTEGER DEFAULT 0, Resistenza INTEGER DEFAULT 0, Difesa INTEGER DEFAULT 0, TiroSuPunizione INTEGER DEFAULT 0,
 
-PRIMARY KEY(ID_Giocatore), CONSTRAINT fk_Giocatore_Abilità FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
+    PRIMARY KEY(ID_Giocatore), CONSTRAINT fk_Giocatore_Abilità FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
 
-);
+    );
 
-CREATE TABLE Skill(
+    CREATE TABLE Skill(
 
-ID_Giocatore INTEGER NOT NULL, ColpoDiTacco INTEGER DEFAULT 0, ColpoDiTesta INTEGER DEFAULT 0, Rovesciata INTEGER DEFAULT 0, Sforbiciata INTEGER DEFAULT 0, Dribbling INTEGER DEFAULT 0, ControlloPalla INTEGER DEFAULT 0,
+    ID_Giocatore INTEGER NOT NULL, ColpoDiTacco INTEGER DEFAULT 0, ColpoDiTesta INTEGER DEFAULT 0, Rovesciata INTEGER DEFAULT 0, Sforbiciata INTEGER DEFAULT 0, Dribbling INTEGER DEFAULT 0, ControlloPalla INTEGER DEFAULT 0,
 
-PRIMARY KEY(ID_Giocatore), CONSTRAINT fk_Giocatore_Skill FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
+    PRIMARY KEY(ID_Giocatore), CONSTRAINT fk_Giocatore_Skill FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE
 
-);
+    );
 
-CREATE TABLE Appartiene(
+    CREATE TABLE Appartiene(
 
-ID_Giocatore INTEGER NOT NULL, NomeNazionalità VARCHAR(50) NOT NULL,
+    ID_Giocatore INTEGER NOT NULL, NomeNazionalità VARCHAR(50) NOT NULL,
 
-PRIMARY KEY(ID_Giocatore,NomeNazionalità), CONSTRAINT fk_Nazionalità_Giocatore FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE, CONSTRAINT fk_Giocatore_Nazionalità FOREIGN KEY (NomeNazionalità) REFERENCES Nazionalità(Nome)
+    PRIMARY KEY(ID_Giocatore,NomeNazionalità), CONSTRAINT fk_Nazionalità_Giocatore FOREIGN KEY (ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE, CONSTRAINT fk_Giocatore_Nazionalità FOREIGN KEY (NomeNazionalità) REFERENCES Nazionalità(Nome)
 
-);
+    );
 
-CREATE TABLE Competizione (
+    CREATE TABLE Competizione (
 
-Nome VARCHAR(25) NOT NULL, Tipo enCompetizione NOT NULL, Durata VARCHAR(5) NOT NULL,
+    Nome VARCHAR(25) NOT NULL, Tipo enCompetizione NOT NULL, Durata VARCHAR(5) NOT NULL,
 
-PRIMARY KEY (Nome, Tipo) );
+    PRIMARY KEY (Nome, Tipo) );
 
-CREATE TABLE Match(
+    CREATE TABLE Match(
 
-ID_Partita SERIAL NOT NULL, ID_Militanza INTEGER NOT NULL, NomeComp VARCHAR(25), TipoComp enCompetizione , DataPartita DATE NOT NULL, GoalCasa INTEGER DEFAULT 0, GoalTrasferta INTEGER DEFAULT 0,
+    ID_Partita SERIAL NOT NULL, ID_Militanza INTEGER NOT NULL, NomeComp VARCHAR(25), TipoComp enCompetizione , DataPartita DATE NOT NULL, GoalCasa INTEGER DEFAULT 0, GoalTrasferta INTEGER DEFAULT 0,
 
-PRIMARY KEY(ID_Partita), CONSTRAINT fk_Match_Militanza FOREIGN KEY (ID_Militanza) REFERENCES Militanza(ID_Militanza) ON DELETE CASCADE, CONSTRAINT fk_Match_Competizione FOREIGN KEY (NomeComp,TipoComp) REFERENCES Competizione(Nome,Tipo) );
+    PRIMARY KEY(ID_Partita), CONSTRAINT fk_Match_Militanza FOREIGN KEY (ID_Militanza) REFERENCES Militanza(ID_Militanza) ON DELETE CASCADE, CONSTRAINT fk_Match_Competizione FOREIGN KEY (NomeComp,TipoComp) REFERENCES Competizione(Nome,Tipo) );
 
-CREATE TABLE Statistica(
+    CREATE TABLE Statistica(
 
-ID_Partita INTEGER NOT NULL, Goal INTEGER DEFAULT 0, Assist INTEGER DEFAULT 0, CartelliniRossi INTEGER DEFAULT 0, CartelliniGialli INTEGER DEFAULT 0, RigoriSegnati INTEGER DEFAULT 0,
+    ID_Partita INTEGER NOT NULL, Goal INTEGER DEFAULT 0, Assist INTEGER DEFAULT 0, CartelliniRossi INTEGER DEFAULT 0, CartelliniGialli INTEGER DEFAULT 0, RigoriSegnati INTEGER DEFAULT 0,
 
-PRIMARY KEY(ID_Partita), CONSTRAINT fk_Statistica_Match FOREIGN KEY (ID_Partita) REFERENCES Match(ID_Partita) ON DELETE CASCADE
+    PRIMARY KEY(ID_Partita), CONSTRAINT fk_Statistica_Match FOREIGN KEY (ID_Partita) REFERENCES Match(ID_Partita) ON DELETE CASCADE
 
-);
+    );
 
-CREATE TABLE StatPortiere(
+    CREATE TABLE StatPortiere(
 
-ID_Partita INTEGER NOT NULL, NumParate INTEGER DEFAULT 0, GoalSubiti INTEGER DEFAULT 0,
+    ID_Partita INTEGER NOT NULL, NumParate INTEGER DEFAULT 0, GoalSubiti INTEGER DEFAULT 0,
 
-PRIMARY KEY(ID_Partita), CONSTRAINT fk_StatPortiere_Match FOREIGN KEY (ID_Partita) REFERENCES Match(ID_Partita) ON DELETE CASCADE
+    PRIMARY KEY(ID_Partita), CONSTRAINT fk_StatPortiere_Match FOREIGN KEY (ID_Partita) REFERENCES Match(ID_Partita) ON DELETE CASCADE
 
-);
+    );
 
-CREATE TABLE Partecipazione(
+    CREATE TABLE Partecipazione(
 
-ID_Partita SERIAL NOT NULL, SquadraCasa VARCHAR(25) NOT NULL, SquadraTrasferta VARCHAR(25) NOT NULL,
+    ID_Partita SERIAL NOT NULL, SquadraCasa VARCHAR(25) NOT NULL, SquadraTrasferta VARCHAR(25) NOT NULL,
 
-PRIMARY KEY(ID_Partita,SquadraCasa,SquadraTrasferta), CONSTRAINT fk_Match_Squadra FOREIGN KEY (ID_Partita) REFERENCES Match(ID_Partita) ON DELETE CASCADE, CONSTRAINT fk_Squadra_Casa FOREIGN KEY (SquadraCasa) REFERENCES Squadra(Nome) ON DELETE CASCADE, CONSTRAINT fk_Squadra_Trasferta FOREIGN KEY (SquadraTrasferta) REFERENCES Squadra(Nome) ON DELETE CASCADE
+    PRIMARY KEY(ID_Partita,SquadraCasa,SquadraTrasferta), CONSTRAINT fk_Match_Squadra FOREIGN KEY (ID_Partita) REFERENCES Match(ID_Partita) ON DELETE CASCADE, CONSTRAINT fk_Squadra_Casa FOREIGN KEY (SquadraCasa) REFERENCES Squadra(Nome) ON DELETE CASCADE, CONSTRAINT fk_Squadra_Trasferta FOREIGN KEY (SquadraTrasferta) REFERENCES Squadra(Nome) ON DELETE CASCADE
 
-);
+    );
 
-CREATE TABLE Trofeo(
+    CREATE TABLE Trofeo(
 
-ID_Trofeo SERIAL NOT NULL, Nome VARCHAR(25) NOT NULL, Tipo enTrofeo NOT NULL,
+    ID_Trofeo SERIAL NOT NULL, Nome VARCHAR(25) NOT NULL, Tipo enTrofeo NOT NULL,
 
-PRIMARY KEY(ID_Trofeo)
+    PRIMARY KEY(ID_Trofeo)
 
-);
+    );
 
-CREATE TABLE Vittoria(
+    CREATE TABLE Vittoria(
 
-ID_Vittoria SERIAL NOT NULL, ID_Trofeo INTEGER NOT NULL, ID_Giocatore INTEGER , NomeSquadra VARCHAR(25), Data DATE NOT NULL,
+    ID_Vittoria SERIAL NOT NULL, ID_Trofeo INTEGER NOT NULL, ID_Giocatore INTEGER , NomeSquadra VARCHAR(25), Data DATE NOT NULL,
 
-PRIMARY KEY(ID_Vittoria),
+    PRIMARY KEY(ID_Vittoria),
 
-CONSTRAINT fk_Vittoria_Trofeo FOREIGN KEY(ID_Trofeo) REFERENCES Trofeo(ID_Trofeo) ON DELETE CASCADE, CONSTRAINT fk_Vittoria_Giocatore FOREIGN KEY(ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE, CONSTRAINT fk_Vittoria_Squadra FOREIGN KEY(NomeSquadra) REFERENCES Squadra(Nome)
+    CONSTRAINT fk_Vittoria_Trofeo FOREIGN KEY(ID_Trofeo) REFERENCES Trofeo(ID_Trofeo) ON DELETE CASCADE, CONSTRAINT fk_Vittoria_Giocatore FOREIGN KEY(ID_Giocatore) REFERENCES Giocatore(ID_Giocatore) ON DELETE CASCADE, CONSTRAINT fk_Vittoria_Squadra FOREIGN KEY(NomeSquadra) REFERENCES Squadra(Nome)
 
-);
+    );
 
-ALTER TABLE Ruolo ADD CONSTRAINT uq_ruolo_tipo UNIQUE (ID_Ruolo, Tipo);
+    ALTER TABLE Ruolo ADD CONSTRAINT uq_ruolo_tipo UNIQUE (ID_Ruolo, Tipo);
 
-ALTER TABLE Trofeo ADD CONSTRAINT uq_trofeo_nome UNIQUE (Nome, Tipo);
+    ALTER TABLE Trofeo ADD CONSTRAINT uq_trofeo_nome UNIQUE (Nome, Tipo);
 
-ALTER TABLE Competizione ADD CONSTRAINT uq_competizione_nome UNIQUE (Nome);
+    ALTER TABLE Competizione ADD CONSTRAINT uq_competizione_nome UNIQUE (Nome);
 
-ALTER TABLE Militanza ADD CONSTRAINT ck_militanza_data CHECK (DataFine IS NULL OR DataFine > DataInizio);
+    ALTER TABLE Militanza ADD CONSTRAINT ck_militanza_data CHECK (DataFine IS NULL OR DataFine > DataInizio);
 
-ALTER TABLE Giocatore ADD CONSTRAINT ck_giocatore_data CHECK (DataRitiro IS NULL OR DataRitiro > DataNascita);
+    ALTER TABLE Giocatore ADD CONSTRAINT ck_giocatore_data CHECK (DataRitiro IS NULL OR DataRitiro > DataNascita);
 
-ALTER TABLE StatPortiere ADD CONSTRAINT ck_stat_portiere CHECK (NumParate >= 0 AND GoalSubiti >= 0);
+    ALTER TABLE StatPortiere ADD CONSTRAINT ck_stat_portiere CHECK (NumParate >= 0 AND GoalSubiti >= 0);
 
-ALTER TABLE Skill ADD CONSTRAINT ck_skill_range CHECK ( ColpoDiTacco BETWEEN 0 AND 100 AND Rovesciata BETWEEN 0 AND 100 AND Dribbling BETWEEN 0 AND 100 AND Sforbiciata BETWEEN 0 AND 100 AND ControlloPalla BETWEEN 0 AND 100 AND ColpoDiTesta BETWEEN 0 AND 100 );
+    ALTER TABLE Skill ADD CONSTRAINT ck_skill_range CHECK ( ColpoDiTacco BETWEEN 0 AND 100 AND Rovesciata BETWEEN 0 AND 100 AND Dribbling BETWEEN 0 AND 100 AND Sforbiciata BETWEEN 0 AND 100 AND ControlloPalla BETWEEN 0 AND 100 AND ColpoDiTesta BETWEEN 0 AND 100 );
 
-ALTER TABLE Abilità ADD CONSTRAINT ck_abilità_range CHECK ( Velocità BETWEEN 0 AND 100 AND Difesa BETWEEN 0 AND 100 AND PiedeDebole BETWEEN 0 AND 100 AND Tiro BETWEEN 0 AND 100 AND Passaggio BETWEEN 0 AND 100 AND PiedeDebole BETWEEN 0 AND 100 AND Resistenza BETWEEN 0 AND 100 AND TiroSuPunizione BETWEEN 0 AND 100 );
+    ALTER TABLE Abilità ADD CONSTRAINT ck_abilità_range CHECK ( Velocità BETWEEN 0 AND 100 AND Difesa BETWEEN 0 AND 100 AND PiedeDebole BETWEEN 0 AND 100 AND Tiro BETWEEN 0 AND 100 AND Passaggio BETWEEN 0 AND 100 AND PiedeDebole BETWEEN 0 AND 100 AND Resistenza BETWEEN 0 AND 100 AND TiroSuPunizione BETWEEN 0 AND 100 );
 
 
 Per il corretto utilizzo del software è necessaria l'introduzione dei ruoli all'interno del database:

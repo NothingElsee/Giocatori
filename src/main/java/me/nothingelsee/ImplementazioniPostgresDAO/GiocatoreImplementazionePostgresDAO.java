@@ -1,14 +1,11 @@
 package me.nothingelsee.ImplementazioniPostgresDAO;
 
 import me.nothingelsee.Database.ConnessioneDatabase;
-import me.nothingelsee.ENUM.PIEDE;
 import me.nothingelsee.InterfacceDAO.GiocatoreDAO;
 import me.nothingelsee.Model.Giocatore;
 
 import javax.swing.*;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 /**
@@ -42,22 +39,238 @@ public class GiocatoreImplementazionePostgresDAO implements GiocatoreDAO {
                 select = "Select DISTINCT  G.id_giocatore, G.nome AS nomeG, G.cognome, G.dataNascita, N.nome AS nomeN, G.dataRitiro, G.piede FROM Giocatore AS G LEFT JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore LEFT JOIN Ruolo AS R ON R.id_ruolo = P.id_ruolo " + "LEFT JOIN Militanza AS M ON G.id_giocatore = M.id_giocatore LEFT JOIN Appartiene AS A ON A.id_giocatore=G.id_giocatore LEFT JOIN nazionalità AS N ON N.nome = A.nomenazionalità " + "WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) + " " + "ORDER BY G.Nome " + filtri.get(5) + ", G.Cognome " + filtri.get(5);
                 break;
             case "Goal":
-                select = "Select G.id_giocatore, G.nome AS nomeG, G.cognome, G.dataNascita, N.nome AS nomeN, G.dataRitiro, G.piede, COALESCE(SUM(s.Goal), 0) AS stat FROM Giocatore AS G JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore JOIN Ruolo AS R ON R.id_ruolo = P.id_ruolo " + "JOIN Militanza AS M ON G.id_giocatore = M.id_giocatore " + "LEFT JOIN match as Ma ON Ma.id_militanza = M.id_militanza " + "LEFT JOIN Statistica AS S ON S.id_partita = Ma.id_partita LEFT JOIN Appartiene AS A ON A.id_giocatore=G.id_giocatore LEFT JOIN nazionalità AS N ON N.nome = A.nomenazionalità " + "WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) + " GROUP BY G.id_giocatore, G.nome, G.cognome, nomeN " + "ORDER BY stat " + filtri.get(5);
+                select = "SELECT " +
+                        "  G.id_giocatore," +
+                        "  G.nome        AS nomeG," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome        AS nomeN," +
+                        "  G.dataRitiro," +
+                        "  G.piede," +
+                        "  MAX(COALESCE(Stats.total_goals, 0)) AS stat" +
+                        " FROM Giocatore AS G" +
+                        "" +
+                        " LEFT JOIN (" +
+                        "  SELECT " +
+                        "    M.id_giocatore," +
+                        "    SUM(S.Goal) AS total_goals" +
+                        "  FROM Militanza AS M" +
+                        "    LEFT JOIN match      AS Ma ON Ma.id_militanza = M.id_militanza" +
+                        "    LEFT JOIN Statistica AS S  ON S.id_partita    = Ma.id_partita" +
+                        "  GROUP BY M.id_giocatore" +
+                        ") AS Stats" +
+                        "  ON Stats.id_giocatore = G.id_giocatore" +
+                        "" +
+                        " LEFT JOIN Appartiene   AS A ON A.id_giocatore = G.id_giocatore" +
+                        " LEFT JOIN nazionalità  AS N ON N.nome          = A.nomenazionalità" +
+                        "" +
+                        " JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore" +
+                        " JOIN Ruolo     AS R ON R.id_ruolo     = P.id_ruolo" +
+                         " WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) +
+                        " GROUP BY " +
+                        "  G.id_giocatore," +
+                        "  G.nome," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome," +
+                        "  G.dataRitiro," +
+                        "  G.piede" +
+                        " ORDER BY stat " + filtri.get(5);
                 break;
             case "Assist":
-                select = "Select G.id_giocatore, G.nome AS nomeG, G.cognome, G.dataNascita, N.nome AS nomeN, G.dataRitiro, G.piede, COALESCE(SUM(s.Assist), 0) AS stat FROM Giocatore AS G JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore JOIN Ruolo AS R ON R.id_ruolo = P.id_ruolo " + "JOIN Militanza AS M ON G.id_giocatore = M.id_giocatore " + "LEFT JOIN match as Ma ON Ma.id_militanza = M.id_militanza " + "LEFT JOIN Statistica AS S ON S.id_partita = Ma.id_partita LEFT JOIN Appartiene AS A ON A.id_giocatore=G.id_giocatore LEFT JOIN nazionalità AS N ON N.nome = A.nomenazionalità " + "WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) + " GROUP BY G.id_giocatore, G.nome, G.cognome, nomeN " + "ORDER BY stat " + filtri.get(5);
+                select = "SELECT " +
+                        "  G.id_giocatore," +
+                        "  G.nome        AS nomeG," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome        AS nomeN," +
+                        "  G.dataRitiro," +
+                        "  G.piede," +
+                        "  MAX(COALESCE(Stats.total_assist, 0)) AS stat" +
+                        " FROM Giocatore AS G" +
+                        "" +
+                        " LEFT JOIN (" +
+                        "  SELECT " +
+                        "    M.id_giocatore," +
+                        "    SUM(S.assist) AS total_assist" +
+                        "  FROM Militanza AS M" +
+                        "    LEFT JOIN match      AS Ma ON Ma.id_militanza = M.id_militanza" +
+                        "    LEFT JOIN Statistica AS S  ON S.id_partita    = Ma.id_partita" +
+                        "  GROUP BY M.id_giocatore" +
+                        ") AS Stats" +
+                        "  ON Stats.id_giocatore = G.id_giocatore" +
+                        "" +
+                        " LEFT JOIN Appartiene   AS A ON A.id_giocatore = G.id_giocatore" +
+                        " LEFT JOIN nazionalità  AS N ON N.nome          = A.nomenazionalità" +
+                        "" +
+                        " JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore" +
+                        " JOIN Ruolo     AS R ON R.id_ruolo     = P.id_ruolo" +
+                        " WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) +
+                        " GROUP BY " +
+                        "  G.id_giocatore," +
+                        "  G.nome," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome," +
+                        "  G.dataRitiro," +
+                        "  G.piede" +
+                        " ORDER BY stat " + filtri.get(5);;
                 break;
             case "Cartellini Rossi":
-                select = "Select G.id_giocatore, G.nome AS nomeG, G.cognome, G.dataNascita, N.nome AS nomeN, G.dataRitiro, G.piede, COALESCE(SUM(s.CartelliniRossi), 0) AS stat FROM Giocatore AS G JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore JOIN Ruolo AS R ON R.id_ruolo = P.id_ruolo " + "JOIN Militanza AS M ON G.id_giocatore = M.id_giocatore " + "LEFT JOIN match as Ma ON Ma.id_militanza = M.id_militanza " + "LEFT JOIN Statistica AS S ON S.id_partita = Ma.id_partita LEFT JOIN Appartiene AS A ON A.id_giocatore=G.id_giocatore LEFT JOIN nazionalità AS N ON N.nome = A.nomenazionalità " + "WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) + " GROUP BY G.id_giocatore, G.nome, G.cognome, nomeN " + "ORDER BY stat " + filtri.get(5);
+                select = "SELECT " +
+                        "  G.id_giocatore," +
+                        "  G.nome        AS nomeG," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome        AS nomeN," +
+                        "  G.dataRitiro," +
+                        "  G.piede," +
+                        "  MAX(COALESCE(Stats.total_cr, 0)) AS stat" +
+                        " FROM Giocatore AS G" +
+                        "" +
+                        " LEFT JOIN (" +
+                        "  SELECT " +
+                        "    M.id_giocatore," +
+                        "    SUM(S.cartellinirossi) AS total_cr" +
+                        "  FROM Militanza AS M" +
+                        "    LEFT JOIN match      AS Ma ON Ma.id_militanza = M.id_militanza" +
+                        "    LEFT JOIN Statistica AS S  ON S.id_partita    = Ma.id_partita" +
+                        "  GROUP BY M.id_giocatore" +
+                        ") AS Stats" +
+                        "  ON Stats.id_giocatore = G.id_giocatore" +
+                        "" +
+                        " LEFT JOIN Appartiene   AS A ON A.id_giocatore = G.id_giocatore" +
+                        " LEFT JOIN nazionalità  AS N ON N.nome          = A.nomenazionalità" +
+                        "" +
+                        " JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore" +
+                        " JOIN Ruolo     AS R ON R.id_ruolo     = P.id_ruolo" +
+                        " WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) +
+                        " GROUP BY " +
+                        "  G.id_giocatore," +
+                        "  G.nome," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome," +
+                        "  G.dataRitiro," +
+                        "  G.piede" +
+                        " ORDER BY stat " + filtri.get(5);;
                 break;
             case "Cartellioni Gialli":
-                select = "Select G.id_giocatore, G.nome AS nomeG, G.cognome, G.dataNascita, N.nome AS nomeN, G.dataRitiro, G.piede, COALESCE(SUM(s.CartelliniGialli), 0) AS stat FROM Giocatore AS G JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore JOIN Ruolo AS R ON R.id_ruolo = P.id_ruolo " + "JOIN Militanza AS M ON G.id_giocatore = M.id_giocatore " + "LEFT JOIN match as Ma ON Ma.id_militanza = M.id_militanza " + "LEFT JOIN Statistica AS S ON S.id_partita = Ma.id_partita LEFT JOIN Appartiene AS A ON A.id_giocatore=G.id_giocatore LEFT JOIN nazionalità AS N ON N.nome = A.nomenazionalità " + "WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) + " GROUP BY G.id_giocatore, G.nome, G.cognome, nomeN " + "ORDER BY stat " + filtri.get(5);
+                select = "SELECT " +
+                        "  G.id_giocatore," +
+                        "  G.nome        AS nomeG," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome        AS nomeN," +
+                        "  G.dataRitiro," +
+                        "  G.piede," +
+                        "  MAX(COALESCE(Stats.total_cg, 0)) AS stat" +
+                        " FROM Giocatore AS G" +
+                        "" +
+                        " LEFT JOIN (" +
+                        "  SELECT " +
+                        "    M.id_giocatore," +
+                        "    SUM(S.cartellinigialli) AS total_cg" +
+                        "  FROM Militanza AS M" +
+                        "    LEFT JOIN match      AS Ma ON Ma.id_militanza = M.id_militanza" +
+                        "    LEFT JOIN Statistica AS S  ON S.id_partita    = Ma.id_partita" +
+                        "  GROUP BY M.id_giocatore" +
+                        ") AS Stats" +
+                        "  ON Stats.id_giocatore = G.id_giocatore" +
+                        "" +
+                        " LEFT JOIN Appartiene   AS A ON A.id_giocatore = G.id_giocatore" +
+                        " LEFT JOIN nazionalità  AS N ON N.nome          = A.nomenazionalità" +
+                        "" +
+                        " JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore" +
+                        " JOIN Ruolo     AS R ON R.id_ruolo     = P.id_ruolo" +
+                        " WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) +
+                        " GROUP BY " +
+                        "  G.id_giocatore," +
+                        "  G.nome," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome," +
+                        "  G.dataRitiro," +
+                        "  G.piede" +
+                        " ORDER BY stat " + filtri.get(5);
                 break;
             case "Numero Parate":
-                select = "Select G.id_giocatore, G.nome AS nomeG, G.cognome, G.dataNascita, N.nome AS nomeN, G.dataRitiro, G.piede, COALESCE(SUM(s.NumParate), 0) AS stat FROM Giocatore AS G JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore JOIN Ruolo AS R ON R.id_ruolo = P.id_ruolo " + "JOIN Militanza AS M ON G.id_giocatore = M.id_giocatore " + "LEFT JOIN match as Ma ON Ma.id_militanza = M.id_militanza " + "LEFT JOIN StatPortiere AS S ON S.id_partita = Ma.id_partita LEFT JOIN Appartiene AS A ON A.id_giocatore=G.id_giocatore LEFT JOIN nazionalità AS N ON N.nome = A.nomenazionalità " + "WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) + " GROUP BY G.id_giocatore, G.nome, G.cognome, nomeN " + "ORDER BY stat " + filtri.get(5);
+                select = "SELECT " +
+                        "  G.id_giocatore," +
+                        "  G.nome        AS nomeG," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome        AS nomeN," +
+                        "  G.dataRitiro," +
+                        "  G.piede," +
+                        "  MAX(COALESCE(Stats.total_np, 0)) AS stat" +
+                        " FROM Giocatore AS G" +
+                        "" +
+                        " LEFT JOIN (" +
+                        "  SELECT " +
+                        "    M.id_giocatore," +
+                        "    SUM(S.numParate) AS total_np" +
+                        "  FROM Militanza AS M" +
+                        "    LEFT JOIN match      AS Ma ON Ma.id_militanza = M.id_militanza" +
+                        "    LEFT JOIN StatPortiere AS S  ON S.id_partita    = Ma.id_partita" +
+                        "  GROUP BY M.id_giocatore" +
+                        ") AS Stats" +
+                        "  ON Stats.id_giocatore = G.id_giocatore" +
+                        "" +
+                        " LEFT JOIN Appartiene   AS A ON A.id_giocatore = G.id_giocatore" +
+                        " LEFT JOIN nazionalità  AS N ON N.nome          = A.nomenazionalità" +
+                        "" +
+                        " JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore" +
+                        " JOIN Ruolo     AS R ON R.id_ruolo     = P.id_ruolo" +
+                        " WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) +
+                        " GROUP BY " +
+                        "  G.id_giocatore," +
+                        "  G.nome," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome," +
+                        "  G.dataRitiro," +
+                        "  G.piede" +
+                        " ORDER BY stat " + filtri.get(5);
                 break;
             case "Numero Goal Subiti":
-                select = "Select G.id_giocatore, G.nome AS nomeG, G.cognome, G.dataNascita, N.nome AS nomeN, G.dataRitiro, G.piede, COALESCE(SUM(s.GoalSubiti), 0) AS stat FROM Giocatore AS G JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore JOIN Ruolo AS R ON R.id_ruolo = P.id_ruolo " + "JOIN Militanza AS M ON G.id_giocatore = M.id_giocatore " + "LEFT JOIN match as Ma ON Ma.id_militanza = M.id_militanza " + "LEFT JOIN StatPortiere AS S ON S.id_partita = Ma.id_partita LEFT JOIN Appartiene AS A ON A.id_giocatore=G.id_giocatore LEFT JOIN nazionalità AS N ON N.nome = A.nomenazionalità " + "WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) + " GROUP BY G.id_giocatore, G.nome, G.cognome, nomeN " + "ORDER BY stat " + filtri.get(5);
+                select = "SELECT" +
+                        "  G.id_giocatore," +
+                        "  G.nome        AS nomeG," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome AS nomeN," +
+                        "  G.dataRitiro," +
+                        "  G.piede," +
+                        "  MAX(COALESCE(Stats.total_gs, 0)) AS stat" +
+                        " FROM Giocatore AS G" +
+                        "" +
+                        " LEFT JOIN (" +
+                        "  SELECT " +
+                        "    M.id_giocatore," +
+                        "    SUM(S.goalsubiti) AS total_gs" +
+                        "  FROM Militanza AS M" +
+                        "    LEFT JOIN match      AS Ma ON Ma.id_militanza = M.id_militanza" +
+                        "    LEFT JOIN StatPortiere AS S  ON S.id_partita    = Ma.id_partita" +
+                        "  GROUP BY M.id_giocatore" +
+                        ") AS Stats" +
+                        "  ON Stats.id_giocatore = G.id_giocatore" +
+                        "" +
+                        " LEFT JOIN Appartiene   AS A ON A.id_giocatore = G.id_giocatore" +
+                        " LEFT JOIN nazionalità  AS N ON N.nome          = A.nomenazionalità" +
+                        "" +
+                        " JOIN Posizione AS P ON P.id_giocatore = G.id_giocatore" +
+                        " JOIN Ruolo     AS R ON R.id_ruolo     = P.id_ruolo" +
+                        " WHERE " + filtri.get(0) + " " + filtri.get(1) + " " + filtri.get(2) + " " + filtri.get(3) +
+                        " GROUP BY " +
+                        "  G.id_giocatore," +
+                        "  G.nome," +
+                        "  G.cognome," +
+                        "  G.dataNascita," +
+                        "  N.nome," +
+                        "  G.dataRitiro," +
+                        "  G.piede" +
+                        " ORDER BY stat " + filtri.get(5);
                 break;
         }
 

@@ -110,7 +110,7 @@ public class LeggiPartiteGuest {
         partite = controller.getMilitanzaCercata().getPartite();
         String avversario = "";
         for (Partita p : partite) {
-            avversario = p.getSquadraCasa().equals(controller.getMilitanzaCercata().getSquadra()) ? p.getSquadraTrasferta() : p.getSquadraCasa();
+            avversario =  controller.getMilitanzaCercata().getSquadra().getNome().equals(p.getSquadraCasa()) ? p.getSquadraTrasferta() : p.getSquadraCasa();
             model.addRow(new Object[]{avversario, p.getData()});
         }
     }
