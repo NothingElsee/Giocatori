@@ -8,7 +8,6 @@ import me.nothingelsee.Model.Giocatore;
 import me.nothingelsee.Model.Militanza;
 import raven.datetime.DatePicker;
 import raven.datetime.DateSelectionAble;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
